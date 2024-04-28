@@ -1,8 +1,10 @@
+//#include "Webserv.hpp"
 #include <sys/socket.h> // For socket functions
 #include <netinet/in.h> // For sockaddr_in
 #include <cstdlib> // For exit() and EXIT_FAILURE
 #include <iostream> // For cout
 #include <unistd.h> // For read
+#include <cerrno>
 
 int main() {
   // Create a socket (IPv4, TCP)
@@ -18,6 +20,7 @@ int main() {
   sockaddr.sin_addr.s_addr = INADDR_ANY;
   sockaddr.sin_port = htons(8080); // htons is necessary to convert a number to
                                    // network byte order
+
   if (bind(sockfd, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) < 0) 
   {
     std::cout << "Failed to bind to port 8080. errno: " << errno << std::endl;
@@ -41,13 +44,21 @@ int main() {
   }
 
   // Send a message to the connection
-  std::string response = "Good talking to you\n";
+  std::string response =  "<!DOCTYPE html>\n<html lang=\"en\">\n\
+	    				  <head>\n\
+	    				  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\
+	    				  <title>AUTO INDEX</title>\n\
+	    				  </head>\n\
+	    				  <body>\n\
+	    				  <div style=\"margin-left: 5%; margin-top:10%;\">\n\
+	    				  <hr>\n";;
+
   send(connection, response.c_str(), response.size(), 0);
 
   // Read from the connection
   char buffer[1000];
-  int bytesRead = read(connection, buffer, 100);
-  std::cout << "The message was: " << buffer;
+  read(connection, buffer, 1000);
+  std::cout << "The message was: \n" << buffer;
 
 
   // Close the connections
