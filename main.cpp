@@ -14,6 +14,12 @@ int main() {
     exit(EXIT_FAILURE);
   }
 
+  int optval = 1;
+  if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) == -1) {
+    std::cout << "Failed to set socket option SO_REUSEADDR. errno: " << errno << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
   // Listen to port 8080 on any address
   sockaddr_in sockaddr;
   sockaddr.sin_family = AF_INET;
@@ -44,14 +50,7 @@ int main() {
   }
 
   // Send a message to the connection
-  std::string response =  "<!DOCTYPE html>\n<html lang=\"en\">\n\
-	    				  <head>\n\
-	    				  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\
-	    				  <title>AUTO INDEX</title>\n\
-	    				  </head>\n\
-	    				  <body>\n\
-	    				  <div style=\"margin-left: 5%; margin-top:10%;\">\n\
-	    				  <hr>\n";;
+  std::string response = "Hello good morning today, from gorliz";
 
   send(connection, response.c_str(), response.size(), 0);
 
