@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:03 by abasante          #+#    #+#             */
-/*   Updated: 2024/04/29 12:37:06 by abasante         ###   ########.fr       */
+/*   Updated: 2024/04/29 15:52:44 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,16 @@
 //   close(sockfd);
 // }
 
-int main()
+int main(int ac, char **av)
 {
-  //Este main es para probar montar el servidor que recibe el parseo de el archivo de configuración ya hecho.
-  
+  if (ac != 2)
+  {
+    std::cout << "Usage: " << av[0] << " <config file>" << std::endl;
+    return 1;
+  }
+  std::string confFilename;
+	confFilename = av[1];
+
+	Config::parseConfig(confFilename);
+	
 }
