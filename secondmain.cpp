@@ -21,6 +21,43 @@ std::string readHtmlFile(const std::string& filename) {
     return buffer.str();
 }
 
+void handleRequest(int clientSocket) {
+    // Leer la solicitud del cliente
+    char request[1024];
+    recv(clientSocket, request, sizeof(request), 0);
+
+    // Comprobar si la solicitud es para la página principal
+    if (strstr(request, "GET /index.html") != nullptr) {
+        // Leer el contenido de la página index.html
+        std::string htmlContent = readHtmlFile("index.html");
+
+        // Enviar la respuesta HTTP con el contenido HTML al cliente
+        std::string response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + std::to_string(htmlContent.size()) + "\r\n\r\n" + htmlContent;
+        send(clientSocket, response.c_str(), response.size(), 0);
+    }
+    // Comprobar si la solicitud es para redirigir a Google
+    else if (strstr(request, "GET /google") != nullptr) {
+        // Redirigir al cliente a google.com
+        std::string redirectResponse = "HTTP/1.1 302 Found\r\nLocation: http://www.google.com\r\n\r\n";
+        send(clientSocket, redirectResponse.c_str(), redirectResponse.size(), 0);
+    }
+    // Comprobar si la solicitud es para generar un error 403
+    else if (strstr(request, "GET /error") != nullptr) {
+        // Devolver un error 403 Forbidden
+        std::string forbiddenResponse = "HTTP/1.1 403 Forbidden\r\n\r\n";
+        send(clientSocket, forbiddenResponse.c_str(), forbiddenResponse.size(), 0);
+    }
+    // Si la solicitud no es para ninguna página conocida, devolver un error 404
+    else {
+        std::string notFoundResponse = "HTTP/1.1 404 Not Found\r\n\r\n";
+        send(clientSocket, notFoundResponse.c_str(), notFoundResponse.size(), 0);
+    }
+
+    // Cerrar la conexión con el cliente
+    close(clientSocket);
+}
+
+
 int main() {
     // Crear un socket
     int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -36,9 +73,6 @@ int main() {
     serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
     serverAddr.sin_port = htons(8080);
 
-	int optval = 1;
-	setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
-
     // Enlazar el socket a la dirección
     if (bind(serverSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) == -1) {
         std::cerr << "Error al enlazar el socket." << std::endl;
@@ -52,6 +86,7 @@ int main() {
         close(serverSocket);
         return 1;
     }
+
     std::cout << "Servidor escuchando en el puerto 8080..." << std::endl;
 
     while (true) {
@@ -64,21 +99,11 @@ int main() {
             close(serverSocket);
             return 1;
         }
-		//char *buffer = new char[1024];
-		//// Recibir la petición HTTP del cliente
-		//read(clientSocket, buffer, 1024);
-		//std::cout << "La petición fue: \n" << buffer << std::endl;
-        //std::cout << "Cliente conectado." << std::endl;
 
-        // Leer el contenido del archivo HTML
-        std::string htmlContent = readHtmlFile("index.html");
+        std::cout << "Cliente conectado." << std::endl;
 
-        // Enviar la respuesta HTTP con el contenido HTML al cliente
-        std::string response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + std::to_string(htmlContent.size()) + "\r\n\r\n" + htmlContent;
-        send(clientSocket, response.c_str(), response.size(), 0);
-
-        // Cerrar la conexión con el cliente
-        close(clientSocket);
+        // Manejar la solicitud del cliente
+        handleRequest(clientSocket);
     }
 
     // Cerrar el socket del servidor

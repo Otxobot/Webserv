@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página con botones</title>
+</head>
+<body>
+    <h1>Página con botones</h1>
+    <p>Esta es una página generada por el servidor.</p>
+    <button onclick="redirectToPage('http://127.0.0.1:8080/second.html')">Ir a otra página</button>
+    <button onclick="redirectToPage('http://www.google.com')">Ir a Google</button>
+    <button onclick="redirectToPage('error')">Error 403</button>
+
+    <script>
+        function redirectToPage(url) {
+            // Redireccionar a la URL especificada
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>
