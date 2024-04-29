@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:14 by abasante          #+#    #+#             */
-/*   Updated: 2024/04/29 15:51:26 by abasante         ###   ########.fr       */
+/*   Updated: 2024/04/29 16:21:34 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ class Config
 		bool			_allowPOST;
 		bool			_allowDELETE;
 		std::string		_errorpage;
-		int				buffer_size;
+		int				_buffer_size;
 		std::string		_upload;
 		bool			_cgi;
 		std::string		_redirect;
