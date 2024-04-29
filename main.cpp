@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:03 by abasante          #+#    #+#             */
-/*   Updated: 2024/04/29 11:57:20 by abasante         ###   ########.fr       */
+/*   Updated: 2024/04/29 12:37:06 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@
 //     exit(EXIT_FAILURE);
 //   }
 
-//   // Start listening. Hold at most 10 connections in the queue
+//   // Start listening. Hold at mfost 10 connections in the queue
 //   if (listen(sockfd, 10) < 0) 
 //   {
 //     std::cout << "Failed to listen on socket. errno: " << errno << std::endl;
