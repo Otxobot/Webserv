@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/04/30 17:16:10 by abasante         ###   ########.fr       */
+/*   Updated: 2024/04/30 17:48:54 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,9 @@ void Config::parseServers(std::ifstream &file, int contador, int location_times)
 	file.seekg(0, std::ios::beg);
 
 	std::string line;
+	std::string line_sin_comillas;
 	int i = 0;
-	int location_counter = 0;
+	//int location_counter = 0;
 	std::getline(file, line);
 	_servers[i]._index = i;
 	while (std::getline(file, line))
@@ -91,9 +92,10 @@ void Config::parseServers(std::ifstream &file, int contador, int location_times)
 		}
 		if (line.find("location:") != std::string::npos)
 		{
-			std::string line_sin_comillas;
 			line_sin_comillas = this->trim_comillas(line);
+			std::cout << line_sin_comillas << std::endl;
 			this->_locations[line_sin_comillas] = this->parseLocation(file, line_sin_comillas, _servers[i]);
+			//line_sin_comillas = "";
 		}
 		if (line.find("servername:") != std::string::npos)
 		{
@@ -117,22 +119,15 @@ Location Config::parseLocation(std::ifstream &file, std::string line_sin_comilla
 	{
 		if (line.find("root") != std::string::npos)
 		{
-			this->_locations[line_sin_comillas] = 
-		}	
+			std::cout << line << std::endl;
+		}
 	}
+	return (server._locations[line_sin_comillas]);
 }
 
 std::string Config::trim_comillas(std::string line)
 {
-    size_t first = line.find_first_of("\"");
-    size_t last = line.find_last_of("\"");
-    if (first != std::string::npos && last != std::string::npos && first < last)
-    {
-        return line.substr(first + 1, last - first - 1);
-    }
-    else if (line == "/")
-    {
-        // Devuelve una cadena vacía si no se encuentran comillas o si están en un orden incorrecto
-        return line.substr(10);
-    }
+	std::string line_sin_comillas;
+	line_sin_comillas = line.substr(10);
+	return (line_sin_comillas);
 }

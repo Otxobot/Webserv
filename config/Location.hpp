@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 13:26:21 by abasante          #+#    #+#             */
-/*   Updated: 2024/04/30 16:23:30 by abasante         ###   ########.fr       */
+/*   Updated: 2024/04/30 17:31:14 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ class Location
 		std::string					_path;
 		std::string					_root;
 		bool						_autoindex;
-		bool						_cgi;
+		//bool						_cgi;
 		std::string					_return;
 		std::string					_alias;
 		std::vector<std::string>	_cgi_path;
