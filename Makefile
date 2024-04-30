@@ -6,13 +6,13 @@
 #    By: abasante <abasante@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/29 11:39:15 by abasante          #+#    #+#              #
-#    Updated: 2024/04/29 11:54:50 by abasante         ###   ########.fr        #
+#    Updated: 2024/04/29 15:41:14 by abasante         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = webserv
 
-FILES = main Webserv ./server/Server
+FILES = main Webserv ./server/Server ./config/Config 
 
 SRC = $(addsuffix .cpp, $(FILES))
 
