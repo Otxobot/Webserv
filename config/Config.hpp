@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:14 by abasante          #+#    #+#             */
-/*   Updated: 2024/04/29 16:21:34 by abasante         ###   ########.fr       */
+/*   Updated: 2024/04/30 13:30:37 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,28 +31,26 @@
 
 #include "../Webserv.hpp"
 #include "../server/Server.hpp"
+#include "./Location.hpp"
 #include <string>
 #include <fstream>
+
+class Location;
 
 class Config
 {
 	private:
-		std::string		_servername;
-		std::string		_listen;
-		std::string		_location;
-		std::string		_root;
-		std::string		_file;
-		bool			_autoindex;
-		bool			_allowGET;
-		bool			_allowPOST;
-		bool			_allowDELETE;
-		std::string		_errorpage;
-		int				_buffer_size;
-		std::string		_upload;
-		bool			_cgi;
-		std::string		_redirect;
-		std::string		_handlePOST;
-		std::string 	_handleDELETE;
+		int									_port; //uint16_t
+		int									_ip_host; //in_addr_t
+		std::string							_servername;
+		std::string							_root;
+		std::string							_listen;
+		std::string							_location;
+		std::string							_file;
+		bool								_autoindex;
+		std::vector<int, std::string>		_errorpage;
+		std::vector<Location>				_locations;
+		unsigned long						_client_max_body_size;
 		
 	public:
 		Config(void);
