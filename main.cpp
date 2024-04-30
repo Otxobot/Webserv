@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:03 by abasante          #+#    #+#             */
-/*   Updated: 2024/04/29 15:52:44 by abasante         ###   ########.fr       */
+/*   Updated: 2024/04/30 14:10:30 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,14 +80,16 @@
 
 int main(int ac, char **av)
 {
-  if (ac != 2)
-  {
-    std::cout << "Usage: " << av[0] << " <config file>" << std::endl;
-    return 1;
-  }
-  std::string confFilename;
+	if (ac != 2)
+  	{
+    	std::cout << "Usage: " << av[0] << " <config file>" << std::endl;
+    	return 1;
+  	}
+  
+	std::string confFilename;
+	Config config;
 	confFilename = av[1];
 
-	Config::parseConfig(confFilename);
-	
+	config.parseConfig(confFilename);
+	return 0;
 }

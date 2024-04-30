@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:14 by abasante          #+#    #+#             */
-/*   Updated: 2024/04/30 13:30:37 by abasante         ###   ########.fr       */
+/*   Updated: 2024/04/30 14:17:12 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,15 @@
 #include "./Location.hpp"
 #include <string>
 #include <fstream>
+#include <vector>
+#include <map>
 
 class Location;
 
 class Config
 {
 	private:
+		int									_index;
 		int									_port; //uint16_t
 		int									_ip_host; //in_addr_t
 		std::string							_servername;
@@ -48,15 +51,15 @@ class Config
 		std::string							_location;
 		std::string							_file;
 		bool								_autoindex;
-		std::vector<int, std::string>		_errorpage;
+		std::map<int, std::string>		_errorpage;
 		std::vector<Location>				_locations;
 		unsigned long						_client_max_body_size;
-		
 	public:
 		Config(void);
 		~Config();
-		
-		static void	parseConfig(std::string configFile);
+
+		void	parseConfig(std::string configFile);
+		//void	parseServers(std::ifstream &file, std::vector<Config> &_servers, int contador);
 };
 
 #endif
