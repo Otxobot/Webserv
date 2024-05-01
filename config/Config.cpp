@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/04/30 13:05:18 by abasante         ###   ########.fr       */
+/*   Updated: 2024/04/30 17:48:54 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,13 @@ Config::Config()
 	//Constructor Default
 	_servername = "";
 	_listen = "";
-	_location = "";
 	_root = "";
 	_file = "";
 	_autoindex = false;
-	_allowGET = false;
-	_allowPOST = false;
-	_allowDELETE = false;
-	_errorpage = "";
-	_buffer_size = 0;
-	_upload = "";
-	_cgi = false;
-	_redirect = "";
-	_handlePOST = "";
-	_handleDELETE = "";
+	_index = 0;
+	_port = 0;
+	_ip_host = 0;
+	_client_max_body_size = 0;
 }
 
 Config::~Config()
@@ -43,7 +36,6 @@ Config::~Config()
 
 void Config::parseConfig(std::string configFile)
 {
-	std::vector<Config>	_servers;
 	std::ifstream file(configFile);
 
 	if (!file.is_open())
@@ -60,57 +52,82 @@ void Config::parseConfig(std::string configFile)
 			contador++;
 		}
 	}
-	
-	std::cout << "Cantidad de servers: " << contador << std::endl;
+	file.clear();
+	file.seekg(0, std::ios::beg); //Reiniciar el puntero del archivo para leerlo desde el principio
+	int location_counter = 0;
+	std::string line1;
+	while (std::getline(file, line1))
+	{
+		if (line1.find("location:") != std::string::npos)
+		{
+			location_counter++;
+		}
+	}
+	parseServers(file, contador, location_counter);
+}
+
+void Config::parseServers(std::ifstream &file, int contador, int location_times)
+{
+	//Aqui hay que parsear todos los servidores y sus locations
+	std::vector<Config>	_servers;
 	_servers.resize(contador);
 
+	location_times = 0;
+	file.clear();
+	file.seekg(0, std::ios::beg);
+
+	std::string line;
+	std::string line_sin_comillas;
 	int i = 0;
-	while (i < contador)
+	//int location_counter = 0;
+	std::getline(file, line);
+	_servers[i]._index = i;
+	while (std::getline(file, line))
 	{
-		_servers[i] = Config();
-		i++;
-	}
-	file.clear(); // Limpia los flags de error/fin de archivo
-	file.seekg(0, std::ios::beg); 
-	i = 0;
-	std::string line1;
-	std::getline(file, line1);
-	while(std::getline(file, line1))
-	{
-		//std::cout << i << std::endl;
- 		if (line1.find("server:") != std::string::npos)
+		if (line.find("server:") != std::string::npos)
 		{
 			i++;
-			std::cout << "============================" << std::endl;
-			std::cout << "============================" << std::endl;
+			_servers[i]._index = i;
 			continue;
 		}
-		if (line1.find("servername: ")  != std::string::npos)
+		if (line.find("location:") != std::string::npos)
 		{
-			_servers[i]._servername = line1.substr(14);
-			std::cout << _servers[i]._servername << std::endl;
+			line_sin_comillas = this->trim_comillas(line);
+			std::cout << line_sin_comillas << std::endl;
+			this->_locations[line_sin_comillas] = this->parseLocation(file, line_sin_comillas, _servers[i]);
+			//line_sin_comillas = "";
 		}
-		if (line1.find("listen: ") != std::string::npos)
+		if (line.find("servername:") != std::string::npos)
 		{
-			_servers[i]._listen = line1.substr(10);
-			std::cout << _servers[i]._listen << std::endl;
+			_servers[i]._servername = line.substr(10);
 		}
-		if (line1.find("location: ") != std::string::npos)
+		if (line.find("root:") != std::string::npos)
 		{
-			// aqui tiene que hacer algo mas
-			continue;
+			_servers[i]._root = line.substr(5);
 		}
-		if (line1.find("root: ") != std::string::npos)
+		if (line.find("listen:") != std::string::npos)
 		{
-			// aqui hay que hacer un manejo mas tambien
-			// _servers[i]._root = line1.substr(8);
-			// std::cout << _servers[i]._root << std::endl;
-			continue;
+			_servers[i]._listen = line.substr(7);
 		}
-		if (line1.find("buffer_size: ") != std::string::npos)
-		{
-			_servers[i]._buffer_size = std::stoi(line1.substr(14));
-			std::cout << _servers[i]._buffer_size << std::endl;
-		}	
 	}
+}
+
+Location Config::parseLocation(std::ifstream &file, std::string line_sin_comillas, Config &server)
+{
+	std::string line;
+	while (std::getline(file, line))
+	{
+		if (line.find("root") != std::string::npos)
+		{
+			std::cout << line << std::endl;
+		}
+	}
+	return (server._locations[line_sin_comillas]);
+}
+
+std::string Config::trim_comillas(std::string line)
+{
+	std::string line_sin_comillas;
+	line_sin_comillas = line.substr(10);
+	return (line_sin_comillas);
 }
