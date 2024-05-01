@@ -66,7 +66,7 @@ void Config::parseConfig(std::string configFile)
 	parseServers(file, contador);
 }
 
-void Config::parseServers(std::ifstream &file, int contador/*, int location_times*/)
+void Config::parseServers(std::ifstream &file, int contador)
 {
 	//Aqui hay que parsear todos los servidores y sus locations
 	std::vector<Config>	_servers;
@@ -88,72 +88,119 @@ void Config::parseServers(std::ifstream &file, int contador/*, int location_time
 			_servers[i]._index = i;
 			continue;
 		}
-		if (line.find("location:") != std::string::npos)
+		while (line.find("location:") != std::string::npos)
 		{
 			line_sin_comillas = this->trim_comillas(line);
-			std::cout << "after trimming->"<<line_sin_comillas << std::endl;
-			//this->_locations[line_sin_comillas] = this->parseLocation(file, line_sin_comillas, _servers[i]);
-			//line_sin_comillas = "";
+			this->_locations[line_sin_comillas] = this->parseLocation(file, line);
 		}
 		if (line.find("servername:") != std::string::npos)
 		{
-			_servers[i]._servername = line.substr(10);
+			_servers[i]._servername = line.substr(14);
+			std::cout << "--->" << _servers[i]._servername << std::endl;
 		}
 		if (line.find("root:") != std::string::npos)
 		{
-			_servers[i]._root = line.substr(5);
+			_servers[i]._root = line.substr(8);
+			std::cout << "--->" << _servers[i]._root << std::endl;
 		}
 		if (line.find("listen:") != std::string::npos)
 		{
-			_servers[i]._listen = line.substr(7);
+			_servers[i]._listen = line.substr(10);
+			std::cout << "--->" << _servers[i]._listen << std::endl;
 		}
 	}
 }
 
-// Location Config::parseLocation(std::ifstream &file, std::string line_sin_comillas, Config &server)
+Location Config::parseLocation(std::ifstream &file, std::string &line)
+{
+	Location loc;
+	std::cout << line << std::endl;
+	while (std::getline(file, line))
+	{
+		if (line.find("location:") != std::string::npos)
+		{
+			break;
+		}
+		std::cout << line << std::endl;
+		if (line.find("allow: ") != std::string::npos)
+		{
+			if (line.substr(8).find("get") != std::string::npos)
+			{
+				loc.setAllowGET(true);
+			}
+			if (line.substr(8).find("get") != std::string::npos)
+			{
+				loc.setAllowPOST(true);
+			}
+			if (line.substr(8).find("get") != std::string::npos)
+			{
+				loc.setAllowDELETE(true);
+			}
+		}
+		if (line.find("file: ") != std::string::npos)
+		{
+			loc.setFile(trim_comillas(line.substr(7)));
+		}
+		if (line.find("redirect: ") != std::string::npos)
+		{
+			loc.setRedirect(trim_comillas(line.substr(11)));
+		}
+		if (line.find("root: ") != std::string::npos)
+		{
+			loc.setRoot(trim_comillas(line.substr(7)));
+		}
+		if (line.find("autoindex: ") != std::string::npos)
+		{
+			line.substr(12) == "on" ? loc.setAutoindex(true) : loc.setAutoindex(false);
+		}
+		if (line.find("handle_delete: ") != std::string::npos)
+		{
+			loc.setHandleDelete(line.substr(16));
+		}
+		if (line.find("handle_post: ") != std::string::npos)
+		{
+			loc.setHandlePost(line.substr(14));
+		}
+		if (line.find("error_page: ") != std::string::npos)
+		{
+			loc.setErrorPage(line.substr(13));
+		}
+		if (line.find("cgi: ") != std::string::npos)
+		{
+			loc.setCgi(line.substr(6));
+		}
+		if (line.find("upload: ") != std::string::npos)
+		{
+			loc.setUpload(line.substr(9));
+		}
+		if (line.find("buffer_size: ") != std::string::npos)
+		{
+			//loc.setBufferSize(std::atoi(line.substr(14).c_str()));
+			loc.setBufferSize(std::atoi(line.c_str().substr(14)));
+		}
+	}
+	return (loc);
+	//return (server._locations[line_sin_comillas]);
+}
+
+// std::string Config::trim_comillas(const std::string& line)
 // {
-// 	std::string line;
-// 	while (std::getline(file, line))
-// 	{
-// 		if (line.find("root") != std::string::npos)
-// 		{
-// 			//std::cout << line << std::endl;
-// 		}
-// 	}
-// 	return (server._locations[line_sin_comillas]);
+//     std::string line_sin_comillas = line;
+
+//     while (!line_sin_comillas.empty() && line_sin_comillas[0] == '"')
+//         line_sin_comillas = line_sin_comillas.substr(1);
+//     while (!line_sin_comillas.empty() && line_sin_comillas.back() == '"')
+//         line_sin_comillas.pop_back();
+//     return line_sin_comillas;
 // }
 
-// std::string Config::trim_comillas(std::string line)
-// {
-// 	std::cout << "line before trimming->" << line << std::endl;
-// 	std::string line_sin_comillas;
-// 	if (line.find("\"") != std::string::npos)
-// 	{
-// 		std::cout << "no ha encontrado comillas, trata el caso /" << std::endl;
-// 		return ("/");
-// 	}
-// 	// line_sin_comillas = line.find('\"');
-// 	// int i = 0;
-// 	// while (line_sin_comillas[i] != '\"')
-// 	// {
-// 	// 	line_sin_comillas += line[i];
-// 	// }
-// 	return (line_sin_comillas);
-// }
-std::string Config::trim_comillas(std::string line)
+std::string Config::trim_comillas(const std::string& line)
 {
-    std::cout << "line before trimming->" << line << std::endl;
-    std::string::size_type i = 0;
-    while (i < line.size())
-    {
-        if (line[i] == '\"')
-        {
-            line.erase(i, 1);
-        }
-        else
-        {
-            ++i;
-        }
-    }
-    return line;
+    std::string line_sin_comillas = line;
+
+    while (!line_sin_comillas.empty() && line_sin_comillas[0] == '"')
+        line_sin_comillas = line_sin_comillas.substr(1);
+    while (!line_sin_comillas.empty() && line_sin_comillas.end() == '"')
+        line_sin_comillas.push_back();
+    return line_sin_comillas;
 }

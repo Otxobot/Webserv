@@ -21,14 +21,14 @@
 class Location
 {
 	private:
-		int					_index;
+		//int					_index;
 		bool			_allowGET;
 		bool			_allowPOST;
 		bool			_allowDELETE;
 		std::string					_path;
 		std::string					_root;
 		bool						_autoindex;
-		//bool						_cgi;
+		std::string						_cgi;
 		std::string					_return;
 		std::string					_alias;
 		std::vector<std::string>	_cgi_path;
@@ -39,6 +39,19 @@ class Location
 		Location(const Location &other);
 		Location &operator=(const Location &rhs);
 		~Location();
+		void setAllowGET(bool allowGET);
+		void setAllowPOST(bool allowPOST);
+		void setAllowDELETE(bool allowDELETE);
+		void setFile(std::string file);
+		void setRedirect(std::string redirect);
+		void setRoot(std::string root);
+		void setAutoindex(bool autoindex);
+		void setHandleDelete(std::string handle_delete);
+		void setHandlePost(std::string handle_post);
+		void setErrorPage(std::string error_page);
+		void setCgi(std::string cgi);
+		void setUpload(std::string upload);
+		void setBufferSize(int buffer_size);
 		
 };
 
