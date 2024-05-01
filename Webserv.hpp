@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:21 by abasante          #+#    #+#             */
-/*   Updated: 2024/04/29 15:36:00 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/01 12:12:15 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include "./server/Server.hpp"
 #include "./config/Config.hpp"
+#include "./config/Location.hpp"
 
 //Aqui van todos los includes que se usaran en el proyecto, en los archivos incluimos Webserv.hpp y ya.
 //La configuración va a ser una clase, el servidor va a ser una clase, el request y la respuesta tambien van a ser una clase.
