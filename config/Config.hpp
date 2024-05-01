@@ -54,7 +54,7 @@ class Config
 		~Config();
 
 		void		parseConfig(std::string configFile);
-		void		parseServers(std::ifstream &file, int contador, int location_times);
+		void		parseServers(std::ifstream &file, int contador/*, int location_times*/);
 		Location	parseLocation(std::ifstream &file, std::string line_sin_comillas, Config &server);
 		std::string    trim_comillas(std::string line);
 };

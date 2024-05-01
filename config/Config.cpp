@@ -36,7 +36,7 @@ Config::~Config()
 
 void Config::parseConfig(std::string configFile)
 {
-	std::ifstream file(configFile);
+	std::ifstream file(configFile.c_str());
 
 	if (!file.is_open())
 	{
@@ -63,23 +63,21 @@ void Config::parseConfig(std::string configFile)
 			location_counter++;
 		}
 	}
-	parseServers(file, contador, location_counter);
+	parseServers(file, contador);
 }
 
-void Config::parseServers(std::ifstream &file, int contador, int location_times)
+void Config::parseServers(std::ifstream &file, int contador/*, int location_times*/)
 {
 	//Aqui hay que parsear todos los servidores y sus locations
 	std::vector<Config>	_servers;
 	_servers.resize(contador);
 
-	location_times = 0;
 	file.clear();
 	file.seekg(0, std::ios::beg);
 
 	std::string line;
 	std::string line_sin_comillas;
 	int i = 0;
-	//int location_counter = 0;
 	std::getline(file, line);
 	_servers[i]._index = i;
 	while (std::getline(file, line))
@@ -93,8 +91,8 @@ void Config::parseServers(std::ifstream &file, int contador, int location_times)
 		if (line.find("location:") != std::string::npos)
 		{
 			line_sin_comillas = this->trim_comillas(line);
-			std::cout << line_sin_comillas << std::endl;
-			this->_locations[line_sin_comillas] = this->parseLocation(file, line_sin_comillas, _servers[i]);
+			std::cout << "after trimming->"<<line_sin_comillas << std::endl;
+			//this->_locations[line_sin_comillas] = this->parseLocation(file, line_sin_comillas, _servers[i]);
 			//line_sin_comillas = "";
 		}
 		if (line.find("servername:") != std::string::npos)
@@ -112,22 +110,50 @@ void Config::parseServers(std::ifstream &file, int contador, int location_times)
 	}
 }
 
-Location Config::parseLocation(std::ifstream &file, std::string line_sin_comillas, Config &server)
-{
-	std::string line;
-	while (std::getline(file, line))
-	{
-		if (line.find("root") != std::string::npos)
-		{
-			std::cout << line << std::endl;
-		}
-	}
-	return (server._locations[line_sin_comillas]);
-}
+// Location Config::parseLocation(std::ifstream &file, std::string line_sin_comillas, Config &server)
+// {
+// 	std::string line;
+// 	while (std::getline(file, line))
+// 	{
+// 		if (line.find("root") != std::string::npos)
+// 		{
+// 			//std::cout << line << std::endl;
+// 		}
+// 	}
+// 	return (server._locations[line_sin_comillas]);
+// }
 
+// std::string Config::trim_comillas(std::string line)
+// {
+// 	std::cout << "line before trimming->" << line << std::endl;
+// 	std::string line_sin_comillas;
+// 	if (line.find("\"") != std::string::npos)
+// 	{
+// 		std::cout << "no ha encontrado comillas, trata el caso /" << std::endl;
+// 		return ("/");
+// 	}
+// 	// line_sin_comillas = line.find('\"');
+// 	// int i = 0;
+// 	// while (line_sin_comillas[i] != '\"')
+// 	// {
+// 	// 	line_sin_comillas += line[i];
+// 	// }
+// 	return (line_sin_comillas);
+// }
 std::string Config::trim_comillas(std::string line)
 {
-	std::string line_sin_comillas;
-	line_sin_comillas = line.substr(10);
-	return (line_sin_comillas);
+    std::cout << "line before trimming->" << line << std::endl;
+    std::string::size_type i = 0;
+    while (i < line.size())
+    {
+        if (line[i] == '\"')
+        {
+            line.erase(i, 1);
+        }
+        else
+        {
+            ++i;
+        }
+    }
+    return line;
 }
