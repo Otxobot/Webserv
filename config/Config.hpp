@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:14 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/02 13:29:14 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/02 14:41:23 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ class Config
 		std::map<int, std::string>			_errorpage;
 		std::map<std::string, Location>		_locations;
 		unsigned long						_client_max_body_size;
+		int									_buffer_size;
 	public:
 		Config(void);
 		~Config();

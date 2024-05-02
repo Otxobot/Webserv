@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/02 14:33:45 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/02 14:43:42 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,33 +84,38 @@ void Config::parseServers(std::ifstream &file, int contador, int location_times)
 	std::getline(file, line);
 	while (std::getline(file, line))
 	{
-		//std::cout << line << std::endl;
+		while (line.find("location:") != std::string::npos)
+		{
+			line_sin_comillas = this->trim_comillas(line.substr(12));
+			std::cout << "location" << line_sin_comillas << std::endl;
+			this->_locations[line_sin_comillas] = this->parseLocation(file, line);
+		}
 		if (line.find("server:") != std::string::npos)
 		{
 			i++;
 			_serversConfig[i]._index = i;
+			std::cout << std::endl << std::endl <<std::endl << std::endl;
 			continue;
-		}
-		while (line.find("location:") != std::string::npos)
-		{
-			line_sin_comillas = this->trim_comillas(line.substr(11));
-			//std::cout << "location" << line_sin_comillas << std::endl;
-			this->_locations[line_sin_comillas] = this->parseLocation(file, line);
 		}
 		if (line.find("servername:") != std::string::npos)
 		{
 			_serversConfig[i]._servername = trim_comillas(line.substr(14));
-			//std::cout << "servername: " << _serversConfig[i]._servername << std::endl;
+			std::cout << "servername: " << _serversConfig[i]._servername << std::endl;
 		}
 		if (line.find("root:") != std::string::npos)
 		{
 			_serversConfig[i]._root = trim_comillas(line.substr(8));
-			//std::cout << "root: " << _serversConfig[i]._root << std::endl;
+			std::cout << "root: " << _serversConfig[i]._root << std::endl;
 		}
 		if (line.find("listen:") != std::string::npos)
 		{
 			_serversConfig[i]._listen = trim_comillas(line.substr(10));
-			//std::cout << "listen: " << _serversConfig[i]._listen << std::endl;
+			std::cout << "listen: " << _serversConfig[i]._listen << std::endl;
+		}
+		if (line.find("buffer_size:") != std::string::npos)
+		{
+			_serversConfig[i]._buffer_size = std::stoi(line.substr(15));
+			std::cout << "buffer_size: " << _serversConfig[i]._buffer_size << std::endl;
 		}
 	}
 }
@@ -126,59 +131,59 @@ Location Config::parseLocation(std::ifstream &file, std::string &line)
 		}
 		if (line.find("allow: ") != std::string::npos)
 		{
-			if (line.substr(8).find("GET") != std::string::npos)
+			if (line.substr(12).find("GET") != std::string::npos)
 			{
 				loc.setAllowGET(true);
 			}
-			if (line.substr(8).find("POST") != std::string::npos)
+			if (line.substr(12).find("POST") != std::string::npos)
 			{
 				loc.setAllowPOST(true);
 			}
-			if (line.substr(8).find("DELETE") != std::string::npos)
+			if (line.substr(12).find("DELETE") != std::string::npos)
 			{
 				loc.setAllowDELETE(true);
 			}
 		}
 		if (line.find("file: ") != std::string::npos)
 		{
-			loc.setFile(trim_comillas(line.substr(9)));
+			loc.setFile(trim_comillas(line.substr(11)));
 		}
 		if (line.find("redirect: ") != std::string::npos)
 		{
-			loc.setRedirect(trim_comillas(line.substr(11)));
+			loc.setRedirect(trim_comillas(line.substr(15)));
 		}
 		if (line.find("root: ") != std::string::npos)
 		{
-			loc.setRoot(trim_comillas(line.substr(7)));
+			loc.setRoot(trim_comillas(line.substr(11)));
 		}
 		if (line.find("autoindex: ") != std::string::npos)
 		{
-			if (line.substr(12) == "on")
+			if (line.substr(15) == "on")
 				loc.setAutoindex(true);
 		}
 		if (line.find("handle_delete: ") != std::string::npos)
 		{
-			loc.setHandleDelete(line.substr(16));
+			loc.setHandleDelete(line.substr(20));
 		}
 		if (line.find("handle_post: ") != std::string::npos)
 		{
-			loc.setHandlePost(line.substr(14));
+			loc.setHandlePost(line.substr(18));
 		}
 		if (line.find("error_page: ") != std::string::npos)
 		{
-			loc.setErrorPage(line.substr(13));
+			loc.setErrorPage(line.substr(17));
 		}
 		if (line.find("cgi: ") != std::string::npos)
 		{
-			loc.setCgi(line.substr(6));
+			loc.setCgi(line.substr(10));
 		}
 		if (line.find("upload: ") != std::string::npos)
 		{
-			loc.setUpload(line.substr(9));
+			loc.setUpload(line.substr(13));
 		}
 		if (line.find("buffer_size: ") != std::string::npos)
 		{
-			loc.setBufferSize(std::stoi(line.substr(14)));
+			loc.setBufferSize(std::stoi(line.substr(18)));
 		}
 	}
 	return (loc);
