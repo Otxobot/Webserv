@@ -6,7 +6,7 @@
 /*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/02 14:34:58 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/02 16:31:38 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,61 +147,59 @@ Location Config::parseLocation(std::ifstream &file, std::string &line)
 		}
 		if (line.find("file: ") != std::string::npos)
 		{
-			loc.setFile(trim_comillas(line.substr(11)));
+			loc.setFile(trim_comillas(line.substr(10)));
 		}
 		if (line.find("redirect: ") != std::string::npos)
 		{
-			loc.setRedirect(trim_comillas(line.substr(15)));
+			loc.setRedirect(trim_comillas(line.substr(14)));
 		}
 		if (line.find("root: ") != std::string::npos)
 		{
-			loc.setRoot(trim_comillas(line.substr(11)));
+			loc.setRoot(trim_comillas(line.substr(10)));
 		}
 		if (line.find("autoindex: ") != std::string::npos)
 		{
-			std::cout << "'" << line << "'" << std::endl;
-			line.substr(15) == "on" ? loc.setAutoindex(true) : loc.setAutoindex(false);
+			line.substr(14) == "on" ? loc.setAutoindex(true) : loc.setAutoindex(false);
 		}
 		if (line.find("handle_delete: ") != std::string::npos)
 		{
-			loc.setHandleDelete(line.substr(20));
+			loc.setHandleDelete(trim_comillas(line.substr(19)));
 		}
 		if (line.find("handle_post: ") != std::string::npos)
 		{
-			loc.setHandlePost(line.substr(18));
+			loc.setHandlePost(trim_comillas(line.substr(17)));
 		}
 		if (line.find("error_page: ") != std::string::npos)
 		{
-			loc.setErrorPage(line.substr(17));
+			loc.setErrorPage(trim_comillas(line.substr(16)));
 		}
 		if (line.find("cgi: ") != std::string::npos)
 		{
-			loc.setCgi(line.substr(10));
+			loc.setCgi(trim_comillas(line.substr(9)));
 		}
 		if (line.find("upload: ") != std::string::npos)
 		{
-			loc.setUpload(line.substr(13));
+			loc.setUpload(trim_comillas(line.substr(12)));
 		}
 		if (line.find("buffer_size: ") != std::string::npos)
 		{
-			loc.setBufferSize(std::stoi(line.substr(18)));
+			loc.setBufferSize(std::stoi(trim_comillas(line.substr(17))));
 		}
 	}
 	return (loc);
-	//return (server._locations[line_sin_comillas]);
 }
 
 std::string Config::trim_comillas(const std::string& line)
 {
     std::string line_sin_espacios = line;
 
-    //size_t first_non_space = line_sin_espacios.find_first_not_of(" \t");
-    //if (first_non_space != std::string::npos && line_sin_espacios[first_non_space] == '"')
-    //    line_sin_espacios.erase(0, first_non_space);
-    //while (!line_sin_espacios.empty() && line_sin_espacios[0] == '"')
-    //    line_sin_espacios = line_sin_espacios.substr(1);
-    //while (!line_sin_espacios.empty() && line_sin_espacios.back() == '"')
-    //    line_sin_espacios.pop_back();
+    size_t first_non_space = line_sin_espacios.find_first_not_of(" \t");
+    if (first_non_space != std::string::npos && line_sin_espacios[first_non_space] == '"')
+        line_sin_espacios.erase(0, first_non_space);
+    while (!line_sin_espacios.empty() && line_sin_espacios[0] == '"')
+        line_sin_espacios = line_sin_espacios.substr(1);
+    while (!line_sin_espacios.empty() && line_sin_espacios.back() == '"')
+        line_sin_espacios.pop_back();
 
     return line_sin_espacios;
 }
