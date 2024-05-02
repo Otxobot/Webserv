@@ -6,7 +6,7 @@
 /*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/02 16:31:38 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/02 16:48:46 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ Config::Config()
 	_autoindex = false;
 	_index = 0;
 	_port = 0;
-	_ip_host = 0;
+	_host = "";
 	_client_max_body_size = 0;
 }
 
@@ -111,6 +111,14 @@ void Config::parseServers(std::ifstream &file, int contador, int location_times)
 		if (line.find("listen:") != std::string::npos)
 		{
 			_servers[i]._listen = trim_comillas(line.substr(10));
+			std::string listen = line.substr(10);
+			size_t colonPos = listen.find(":");
+			std::string host = listen.substr(0, colonPos);
+			int port = stoi(listen.substr(colonPos + 1));
+			_servers[i]._host = host;
+			_servers[i]._port = port;
+			std::cout << "host: " << _servers[i]._host << std::endl;
+			std::cout << "port: " << _servers[i]._port << std::endl;
 			std::cout << "listen: " << _servers[i]._listen << std::endl;
 		}
 		if (line.find("buffer_size:") != std::string::npos)
