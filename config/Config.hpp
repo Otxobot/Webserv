@@ -6,7 +6,7 @@
 /*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:14 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/02 12:59:43 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/02 14:05:02 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ class Config
 		int									_index;
 		int									_port; //uint16_t
 		int									_ip_host; //in_addr_t
+		int									_buffer_size;
 		std::string							_servername;
 		std::string							_root;
 		std::string							_listen;
