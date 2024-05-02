@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/02 13:31:59 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/02 14:33:45 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,8 @@ void Config::parseServers(std::ifstream &file, int contador, int location_times)
 {
 	location_times = 0;
 	//Aqui hay que parsear todos los servidores y sus locations
-	std::vector<Config>	_servers;
-	_servers.resize(contador);
+	std::vector<Config>	_serversConfig;
+	_serversConfig.resize(contador);
 
 	file.clear();
 	file.seekg(0, std::ios::beg);
@@ -80,36 +80,37 @@ void Config::parseServers(std::ifstream &file, int contador, int location_times)
 	std::string line;
 	std::string line_sin_comillas;
 	int i = 0;
+	_serversConfig[i]._index = i;
 	std::getline(file, line);
-	_servers[i]._index = i;
 	while (std::getline(file, line))
 	{
+		//std::cout << line << std::endl;
 		if (line.find("server:") != std::string::npos)
 		{
 			i++;
-			_servers[i]._index = i;
+			_serversConfig[i]._index = i;
 			continue;
 		}
 		while (line.find("location:") != std::string::npos)
 		{
 			line_sin_comillas = this->trim_comillas(line.substr(11));
-			std::cout << "location" <<line_sin_comillas << std::endl;
+			//std::cout << "location" << line_sin_comillas << std::endl;
 			this->_locations[line_sin_comillas] = this->parseLocation(file, line);
 		}
 		if (line.find("servername:") != std::string::npos)
 		{
-			_servers[i]._servername = trim_comillas(line.substr(14));
-			std::cout << "servername: " << _servers[i]._servername << std::endl;
+			_serversConfig[i]._servername = trim_comillas(line.substr(14));
+			//std::cout << "servername: " << _serversConfig[i]._servername << std::endl;
 		}
 		if (line.find("root:") != std::string::npos)
 		{
-			_servers[i]._root = trim_comillas(line.substr(8));
-			std::cout << "root: " << _servers[i]._root << std::endl;
+			_serversConfig[i]._root = trim_comillas(line.substr(8));
+			//std::cout << "root: " << _serversConfig[i]._root << std::endl;
 		}
 		if (line.find("listen:") != std::string::npos)
 		{
-			_servers[i]._listen = trim_comillas(line.substr(10));
-			std::cout << "listen: " << _servers[i]._listen << std::endl;
+			_serversConfig[i]._listen = trim_comillas(line.substr(10));
+			//std::cout << "listen: " << _serversConfig[i]._listen << std::endl;
 		}
 	}
 }
@@ -119,21 +120,21 @@ Location Config::parseLocation(std::ifstream &file, std::string &line)
 	Location loc;
 	while (std::getline(file, line))
 	{
-		if (line.find("location:") != std::string::npos)
+		if (line.find("location:") != std::string::npos || line.find("server:") != std::string::npos)
 		{
 			break;
 		}
 		if (line.find("allow: ") != std::string::npos)
 		{
-			if (line.substr(8).find("get") != std::string::npos)
+			if (line.substr(8).find("GET") != std::string::npos)
 			{
 				loc.setAllowGET(true);
 			}
-			if (line.substr(8).find("get") != std::string::npos)
+			if (line.substr(8).find("POST") != std::string::npos)
 			{
 				loc.setAllowPOST(true);
 			}
-			if (line.substr(8).find("get") != std::string::npos)
+			if (line.substr(8).find("DELETE") != std::string::npos)
 			{
 				loc.setAllowDELETE(true);
 			}
@@ -152,7 +153,8 @@ Location Config::parseLocation(std::ifstream &file, std::string &line)
 		}
 		if (line.find("autoindex: ") != std::string::npos)
 		{
-			line.substr(12) == "on" ? loc.setAutoindex(true) : loc.setAutoindex(false);
+			if (line.substr(12) == "on")
+				loc.setAutoindex(true);
 		}
 		if (line.find("handle_delete: ") != std::string::npos)
 		{
@@ -180,7 +182,6 @@ Location Config::parseLocation(std::ifstream &file, std::string &line)
 		}
 	}
 	return (loc);
-	//return (server._locations[line_sin_comillas]);
 }
 
 std::string Config::trim_comillas(const std::string& line)
