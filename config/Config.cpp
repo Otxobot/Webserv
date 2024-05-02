@@ -6,11 +6,12 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/04/30 17:48:54 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/02 13:29:30 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
+#include "Location.hpp"
 
 class Config;
 
@@ -90,23 +91,24 @@ void Config::parseServers(std::ifstream &file, int contador)
 		}
 		while (line.find("location:") != std::string::npos)
 		{
-			line_sin_comillas = this->trim_comillas(line);
+			line_sin_comillas = this->trim_comillas(line.substr(11));
+			std::cout << "location" <<line_sin_comillas << std::endl;
 			this->_locations[line_sin_comillas] = this->parseLocation(file, line);
 		}
 		if (line.find("servername:") != std::string::npos)
 		{
-			_servers[i]._servername = line.substr(14);
-			std::cout << "--->" << _servers[i]._servername << std::endl;
+			_servers[i]._servername = trim_comillas(line.substr(14));
+			std::cout << "servername: " << _servers[i]._servername << std::endl;
 		}
 		if (line.find("root:") != std::string::npos)
 		{
-			_servers[i]._root = line.substr(8);
-			std::cout << "--->" << _servers[i]._root << std::endl;
+			_servers[i]._root = trim_comillas(line.substr(8));
+			std::cout << "root: " << _servers[i]._root << std::endl;
 		}
 		if (line.find("listen:") != std::string::npos)
 		{
-			_servers[i]._listen = line.substr(10);
-			std::cout << "--->" << _servers[i]._listen << std::endl;
+			_servers[i]._listen = trim_comillas(line.substr(10));
+			std::cout << "listen: " << _servers[i]._listen << std::endl;
 		}
 	}
 }
@@ -114,14 +116,12 @@ void Config::parseServers(std::ifstream &file, int contador)
 Location Config::parseLocation(std::ifstream &file, std::string &line)
 {
 	Location loc;
-	std::cout << line << std::endl;
 	while (std::getline(file, line))
 	{
 		if (line.find("location:") != std::string::npos)
 		{
 			break;
 		}
-		std::cout << line << std::endl;
 		if (line.find("allow: ") != std::string::npos)
 		{
 			if (line.substr(8).find("get") != std::string::npos)
@@ -139,7 +139,7 @@ Location Config::parseLocation(std::ifstream &file, std::string &line)
 		}
 		if (line.find("file: ") != std::string::npos)
 		{
-			loc.setFile(trim_comillas(line.substr(7)));
+			loc.setFile(trim_comillas(line.substr(9)));
 		}
 		if (line.find("redirect: ") != std::string::npos)
 		{
@@ -175,32 +175,25 @@ Location Config::parseLocation(std::ifstream &file, std::string &line)
 		}
 		if (line.find("buffer_size: ") != std::string::npos)
 		{
-			//loc.setBufferSize(std::atoi(line.substr(14).c_str()));
-			loc.setBufferSize(std::atoi(line.c_str().substr(14)));
+			loc.setBufferSize(std::stoi(line.substr(14)));
 		}
 	}
 	return (loc);
 	//return (server._locations[line_sin_comillas]);
 }
 
-// std::string Config::trim_comillas(const std::string& line)
-// {
-//     std::string line_sin_comillas = line;
-
-//     while (!line_sin_comillas.empty() && line_sin_comillas[0] == '"')
-//         line_sin_comillas = line_sin_comillas.substr(1);
-//     while (!line_sin_comillas.empty() && line_sin_comillas.back() == '"')
-//         line_sin_comillas.pop_back();
-//     return line_sin_comillas;
-// }
-
 std::string Config::trim_comillas(const std::string& line)
 {
-    std::string line_sin_comillas = line;
+    std::string line_sin_espacios = line;
 
-    while (!line_sin_comillas.empty() && line_sin_comillas[0] == '"')
-        line_sin_comillas = line_sin_comillas.substr(1);
-    while (!line_sin_comillas.empty() && line_sin_comillas.end() == '"')
-        line_sin_comillas.push_back();
-    return line_sin_comillas;
+    size_t first_non_space = line_sin_espacios.find_first_not_of(" \t");
+    if (first_non_space != std::string::npos && line_sin_espacios[first_non_space] == '"')
+        line_sin_espacios.erase(0, first_non_space);
+    while (!line_sin_espacios.empty() && line_sin_espacios[0] == '"')
+        line_sin_espacios = line_sin_espacios.substr(1);
+    while (!line_sin_espacios.empty() && line_sin_espacios.back() == '"')
+        line_sin_espacios.pop_back();
+
+    return line_sin_espacios;
 }
+

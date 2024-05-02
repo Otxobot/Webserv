@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:14 by abasante          #+#    #+#             */
-/*   Updated: 2024/04/30 17:22:52 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/02 13:29:14 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,9 @@ class Config
 		~Config();
 
 		void		parseConfig(std::string configFile);
-		void		parseServers(std::ifstream &file, int contador);
-		//Location	parseLocation(std::ifstream &file, std::string line_sin_comillas, Config &server);
+		void		parseServers(std::ifstream &file, int contador, int location_times);
 		Location	parseLocation(std::ifstream &file, std::string &line);
-		std::string    trim_comillas(const std::string &line);
+		std::string trim_comillas(const std::string& line);
 };
 
 #endif
