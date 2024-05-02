@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 13:26:19 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/02 13:30:10 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/02 13:33:05 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,70 +152,4 @@ void Location::setBufferSize(int buffer_size)
 {
 	_buffer_size = buffer_size;
 	std::cout << "Buffer Size: " << _buffer_size << std::endl;
-}
-
-
-void Location::setAllowGET(bool allowGET)
-{
-	_allowGET = allowGET;
-}
-
-void Location::setAllowPOST(bool allowPOST)
-{
-	_allowPOST = allowPOST;
-}
-
-void Location::setAllowDELETE(bool allowDELETE)
-{
-	_allowDELETE = allowDELETE;
-}
-
-void Location::setFile(std::string file)
-{
-	_file = file;
-}
-
-void Location::setRedirect(std::string redirect)
-{
-	_redirect = redirect;
-}
-
-void Location::setRoot(std::string root)
-{
-	_root = root;
-}
-
-void Location::setAutoindex(bool autoindex)
-{
-	_autoindex = autoindex;
-}
-
-void Location::setHandleDelete(std::string handle_delete)
-{
-	_handle_delete = handle_delete;
-}
-
-void Location::setHandlePost(std::string handle_post)
-{
-	_handle_post = handle_post;
-}
-
-void Location::setErrorPage(std::string error_page)
-{
-	_error_page = error_page;
-}
-
-void Location::setCgi(std::string cgi)
-{
-	_cgi = cgi;
-}
-
-void Location::setUpload(std::string upload)
-{
-	_upload = upload;
-}
-
-void Location::setBufferSize(int buffer_size)
-{
-	_buffer_size = buffer_size;
 }

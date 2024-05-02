@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/02 13:29:30 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/02 13:31:59 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,11 +64,12 @@ void Config::parseConfig(std::string configFile)
 			location_counter++;
 		}
 	}
-	parseServers(file, contador);
+	parseServers(file, contador, location_counter);
 }
 
-void Config::parseServers(std::ifstream &file, int contador)
+void Config::parseServers(std::ifstream &file, int contador, int location_times)
 {
+	location_times = 0;
 	//Aqui hay que parsear todos los servidores y sus locations
 	std::vector<Config>	_servers;
 	_servers.resize(contador);
