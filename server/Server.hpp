@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:08 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/02 16:29:27 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/02 16:55:19 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,25 @@
 
 #include "../Webserv.hpp"
 #include "../config/Config.hpp"
-#include <vector>
+#include <iostream>
+#include <cstring>
+#include <string>
 #include <sys/socket.h>
-#include <netinet/in.h> 
+#include <sys/types.h>
+#include <sys/select.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <iostream>
+#include <fstream>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <algorithm>
+#include <vector>
+#include <map>
+#include <sstream>
+#define BUFFER_SIZE 1024
+#define BACKLOG 2048
 
 class Config;
 

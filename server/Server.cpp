@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:11 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/02 16:51:20 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/02 16:57:37 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,7 +232,7 @@ void Server::accptedConnectHandling(int &accptSockFD)
 		if (it != _clients.end())
 			it->second += _buffRes;
 		std::string req(_buffRes);
-		_request.Request_start(req);
+		//_request.Request_start(req);
 		if (FD_ISSET(accptSockFD, &_writeFDs))
 		{
 			this->responseHandling(accptSockFD);
