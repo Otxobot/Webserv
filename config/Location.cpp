@@ -6,7 +6,7 @@
 /*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 13:26:19 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/01 13:12:35 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/02 13:18:54 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,64 +79,77 @@ Location & Location::operator=(Location const &rhs)
 void Location::setAllowGET(bool allowGET)
 {
 	_allowGET = allowGET;
+	std::cout << "Allow GET: " << _allowGET << std::endl;
 }
 
 void Location::setAllowPOST(bool allowPOST)
 {
 	_allowPOST = allowPOST;
+	std::cout << "Allow POST: " << _allowPOST << std::endl;
 }
 
 void Location::setAllowDELETE(bool allowDELETE)
 {
 	_allowDELETE = allowDELETE;
+	std::cout << "Allow DELETE: " << _allowDELETE << std::endl;
 }
 
 void Location::setFile(std::string file)
 {
 	_file = file;
+	std::cout << "File: " << _file << std::endl;
 }
 
 void Location::setRedirect(std::string redirect)
 {
 	_redirect = redirect;
+	std::cout << "Redirect: " << _redirect << std::endl;
 }
 
 void Location::setRoot(std::string root)
 {
 	_root = root;
+	std::cout << "Root: " << _root << std::endl;
 }
 
 void Location::setAutoindex(bool autoindex)
 {
 	_autoindex = autoindex;
+	std::cout << "Autoindex: " << _autoindex << std::endl;
 }
 
 void Location::setHandleDelete(std::string handle_delete)
 {
 	_handle_delete = handle_delete;
+	std::cout << "Handle Delete: " << _handle_delete << std::endl;
 }
 
 void Location::setHandlePost(std::string handle_post)
 {
 	_handle_post = handle_post;
+	std::cout << "Handle Post: " << _handle_post << std::endl;
 }
 
 void Location::setErrorPage(std::string error_page)
 {
 	_error_page = error_page;
+	std::cout << "Error Page: " << _error_page << std::endl;
 }
 
 void Location::setCgi(std::string cgi)
 {
 	_cgi = cgi;
+	std::cout << "Cgi: " << _cgi << std::endl;
 }
 
 void Location::setUpload(std::string upload)
 {
 	_upload = upload;
+	std::cout << "Upload: " << _upload << std::endl;
 }
 
 void Location::setBufferSize(int buffer_size)
 {
 	_buffer_size = buffer_size;
+	std::cout << "Buffer Size: " << _buffer_size << std::endl;
 }
