@@ -28,8 +28,7 @@ class Config
 	private:
 		int									_index;
 		int									_port; //uint16_t
-		//int									_ip_host; //in_addr_t
-		std::string							_host;
+		int									_ip_host; //in_addr_t
 		std::string							_servername;
 		std::string							_root;
 		std::string							_listen;

@@ -7,6 +7,7 @@
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:05 by abasante          #+#    #+#             */
 /*   Updated: 2024/05/02 16:55:58 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/02 16:48:46 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +27,7 @@ Config::Config()
 	_autoindex = false;
 	_index = 0;
 	_port = 0;
-	_host = "";
+	_ip_host = 0;
 	_client_max_body_size = 0;
 }
 
@@ -89,12 +90,13 @@ std::vector<Config> Config::parseServers(std::ifstream &file, int contador, int 
 	{
 		while (line.find("location:") != std::string::npos)
 		{
+			std::cout << line << std::endl;
 			line_sin_comillas = this->trim_comillas(line.substr(12));
-			std::cout << "location" << line_sin_comillas << std::endl;
 			this->_locations[line_sin_comillas] = this->parseLocation(file, line);
 		}
 		if (line.find("server:") != std::string::npos)
 		{
+			std::cout << std::endl << std::endl << std::endl << std::endl;
 			i++;
 			_serversConfig[i]._index = i;
 			std::cout << std::endl << std::endl <<std::endl << std::endl;
@@ -112,13 +114,21 @@ std::vector<Config> Config::parseServers(std::ifstream &file, int contador, int 
 		}
 		if (line.find("listen:") != std::string::npos)
 		{
-			_serversConfig[i]._listen = trim_comillas(line.substr(10));
-			std::cout << "listen: " << _serversConfig[i]._listen << std::endl;
+			_servers[i]._listen = trim_comillas(line.substr(10));
+			std::string listen = line.substr(10);
+			size_t colonPos = listen.find(":");
+			std::string host = listen.substr(0, colonPos);
+			int port = stoi(listen.substr(colonPos + 1));
+			_servers[i]._host = host;
+			_servers[i]._port = port;
+			std::cout << "host: " << _servers[i]._host << std::endl;
+			std::cout << "port: " << _servers[i]._port << std::endl;
+			std::cout << "listen: " << _servers[i]._listen << std::endl;
 		}
 		if (line.find("buffer_size:") != std::string::npos)
 		{
-			_serversConfig[i]._buffer_size = std::stoi(line.substr(15));
-			std::cout << "buffer_size: " << _serversConfig[i]._buffer_size << std::endl;
+			_servers[i]._buffer_size = std::stoi(line.substr(15));
+			std::cout << "buffer_size: " << _servers[i]._buffer_size << std::endl;
 		}
 	}
 	return (_serversConfig);
