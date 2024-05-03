@@ -3,27 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Config.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:14 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/02 16:36:17 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/02 16:55:54 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
-
-// #define D_ROOT					"root:"
-// #define D_FILE					"file:"
-// #define D_AUTO_INDEX			"autoindex:"
-// #define D_ALLOW					"allow:"
-// #define D_ERROR_PAGE			"error_page:"
-// #define D_BUFFER_SIZE			"buffer_size:"
-// #define D_UPLOAD				"upload:"
-// #define D_CGI					"cgi:"
-// #define D_REDIR					"redirect:"
-// #define D_HANDLE_POST			"handle_post:"
-// #define D_HANDLE_DELETE			"handle_delete:"
 
 #include "../Webserv.hpp"
 #include "../server/Server.hpp"
@@ -40,8 +28,7 @@ class Config
 	private:
 		int									_index;
 		int									_port; //uint16_t
-		std::string							_host; //in_addr_t
-		int									_buffer_size;
+		int									_ip_host; //in_addr_t
 		std::string							_servername;
 		std::string							_root;
 		std::string							_listen;
@@ -50,14 +37,17 @@ class Config
 		std::map<int, std::string>			_errorpage;
 		std::map<std::string, Location>		_locations;
 		unsigned long						_client_max_body_size;
+		int									_buffer_size;
 	public:
-		Config(void);
+		Config();
 		~Config();
 
-		void		parseConfig(std::string configFile);
-		void		parseServers(std::ifstream &file, int contador, int location_times);
-		Location	parseLocation(std::ifstream &file, std::string &line);
-		std::string trim_comillas(const std::string& line);
+		std::vector<Config>		parseConfig(std::string configFile);
+		std::vector<Config>		parseServers(std::ifstream &file, int contador, int location_times);
+		Location				parseLocation(std::ifstream &file, std::string &line);
+		std::string 			trim_comillas(const std::string& line);
+		int     				getPorts();
+		std::string 			getHost();
 };
 
 #endif

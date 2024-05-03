@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 13:26:19 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/02 16:26:16 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/02 14:42:54 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,13 +79,13 @@ Location & Location::operator=(Location const &rhs)
 void Location::setAllowGET(bool allowGET)
 {
 	_allowGET = allowGET;
-	std::cout << "Allow GET:" << _allowGET << std::endl;
+	//std::cout << "Allow GET: " << _allowGET << std::endl;
 }
 
 void Location::setAllowPOST(bool allowPOST)
 {
 	_allowPOST = allowPOST;
-	std::cout << "Allow POST:" << _allowPOST << std::endl;
+	//std::cout << "Allow POST: " << _allowPOST << std::endl;
 }
 
 void Location::setAllowDELETE(bool allowDELETE)
@@ -151,5 +151,5 @@ void Location::setUpload(std::string upload)
 void Location::setBufferSize(int buffer_size)
 {
 	_buffer_size = buffer_size;
-	std::cout << "Buffer Size:" << _buffer_size << std::endl;
+	std::cout << "Buffer Size: " << _buffer_size << std::endl;
 }
