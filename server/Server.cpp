@@ -121,11 +121,11 @@ void Server::createSocket()
 
 	// set socket to non-blocking
 	if (fcntl(_masterSockFD, F_SETFL, O_NONBLOCK) == -1)
-		throw std::runtime_error("Unable to set the socket " + std::to_string(_masterSockFD) + " to non-blocking.");
+		throw std::runtime_error("Unable to set the socket  /*(+ std::wstring(_masterSockFD) +*/  to non-blocking.");
 	// set socket option of reusing address
 	int opt = 1;
 	if (setsockopt(_masterSockFD, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(int)) == -1)
-		throw std::runtime_error("Unable to set socket option to the socket " + std::to_string(_masterSockFD));
+		throw std::runtime_error("Unable to set socket option to the socket" /* + std::wstring(_masterSockFD)*/);
 }
 
 // Socket binding
@@ -143,7 +143,7 @@ void Server::bindSocket()
 void Server::listenSocket()
 {
 	if (listen(_masterSockFD, BACKLOG) == -1)
-		throw std::runtime_error("Unable to listen for connections in the socket " + std::to_string(_masterSockFD));
+		throw std::runtime_error("Unable to listen for connections in the socket ");
 	// set socket to fd_set struct
 	FD_SET(_masterSockFD, &_masterFDs);
 	_maxSockFD = (_masterSockFD > _maxSockFD) ? _masterSockFD : _maxSockFD;
@@ -205,9 +205,9 @@ void Server::newConnectHandling(int &sockFD)
 {
 	int accptSockFD = accept(sockFD, (struct sockaddr *)&_clientAddr, &_addrLen);
 	if (accptSockFD == -1)
-		throw std::runtime_error("Unable to accept the connection from client by the socket " + std::to_string(accptSockFD));
+		throw std::runtime_error("Unable to accept the connection from client by the socket ");
 	if (fcntl(accptSockFD, F_SETFL, O_NONBLOCK) == -1)
-		throw std::runtime_error("Unable to set the socket " + std::to_string(accptSockFD) + " to non-blocking.");
+		throw std::runtime_error("Unable to set the socket to non-blocking.");
 	FD_SET(accptSockFD, &_masterFDs);
 	FD_SET(accptSockFD, &_writeFDs);
 	if (accptSockFD > _maxSockFD)
@@ -235,7 +235,8 @@ void Server::accptedConnectHandling(int &accptSockFD)
 		//_request.Request_start(req);
 		if (FD_ISSET(accptSockFD, &_writeFDs))
 		{
-			this->responseHandling(accptSockFD);
+			std::cout << "FD_ISSET ACCPTSOCKFD BLABLA" << std::endl;
+			//this->responseHandling(accptSockFD);
 		}
 	}
 	if (valRead == 0)
@@ -253,7 +254,7 @@ void Server::accptedConnectHandling(int &accptSockFD)
 std::string Server::get_body(std::string file_name)
 {
 	std::string _body;
-	std::ifstream file(file_name);
+	std::ifstream file(file_name.c_str());
 	if (file)
 	{
 		std::ostringstream ss;
@@ -297,3 +298,30 @@ char *Server::ft_itoa(int n)
 		*(str) = '-';
 	return (str);
 }
+
+// void Server::responseHandling(int &accptSockFD)
+// {
+// 	std::string body;
+// 	std::string path = _request.getTarget().erase(0, 1);
+// 	char *header = strdup("HTTP/1.1 200 OK\r\nContent-Length: ");
+
+// 	Response _resp;
+// 	_resp.creatResponse(this->_servers, this->_request);
+// 	this->_request.clear();
+
+// 	std::string all = std::string(header) + std::string(ft_itoa(_resp.GetBody().size())) + "\r\n\r\n" + _resp.GetBody();
+
+// 	if (FD_ISSET(accptSockFD, &_writeFDs))
+// 	{
+// 		if (send(accptSockFD, _resp.getRespHeader().c_str(), _resp.getRespHeader().length(), 0) != (ssize_t)_resp.getRespHeader().length())
+// 			throw std::runtime_error("Unable to send the response to client in socket " + std::to_string(accptSockFD));
+// 		if (!this->_request.getReqValue("Connection").compare("close")) // if connection is set to close in request close
+// 		{
+// 			close(accptSockFD);
+// 			FD_CLR(accptSockFD, &_masterFDs);
+// 			FD_CLR(accptSockFD, &_writeFDs);
+// 		}
+// 	}
+// 	_resp.clear();
+// 	this->_request.clear();
+// }
