@@ -20,6 +20,7 @@ Server::Server(Config config, std::string configFile) : _masterSockFD(0),
 				   _isvalid(1) 
 {
 				   this->servers_parsed = config.parseConfig(configFile);
+				   this->makeSockets();
 }
 
 Server::Server(std::vector<Config> &servers) : servers_parsed(servers),
@@ -31,7 +32,7 @@ Server::Server(std::vector<Config> &servers) : servers_parsed(servers),
 												   _isvalid(1)
 {
 	this->makeSockets();
-	this->waitingForConnections();
+	//this->waitingForConnections();
 }
 
 // Copy constructor
@@ -89,14 +90,16 @@ void Server::makeSockets()
 	// making master sockets for()
 	for (std::vector<Config>::iterator itServer = servers_parsed.begin(); itServer != servers_parsed.end(); itServer++)
 	{
-		_port = itServer->getPorts();
+		std::cout << "============================================" << std::endl;
+		std::cout << "Esta entrando en el servidor-> "<<itServer->getIndex() << std::endl;
+		_port = itServer->getPort();
 		_host = itServer->getHost();
-		for (std::vector<int>::iterator itPort = _ports.begin(); itPort != _ports.end(); ++itPort)
-		{
-			_port = *itPort;
+		std::cout << "El host es: " << _host << std::endl;
+		// for (std::vector<int>::iterator itPort = _ports.begin(); itPort != _ports.end(); ++itPort)
+		// {
+			//_port = *itPort;
 			try
 			{
-
 				// Socket creating
 				this->createSocket();
 				// Bind a name to a socket
@@ -109,11 +112,10 @@ void Server::makeSockets()
 				close(_masterSockFD);
 				std::cerr << e.what() << '\n';
 			}
-		}
+		//}
 	}
 }
 
-// Socket creating
 void Server::createSocket()
 {
 	if ((_masterSockFD = socket(AF_INET, SOCK_STREAM, 0)) == -1)
@@ -134,6 +136,7 @@ void Server::bindSocket()
 	std::memset(&_serverAddr, 0, sizeof(_serverAddr));
 	_addrLen = sizeof(_serverAddr);
 	_serverAddr.sin_family = AF_INET;
+	std::cout << "EL PUERTO ES: " << _port << std::endl;
 	_serverAddr.sin_port = htons(_port);
 	_serverAddr.sin_addr.s_addr = (_host == "ANY") ? htonl(INADDR_ANY) : inet_addr(_host.c_str());
 	bind(_masterSockFD, (struct sockaddr *)&_serverAddr, sizeof(_serverAddr));
@@ -151,153 +154,153 @@ void Server::listenSocket()
 	_masterSockFDs.push_back(_masterSockFD);
 }
 
-void Server::waitingForConnections()
-{
-	int running = 1;
-	std::cout << "\t<Server running... waiting for connections./>" << std::endl;
-	while (running)
-	{
+// void Server::waitingForConnections()
+// {
+// 	int running = 1;
+// 	std::cout << "\t<Server running... waiting for connections./>" << std::endl;
+// 	while (running)
+// 	{
 
-		FD_ZERO(&_readFDs);
-		_readFDs = _masterFDs;
-		usleep(2000);
-		struct timeval _tv = {1, 0};
-		int activity = select(_maxSockFD + 1, &_readFDs, &_writeFDs, NULL, &_tv);
-		if (activity == -1)
-			throw std::runtime_error("Select failed to multiplexing Input/Output.");
-		if (activity > 0)
-		{
-			if (FD_ISSET(0, &_readFDs))
-			{ /* Check keyboard */
-				std::cout << "Shutting down server gracefuly" << std::endl;
-				// getchar();
-				running = 0;
-				for (std::vector<int>::iterator it = _masterSockFDs.begin(); it != _masterSockFDs.end(); it++)
-				{
-					close(*it);
-				}
-				FD_ZERO(&_masterFDs);
-				FD_ZERO(&_readFDs);
-				FD_ZERO(&_writeFDs);
-				break;
-			}
-			for (int sockFD = 1; sockFD < _maxSockFD + 1; sockFD++)
-			{
-				if (FD_ISSET(sockFD, &_readFDs))
-				{
-					int newConnect = 0;
-					for (std::vector<int>::iterator it = _masterSockFDs.begin(); it != _masterSockFDs.end(); it++)
-					{
-						if (sockFD == *it)
-						{
-							newConnect = 1;
-							break;
-						}
-					}
-					newConnect ? this->newConnectHandling(sockFD) : this->accptedConnectHandling(sockFD);
-				}
-			}
-		}
-	}
-}
+// 		FD_ZERO(&_readFDs);
+// 		_readFDs = _masterFDs;
+// 		usleep(2000);
+// 		struct timeval _tv = {1, 0};
+// 		int activity = select(_maxSockFD + 1, &_readFDs, &_writeFDs, NULL, &_tv);
+// 		if (activity == -1)
+// 			throw std::runtime_error("Select failed to multiplexing Input/Output.");
+// 		if (activity > 0)
+// 		{
+// 			if (FD_ISSET(0, &_readFDs))
+// 			{ /* Check keyboard */
+// 				std::cout << "Shutting down server gracefuly" << std::endl;
+// 				// getchar();
+// 				running = 0;
+// 				for (std::vector<int>::iterator it = _masterSockFDs.begin(); it != _masterSockFDs.end(); it++)
+// 				{
+// 					close(*it);
+// 				}
+// 				FD_ZERO(&_masterFDs);
+// 				FD_ZERO(&_readFDs);
+// 				FD_ZERO(&_writeFDs);
+// 				break;
+// 			}
+// 			for (int sockFD = 1; sockFD < _maxSockFD + 1; sockFD++)
+// 			{
+// 				if (FD_ISSET(sockFD, &_readFDs))
+// 				{
+// 					int newConnect = 0;
+// 					for (std::vector<int>::iterator it = _masterSockFDs.begin(); it != _masterSockFDs.end(); it++)
+// 					{
+// 						if (sockFD == *it)
+// 						{
+// 							newConnect = 1;
+// 							break;
+// 						}
+// 					}
+// 					newConnect ? this->newConnectHandling(sockFD) : this->accptedConnectHandling(sockFD);
+// 				}
+// 			}
+// 		}
+// 	}
+// }
 
-void Server::newConnectHandling(int &sockFD)
-{
-	int accptSockFD = accept(sockFD, (struct sockaddr *)&_clientAddr, &_addrLen);
-	if (accptSockFD == -1)
-		throw std::runtime_error("Unable to accept the connection from client by the socket ");
-	if (fcntl(accptSockFD, F_SETFL, O_NONBLOCK) == -1)
-		throw std::runtime_error("Unable to set the socket to non-blocking.");
-	FD_SET(accptSockFD, &_masterFDs);
-	FD_SET(accptSockFD, &_writeFDs);
-	if (accptSockFD > _maxSockFD)
-		_maxSockFD = accptSockFD;
-	_clients.insert(std::pair<int, std::string>(accptSockFD, ""));
-	std::map<int, int>::iterator it = _accptMaster.find(accptSockFD);
-	if (it != _accptMaster.end())
-		it->second = sockFD;
-	else
-		_accptMaster.insert(std::pair<int, int>(accptSockFD, sockFD));
-}
+// void Server::newConnectHandling(int &sockFD)
+// {
+// 	int accptSockFD = accept(sockFD, (struct sockaddr *)&_clientAddr, &_addrLen);
+// 	if (accptSockFD == -1)
+// 		throw std::runtime_error("Unable to accept the connection from client by the socket ");
+// 	if (fcntl(accptSockFD, F_SETFL, O_NONBLOCK) == -1)
+// 		throw std::runtime_error("Unable to set the socket to non-blocking.");
+// 	FD_SET(accptSockFD, &_masterFDs);
+// 	FD_SET(accptSockFD, &_writeFDs);
+// 	if (accptSockFD > _maxSockFD)
+// 		_maxSockFD = accptSockFD;
+// 	_clients.insert(std::pair<int, std::string>(accptSockFD, ""));
+// 	std::map<int, int>::iterator it = _accptMaster.find(accptSockFD);
+// 	if (it != _accptMaster.end())
+// 		it->second = sockFD;
+// 	else
+// 		_accptMaster.insert(std::pair<int, int>(accptSockFD, sockFD));
+// }
 
-void Server::accptedConnectHandling(int &accptSockFD)
-{
-	char _buffRes[BUFFER_SIZE + 1] = {0};
-	bzero(_buffRes, sizeof(_buffRes));
-	int valRead = recv(accptSockFD, _buffRes, BUFFER_SIZE, 0);
-	if (valRead > 0)
-	{
-		_buffRes[valRead] = '\0';
-		std::map<int, std::string>::iterator it = _clients.find(accptSockFD);
-		if (it != _clients.end())
-			it->second += _buffRes;
-		std::string req(_buffRes);
-		//_request.Request_start(req);
-		if (FD_ISSET(accptSockFD, &_writeFDs))
-		{
-			std::cout << "FD_ISSET ACCPTSOCKFD BLABLA" << std::endl;
-			//this->responseHandling(accptSockFD);
-		}
-	}
-	if (valRead == 0)
-	{
-		close(accptSockFD);
-		FD_CLR(accptSockFD, &_masterFDs);
-		FD_CLR(accptSockFD, &_writeFDs);
-		_clients.erase(accptSockFD);
-	}
-	else
-		return; // Socket is connected but doesn't send request.
-}
+// void Server::accptedConnectHandling(int &accptSockFD)
+// {
+// 	char _buffRes[BUFFER_SIZE + 1] = {0};
+// 	bzero(_buffRes, sizeof(_buffRes));
+// 	int valRead = recv(accptSockFD, _buffRes, BUFFER_SIZE, 0);
+// 	if (valRead > 0)
+// 	{
+// 		_buffRes[valRead] = '\0';
+// 		std::map<int, std::string>::iterator it = _clients.find(accptSockFD);
+// 		if (it != _clients.end())
+// 			it->second += _buffRes;
+// 		std::string req(_buffRes);
+// 		//_request.Request_start(req);
+// 		if (FD_ISSET(accptSockFD, &_writeFDs))
+// 		{
+// 			std::cout << "FD_ISSET ACCPTSOCKFD BLABLA" << std::endl;
+// 			//this->responseHandling(accptSockFD);
+// 		}
+// 	}
+// 	if (valRead == 0)
+// 	{
+// 		close(accptSockFD);
+// 		FD_CLR(accptSockFD, &_masterFDs);
+// 		FD_CLR(accptSockFD, &_writeFDs);
+// 		_clients.erase(accptSockFD);
+// 	}
+// 	else
+// 		return; // Socket is connected but doesn't send request.
+// }
 
 
-std::string Server::get_body(std::string file_name)
-{
-	std::string _body;
-	std::ifstream file(file_name.c_str());
-	if (file)
-	{
-		std::ostringstream ss;
-		ss << file.rdbuf();
-		_body = ss.str();
-		file.close(); // close the file(filename)
-	}
-	return _body;
-}
+// std::string Server::get_body(std::string file_name)
+// {
+// 	std::string _body;
+// 	std::ifstream file(file_name.c_str());
+// 	if (file)
+// 	{
+// 		std::ostringstream ss;
+// 		ss << file.rdbuf();
+// 		_body = ss.str();
+// 		file.close(); // close the file(filename)
+// 	}
+// 	return _body;
+// }
 
-int Server::num_len(int n)
-{
-	int i;
+// int Server::num_len(int n)
+// {
+// 	int i;
 
-	i = 1;
-	while (n /= 10)
-		i++;
-	return (i);
-}
+// 	i = 1;
+// 	while (n /= 10)
+// 		i++;
+// 	return (i);
+// }
 
-char *Server::ft_itoa(int n)
-{
-	char *str;
-	int numlen;
-	unsigned int nb;
+// char *Server::ft_itoa(int n)
+// {
+// 	char *str;
+// 	int numlen;
+// 	unsigned int nb;
 
-	numlen = num_len(n);
-	nb = n;
-	if (n < 0)
-	{
-		nb = -n;
-		numlen++;
-	}
-	if (!(str = (char *)malloc(sizeof(char) * numlen + 1)))
-		return (0);
-	str[numlen] = '\0';
-	str[--numlen] = nb % 10 + '0';
-	while (nb /= 10)
-		str[--numlen] = nb % 10 + '0';
-	if (n < 0)
-		*(str) = '-';
-	return (str);
-}
+// 	numlen = num_len(n);
+// 	nb = n;
+// 	if (n < 0)
+// 	{
+// 		nb = -n;
+// 		numlen++;
+// 	}
+// 	if (!(str = (char *)malloc(sizeof(char) * numlen + 1)))
+// 		return (0);
+// 	str[numlen] = '\0';
+// 	str[--numlen] = nb % 10 + '0';
+// 	while (nb /= 10)
+// 		str[--numlen] = nb % 10 + '0';
+// 	if (n < 0)
+// 		*(str) = '-';
+// 	return (str);
+// }
 
 // void Server::responseHandling(int &accptSockFD)
 // {

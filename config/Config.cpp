@@ -125,6 +125,7 @@ std::vector<Config> Config::parseServers(std::ifstream &file, int contador)
     		int port = atoi(port_str.c_str());
 			_serversConfig[i]._host = host;
 			_serversConfig[i]._port = port;
+			_serversConfig[i]._ports.push_back(port);
 			//std::cout << "host: " << _serversConfig[i]._host << std::endl;
 			//std::cout << "port: " << _serversConfig[i]._port << std::endl;
 			//std::cout << "listen: " << _serversConfig[i]._listen << std::endl;
@@ -256,12 +257,22 @@ std::string Config::trim_comillas(const std::string& line) {
     return line_sin_espacios;
 }
 
-int  Config::getPorts()
+std::vector<int>  Config::getPorts()
 {
-    return this->_port;
+    return this->_ports;
+}
+
+int Config::getPort()
+{
+	return this->_port;
 }
 
 std::string    Config::getHost()
 {
     return (this->_host);
+}
+
+int Config::getIndex()
+{
+	return this->_index;
 }

@@ -90,7 +90,6 @@ int main(int ac, char **av)
 	Config config;
 	confFilename = av[1];
 
-	//config.parseConfig(confFilename);
 	Server server(config, confFilename);
 	return 0;
 }
