@@ -13,6 +13,12 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#define RED "\033[31m"
+#define GREEN "\033[32m"
+#define YELLOW "\033[33m"
+#define BLUE "\033[34m"
+
+
 #include "../Webserv.hpp"
 #include "../config/Config.hpp"
 #include <iostream>
@@ -86,7 +92,7 @@ class Server
 	    void listenSocket();
 	    void waitingForConnections();
 	    void newConnectHandling(int &);
-	    void accptedConnectHandling(int &);
+	    void acceptedConnectHandling(int &);
 	    void responseHandling(int &);
 };
 
