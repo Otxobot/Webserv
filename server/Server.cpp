@@ -46,6 +46,7 @@ Server::Server(Server const &ths)
 // Destructor
 Server::~Server()
 {
+	std::cout << RED << "Server destructor is closing fds..." << std::endl;
 	for (std::vector<int>::iterator it = _masterSockFDs.begin(); it != _masterSockFDs.end(); it++)
 	{
 		close(*it);
@@ -96,9 +97,6 @@ void Server::makeSockets()
 		_port = itServer->getPort();
 		_host = itServer->getHost();
 		std::cout << "El host es: " << _host << std::endl;
-		// for (std::vector<int>::iterator itPort = _ports.begin(); itPort != _ports.end(); ++itPort)
-		// {
-			//_port = *itPort;
 			try
 			{
 				// Socket creating
@@ -113,12 +111,6 @@ void Server::makeSockets()
 				close(_masterSockFD);
 				std::cerr << e.what() << '\n';
 			}
-		//}
-	}
-	std::cout << "============================================" << std::endl;
-	for (std::vector<int>::iterator itSock = _masterSockFDs.begin(); itSock != _masterSockFDs.end(); itSock++)
-	{
-		std::cout << "El socket es: " << *itSock << std::endl;
 	}
 }
 
@@ -157,14 +149,11 @@ void Server::bindSocket()
 	std::cout << "EL PUERTO ES: " << _port << std::endl;
 	//Htons cambia el puerto a network byte order, en vez de host byte order
 	_serverAddr.sin_port = htons(_port);
-	std::cout << "EL PUERTO DESPUES DE HTONS: " << _serverAddr.sin_port << std::endl;
-	std::cout << "EL HOST ANTES DE HTONL: " << _host << std::endl;
 	if (_host == "ANY")
 		_serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	else
 		_serverAddr.sin_addr.s_addr = inet_addr(_host.c_str());
 	//_serverAddr.sin_addr.s_addr = (_host == "ANY") ? htonl(INADDR_ANY) : inet_addr(_host.c_str());
-	std::cout << "EL HOST DESPUES DE HTONL: " << _serverAddr.sin_addr.s_addr << std::endl;
 	bind(_masterSockFD, (struct sockaddr *)&_serverAddr, sizeof(_serverAddr));
 }
 
@@ -184,18 +173,17 @@ void Server::listenSocket()
 	FD_SET(_masterSockFD, &_masterFDs);
 	if (_masterSockFD > _maxSockFD)
 	{
+		//aqui se esta renovando el maximo socket constantemente. 
 		_maxSockFD = _masterSockFD;
-	
 	}
-	//_maxSockFD = (_masterSockFD > _maxSockFD) ? _masterSockFD : _maxSockFD;
-	// Add the socket to the sockets vector
+	// Add the socket to the sockets vector _masterSockFDs
 	_masterSockFDs.push_back(_masterSockFD);
 }
 
 void Server::waitingForConnections()
 {
 	int running = 1;
-	std::cout << "\t<Server running... waiting for connections./>" << std::endl;
+	std::cout << BLUE <<"\t<Server running... waiting for connections./>" << std::endl;
 	while (running)
 	{
 
@@ -209,9 +197,8 @@ void Server::waitingForConnections()
 		if (activity > 0)
 		{
 			if (FD_ISSET(0, &_readFDs))
-			{ /* Check keyboard */
-				std::cout << "Shutting down server gracefuly" << std::endl;
-				// getchar();
+			{
+				std::cout << BLUE << "Shutting down server gracefuly" << std::endl;
 				running = 0;
 				for (std::vector<int>::iterator it = _masterSockFDs.begin(); it != _masterSockFDs.end(); it++)
 				{
@@ -235,7 +222,11 @@ void Server::waitingForConnections()
 							break;
 						}
 					}
-					newConnect ? this->newConnectHandling(sockFD) : this->accptedConnectHandling(sockFD);
+					if (newConnect)
+						this->newConnectHandling(sockFD);
+					else
+						this->acceptedConnectHandling(sockFD);
+					//newConnect ? this->newConnectHandling(sockFD) : this->acceptedConnectHandling(sockFD);
 				}
 			}
 		}
@@ -261,7 +252,7 @@ void Server::newConnectHandling(int &sockFD)
 		_accptMaster.insert(std::pair<int, int>(accptSockFD, sockFD));
 }
 
-void Server::accptedConnectHandling(int &accptSockFD)
+void Server::acceptedConnectHandling(int &accptSockFD)
 {
 	char _buffRes[BUFFER_SIZE + 1] = {0};
 	bzero(_buffRes, sizeof(_buffRes));
@@ -277,7 +268,6 @@ void Server::accptedConnectHandling(int &accptSockFD)
 		if (FD_ISSET(accptSockFD, &_writeFDs))
 		{
 			std::cout << _buffRes << std::endl;
-			std::cout << "FD_ISSET ACCPTSOCKFD BLABLA" << std::endl;
 			//this->responseHandling(accptSockFD);
 		}
 	}
