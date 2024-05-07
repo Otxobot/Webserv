@@ -21,7 +21,7 @@ Server::Server(Config config, std::string configFile) : _masterSockFD(0),
 {
 				   this->servers_parsed = config.parseConfig(configFile);
 				   this->makeSockets();
-				   //this->waitingForConnections();
+				   this->waitingForConnections();
 }
 
 Server::Server(std::vector<Config> &servers) : servers_parsed(servers),
@@ -192,104 +192,105 @@ void Server::listenSocket()
 	_masterSockFDs.push_back(_masterSockFD);
 }
 
-// void Server::waitingForConnections()
-// {
-// 	int running = 1;
-// 	std::cout << "\t<Server running... waiting for connections./>" << std::endl;
-// 	while (running)
-// 	{
+void Server::waitingForConnections()
+{
+	int running = 1;
+	std::cout << "\t<Server running... waiting for connections./>" << std::endl;
+	while (running)
+	{
 
-// 		FD_ZERO(&_readFDs);
-// 		_readFDs = _masterFDs;
-// 		usleep(2000);
-// 		struct timeval _tv = {1, 0};
-// 		int activity = select(_maxSockFD + 1, &_readFDs, &_writeFDs, NULL, &_tv);
-// 		if (activity == -1)
-// 			throw std::runtime_error("Select failed to multiplexing Input/Output.");
-// 		if (activity > 0)
-// 		{
-// 			if (FD_ISSET(0, &_readFDs))
-// 			{ /* Check keyboard */
-// 				std::cout << "Shutting down server gracefuly" << std::endl;
-// 				// getchar();
-// 				running = 0;
-// 				for (std::vector<int>::iterator it = _masterSockFDs.begin(); it != _masterSockFDs.end(); it++)
-// 				{
-// 					close(*it);
-// 				}
-// 				FD_ZERO(&_masterFDs);
-// 				FD_ZERO(&_readFDs);
-// 				FD_ZERO(&_writeFDs);
-// 				break;
-// 			}
-// 			for (int sockFD = 1; sockFD < _maxSockFD + 1; sockFD++)
-// 			{
-// 				if (FD_ISSET(sockFD, &_readFDs))
-// 				{
-// 					int newConnect = 0;
-// 					for (std::vector<int>::iterator it = _masterSockFDs.begin(); it != _masterSockFDs.end(); it++)
-// 					{
-// 						if (sockFD == *it)
-// 						{
-// 							newConnect = 1;
-// 							break;
-// 						}
-// 					}
-// 					newConnect ? this->newConnectHandling(sockFD) : this->accptedConnectHandling(sockFD);
-// 				}
-// 			}
-// 		}
-// 	}
-// }
+		FD_ZERO(&_readFDs);
+		_readFDs = _masterFDs;
+		usleep(2000);
+		struct timeval _tv = {1, 0};
+		int activity = select(_maxSockFD + 1, &_readFDs, &_writeFDs, NULL, &_tv);
+		if (activity == -1)
+			throw std::runtime_error("Select failed to multiplexing Input/Output.");
+		if (activity > 0)
+		{
+			if (FD_ISSET(0, &_readFDs))
+			{ /* Check keyboard */
+				std::cout << "Shutting down server gracefuly" << std::endl;
+				// getchar();
+				running = 0;
+				for (std::vector<int>::iterator it = _masterSockFDs.begin(); it != _masterSockFDs.end(); it++)
+				{
+					close(*it);
+				}
+				FD_ZERO(&_masterFDs);
+				FD_ZERO(&_readFDs);
+				FD_ZERO(&_writeFDs);
+				break;
+			}
+			for (int sockFD = 1; sockFD < _maxSockFD + 1; sockFD++)
+			{
+				if (FD_ISSET(sockFD, &_readFDs))
+				{
+					int newConnect = 0;
+					for (std::vector<int>::iterator it = _masterSockFDs.begin(); it != _masterSockFDs.end(); it++)
+					{
+						if (sockFD == *it)
+						{
+							newConnect = 1;
+							break;
+						}
+					}
+					newConnect ? this->newConnectHandling(sockFD) : this->accptedConnectHandling(sockFD);
+				}
+			}
+		}
+	}
+}
 
-// void Server::newConnectHandling(int &sockFD)
-// {
-// 	int accptSockFD = accept(sockFD, (struct sockaddr *)&_clientAddr, &_addrLen);
-// 	if (accptSockFD == -1)
-// 		throw std::runtime_error("Unable to accept the connection from client by the socket ");
-// 	if (fcntl(accptSockFD, F_SETFL, O_NONBLOCK) == -1)
-// 		throw std::runtime_error("Unable to set the socket to non-blocking.");
-// 	FD_SET(accptSockFD, &_masterFDs);
-// 	FD_SET(accptSockFD, &_writeFDs);
-// 	if (accptSockFD > _maxSockFD)
-// 		_maxSockFD = accptSockFD;
-// 	_clients.insert(std::pair<int, std::string>(accptSockFD, ""));
-// 	std::map<int, int>::iterator it = _accptMaster.find(accptSockFD);
-// 	if (it != _accptMaster.end())
-// 		it->second = sockFD;
-// 	else
-// 		_accptMaster.insert(std::pair<int, int>(accptSockFD, sockFD));
-// }
+void Server::newConnectHandling(int &sockFD)
+{
+	int accptSockFD = accept(sockFD, (struct sockaddr *)&_clientAddr, &_addrLen);
+	if (accptSockFD == -1)
+		throw std::runtime_error("Unable to accept the connection from client by the socket ");
+	if (fcntl(accptSockFD, F_SETFL, O_NONBLOCK) == -1)
+		throw std::runtime_error("Unable to set the socket to non-blocking.");
+	FD_SET(accptSockFD, &_masterFDs);
+	FD_SET(accptSockFD, &_writeFDs);
+	if (accptSockFD > _maxSockFD)
+		_maxSockFD = accptSockFD;
+	_clients.insert(std::pair<int, std::string>(accptSockFD, ""));
+	std::map<int, int>::iterator it = _accptMaster.find(accptSockFD);
+	if (it != _accptMaster.end())
+		it->second = sockFD;
+	else
+		_accptMaster.insert(std::pair<int, int>(accptSockFD, sockFD));
+}
 
-// void Server::accptedConnectHandling(int &accptSockFD)
-// {
-// 	char _buffRes[BUFFER_SIZE + 1] = {0};
-// 	bzero(_buffRes, sizeof(_buffRes));
-// 	int valRead = recv(accptSockFD, _buffRes, BUFFER_SIZE, 0);
-// 	if (valRead > 0)
-// 	{
-// 		_buffRes[valRead] = '\0';
-// 		std::map<int, std::string>::iterator it = _clients.find(accptSockFD);
-// 		if (it != _clients.end())
-// 			it->second += _buffRes;
-// 		std::string req(_buffRes);
-// 		//_request.Request_start(req);
-// 		if (FD_ISSET(accptSockFD, &_writeFDs))
-// 		{
-// 			std::cout << "FD_ISSET ACCPTSOCKFD BLABLA" << std::endl;
-// 			//this->responseHandling(accptSockFD);
-// 		}
-// 	}
-// 	if (valRead == 0)
-// 	{
-// 		close(accptSockFD);
-// 		FD_CLR(accptSockFD, &_masterFDs);
-// 		FD_CLR(accptSockFD, &_writeFDs);
-// 		_clients.erase(accptSockFD);
-// 	}
-// 	else
-// 		return; // Socket is connected but doesn't send request.
-// }
+void Server::accptedConnectHandling(int &accptSockFD)
+{
+	char _buffRes[BUFFER_SIZE + 1] = {0};
+	bzero(_buffRes, sizeof(_buffRes));
+	int valRead = recv(accptSockFD, _buffRes, BUFFER_SIZE, 0);
+	if (valRead > 0)
+	{
+		_buffRes[valRead] = '\0';
+		std::map<int, std::string>::iterator it = _clients.find(accptSockFD);
+		if (it != _clients.end())
+			it->second += _buffRes;
+		std::string req(_buffRes);
+		//_request.Request_start(req);
+		if (FD_ISSET(accptSockFD, &_writeFDs))
+		{
+			std::cout << _buffRes << std::endl;
+			std::cout << "FD_ISSET ACCPTSOCKFD BLABLA" << std::endl;
+			//this->responseHandling(accptSockFD);
+		}
+	}
+	if (valRead == 0)
+	{
+		close(accptSockFD);
+		FD_CLR(accptSockFD, &_masterFDs);
+		FD_CLR(accptSockFD, &_writeFDs);
+		_clients.erase(accptSockFD);
+	}
+	else
+		return; // Socket is connected but doesn't send request.
+}
 
 
 // std::string Server::get_body(std::string file_name)
