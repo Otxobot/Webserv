@@ -21,6 +21,7 @@ Server::Server(Config config, std::string configFile) : _masterSockFD(0),
 {
 				   this->servers_parsed = config.parseConfig(configFile);
 				   this->makeSockets();
+				   //this->waitingForConnections();
 }
 
 Server::Server(std::vector<Config> &servers) : servers_parsed(servers),
@@ -114,7 +115,19 @@ void Server::makeSockets()
 			}
 		//}
 	}
+	std::cout << "============================================" << std::endl;
+	for (std::vector<int>::iterator itSock = _masterSockFDs.begin(); itSock != _masterSockFDs.end(); itSock++)
+	{
+		std::cout << "El socket es: " << *itSock << std::endl;
+	}
 }
+
+/*Server::createSocket(): Esta función crea un nuevo socket y configura algunas de sus opciones. 
+Primero, crea un nuevo socket utilizando la función socket(). 
+Luego, utiliza la función fcntl() para configurar el socket como no bloqueante, 
+lo que significa que las llamadas a funciones como recv() y send() no bloquearán el programa si no hay datos disponibles. 
+Finalmente, utiliza setsockopt() para configurar la opción SO_REUSEADDR del socket, 
+lo que permite que el socket reutilice un puerto local sin esperar que el kernel libere el puerto después de cerrar el socket.*/
 
 void Server::createSocket()
 {
@@ -130,6 +143,11 @@ void Server::createSocket()
 		throw std::runtime_error("Unable to set socket option to the socket" /* + std::wstring(_masterSockFD)*/);
 }
 
+/*Server::bindSocket(): Esta función vincula el socket creado en createSocket() a una dirección y puerto específicos. 
+Primero, inicializa la estructura _serverAddr a cero y luego establece la familia de direcciones a AF_INET (IPv4), 
+el puerto a _port y la dirección IP a _host. 
+Luego, utiliza la función bind() para vincular el socket a la dirección y puerto especificados.*/
+
 // Socket binding
 void Server::bindSocket()
 {
@@ -137,10 +155,25 @@ void Server::bindSocket()
 	_addrLen = sizeof(_serverAddr);
 	_serverAddr.sin_family = AF_INET;
 	std::cout << "EL PUERTO ES: " << _port << std::endl;
+	//Htons cambia el puerto a network byte order, en vez de host byte order
 	_serverAddr.sin_port = htons(_port);
-	_serverAddr.sin_addr.s_addr = (_host == "ANY") ? htonl(INADDR_ANY) : inet_addr(_host.c_str());
+	std::cout << "EL PUERTO DESPUES DE HTONS: " << _serverAddr.sin_port << std::endl;
+	std::cout << "EL HOST ANTES DE HTONL: " << _host << std::endl;
+	if (_host == "ANY")
+		_serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	else
+		_serverAddr.sin_addr.s_addr = inet_addr(_host.c_str());
+	//_serverAddr.sin_addr.s_addr = (_host == "ANY") ? htonl(INADDR_ANY) : inet_addr(_host.c_str());
+	std::cout << "EL HOST DESPUES DE HTONL: " << _serverAddr.sin_addr.s_addr << std::endl;
 	bind(_masterSockFD, (struct sockaddr *)&_serverAddr, sizeof(_serverAddr));
 }
+
+/*Server::listenSocket(): Esta función pone el socket en modo de escucha, 
+lo que significa que el socket está listo para aceptar conexiones entrantes. 
+Utiliza la función listen() para hacer esto. 
+Luego, agrega el descriptor del socket al conjunto de descriptores de archivo _masterFDs utilizando la macro FD_SET(). 
+Esto permite que el programa monitoree el socket para ver si hay datos entrantes.
+Finalmente, agrega el descriptor del socket al vector _masterSockFDs.*/
 
 // Listen for incoming connections from clients
 void Server::listenSocket()
@@ -149,7 +182,12 @@ void Server::listenSocket()
 		throw std::runtime_error("Unable to listen for connections in the socket ");
 	// set socket to fd_set struct
 	FD_SET(_masterSockFD, &_masterFDs);
-	_maxSockFD = (_masterSockFD > _maxSockFD) ? _masterSockFD : _maxSockFD;
+	if (_masterSockFD > _maxSockFD)
+	{
+		_maxSockFD = _masterSockFD;
+	
+	}
+	//_maxSockFD = (_masterSockFD > _maxSockFD) ? _masterSockFD : _maxSockFD;
 	// Add the socket to the sockets vector
 	_masterSockFDs.push_back(_masterSockFD);
 }
