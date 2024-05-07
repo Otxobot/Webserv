@@ -20,6 +20,8 @@ Server::Server(Config config, std::string configFile) : _masterSockFD(0),
 				   _isvalid(1) 
 {
 				   this->servers_parsed = config.parseConfig(configFile);
+				   this->makeSockets();
+				   this->waitingForConnections();
 }
 
 Server::Server(std::vector<Config> &servers) : servers_parsed(servers),
@@ -31,7 +33,7 @@ Server::Server(std::vector<Config> &servers) : servers_parsed(servers),
 												   _isvalid(1)
 {
 	this->makeSockets();
-	this->waitingForConnections();
+	//this->waitingForConnections();
 }
 
 // Copy constructor
@@ -89,14 +91,16 @@ void Server::makeSockets()
 	// making master sockets for()
 	for (std::vector<Config>::iterator itServer = servers_parsed.begin(); itServer != servers_parsed.end(); itServer++)
 	{
-		_port = itServer->getPorts();
+		std::cout << "============================================" << std::endl;
+		std::cout << "Esta entrando en el servidor-> "<<itServer->getIndex() << std::endl;
+		_port = itServer->getPort();
 		_host = itServer->getHost();
-		for (std::vector<int>::iterator itPort = _ports.begin(); itPort != _ports.end(); ++itPort)
-		{
-			_port = *itPort;
+		std::cout << "El host es: " << _host << std::endl;
+		// for (std::vector<int>::iterator itPort = _ports.begin(); itPort != _ports.end(); ++itPort)
+		// {
+			//_port = *itPort;
 			try
 			{
-
 				// Socket creating
 				this->createSocket();
 				// Bind a name to a socket
@@ -109,11 +113,22 @@ void Server::makeSockets()
 				close(_masterSockFD);
 				std::cerr << e.what() << '\n';
 			}
-		}
+		//}
+	}
+	std::cout << "============================================" << std::endl;
+	for (std::vector<int>::iterator itSock = _masterSockFDs.begin(); itSock != _masterSockFDs.end(); itSock++)
+	{
+		std::cout << "El socket es: " << *itSock << std::endl;
 	}
 }
 
-// Socket creating
+/*Server::createSocket(): Esta función crea un nuevo socket y configura algunas de sus opciones. 
+Primero, crea un nuevo socket utilizando la función socket(). 
+Luego, utiliza la función fcntl() para configurar el socket como no bloqueante, 
+lo que significa que las llamadas a funciones como recv() y send() no bloquearán el programa si no hay datos disponibles. 
+Finalmente, utiliza setsockopt() para configurar la opción SO_REUSEADDR del socket, 
+lo que permite que el socket reutilice un puerto local sin esperar que el kernel libere el puerto después de cerrar el socket.*/
+
 void Server::createSocket()
 {
 	if ((_masterSockFD = socket(AF_INET, SOCK_STREAM, 0)) == -1)
@@ -121,12 +136,17 @@ void Server::createSocket()
 
 	// set socket to non-blocking
 	if (fcntl(_masterSockFD, F_SETFL, O_NONBLOCK) == -1)
-		throw std::runtime_error("Unable to set the socket " + std::to_string(_masterSockFD) + " to non-blocking.");
+		throw std::runtime_error("Unable to set the socket  /*(+ std::wstring(_masterSockFD) +*/  to non-blocking.");
 	// set socket option of reusing address
 	int opt = 1;
 	if (setsockopt(_masterSockFD, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(int)) == -1)
-		throw std::runtime_error("Unable to set socket option to the socket " + std::to_string(_masterSockFD));
+		throw std::runtime_error("Unable to set socket option to the socket" /* + std::wstring(_masterSockFD)*/);
 }
+
+/*Server::bindSocket(): Esta función vincula el socket creado en createSocket() a una dirección y puerto específicos. 
+Primero, inicializa la estructura _serverAddr a cero y luego establece la familia de direcciones a AF_INET (IPv4), 
+el puerto a _port y la dirección IP a _host. 
+Luego, utiliza la función bind() para vincular el socket a la dirección y puerto especificados.*/
 
 // Socket binding
 void Server::bindSocket()
@@ -134,19 +154,40 @@ void Server::bindSocket()
 	std::memset(&_serverAddr, 0, sizeof(_serverAddr));
 	_addrLen = sizeof(_serverAddr);
 	_serverAddr.sin_family = AF_INET;
+	std::cout << "EL PUERTO ES: " << _port << std::endl;
+	//Htons cambia el puerto a network byte order, en vez de host byte order
 	_serverAddr.sin_port = htons(_port);
-	_serverAddr.sin_addr.s_addr = (_host == "ANY") ? htonl(INADDR_ANY) : inet_addr(_host.c_str());
+	std::cout << "EL PUERTO DESPUES DE HTONS: " << _serverAddr.sin_port << std::endl;
+	std::cout << "EL HOST ANTES DE HTONL: " << _host << std::endl;
+	if (_host == "ANY")
+		_serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	else
+		_serverAddr.sin_addr.s_addr = inet_addr(_host.c_str());
+	//_serverAddr.sin_addr.s_addr = (_host == "ANY") ? htonl(INADDR_ANY) : inet_addr(_host.c_str());
+	std::cout << "EL HOST DESPUES DE HTONL: " << _serverAddr.sin_addr.s_addr << std::endl;
 	bind(_masterSockFD, (struct sockaddr *)&_serverAddr, sizeof(_serverAddr));
 }
+
+/*Server::listenSocket(): Esta función pone el socket en modo de escucha, 
+lo que significa que el socket está listo para aceptar conexiones entrantes. 
+Utiliza la función listen() para hacer esto. 
+Luego, agrega el descriptor del socket al conjunto de descriptores de archivo _masterFDs utilizando la macro FD_SET(). 
+Esto permite que el programa monitoree el socket para ver si hay datos entrantes.
+Finalmente, agrega el descriptor del socket al vector _masterSockFDs.*/
 
 // Listen for incoming connections from clients
 void Server::listenSocket()
 {
 	if (listen(_masterSockFD, BACKLOG) == -1)
-		throw std::runtime_error("Unable to listen for connections in the socket " + std::to_string(_masterSockFD));
+		throw std::runtime_error("Unable to listen for connections in the socket ");
 	// set socket to fd_set struct
 	FD_SET(_masterSockFD, &_masterFDs);
-	_maxSockFD = (_masterSockFD > _maxSockFD) ? _masterSockFD : _maxSockFD;
+	if (_masterSockFD > _maxSockFD)
+	{
+		_maxSockFD = _masterSockFD;
+	
+	}
+	//_maxSockFD = (_masterSockFD > _maxSockFD) ? _masterSockFD : _maxSockFD;
 	// Add the socket to the sockets vector
 	_masterSockFDs.push_back(_masterSockFD);
 }
@@ -205,9 +246,9 @@ void Server::newConnectHandling(int &sockFD)
 {
 	int accptSockFD = accept(sockFD, (struct sockaddr *)&_clientAddr, &_addrLen);
 	if (accptSockFD == -1)
-		throw std::runtime_error("Unable to accept the connection from client by the socket " + std::to_string(accptSockFD));
+		throw std::runtime_error("Unable to accept the connection from client by the socket ");
 	if (fcntl(accptSockFD, F_SETFL, O_NONBLOCK) == -1)
-		throw std::runtime_error("Unable to set the socket " + std::to_string(accptSockFD) + " to non-blocking.");
+		throw std::runtime_error("Unable to set the socket to non-blocking.");
 	FD_SET(accptSockFD, &_masterFDs);
 	FD_SET(accptSockFD, &_writeFDs);
 	if (accptSockFD > _maxSockFD)
@@ -235,7 +276,9 @@ void Server::accptedConnectHandling(int &accptSockFD)
 		//_request.Request_start(req);
 		if (FD_ISSET(accptSockFD, &_writeFDs))
 		{
-			this->responseHandling(accptSockFD);
+			std::cout << _buffRes << std::endl;
+			std::cout << "FD_ISSET ACCPTSOCKFD BLABLA" << std::endl;
+			//this->responseHandling(accptSockFD);
 		}
 	}
 	if (valRead == 0)
@@ -250,50 +293,77 @@ void Server::accptedConnectHandling(int &accptSockFD)
 }
 
 
-std::string Server::get_body(std::string file_name)
-{
-	std::string _body;
-	std::ifstream file(file_name);
-	if (file)
-	{
-		std::ostringstream ss;
-		ss << file.rdbuf();
-		_body = ss.str();
-		file.close(); // close the file(filename)
-	}
-	return _body;
-}
+// std::string Server::get_body(std::string file_name)
+// {
+// 	std::string _body;
+// 	std::ifstream file(file_name.c_str());
+// 	if (file)
+// 	{
+// 		std::ostringstream ss;
+// 		ss << file.rdbuf();
+// 		_body = ss.str();
+// 		file.close(); // close the file(filename)
+// 	}
+// 	return _body;
+// }
 
-int Server::num_len(int n)
-{
-	int i;
+// int Server::num_len(int n)
+// {
+// 	int i;
 
-	i = 1;
-	while (n /= 10)
-		i++;
-	return (i);
-}
+// 	i = 1;
+// 	while (n /= 10)
+// 		i++;
+// 	return (i);
+// }
 
-char *Server::ft_itoa(int n)
-{
-	char *str;
-	int numlen;
-	unsigned int nb;
+// char *Server::ft_itoa(int n)
+// {
+// 	char *str;
+// 	int numlen;
+// 	unsigned int nb;
 
-	numlen = num_len(n);
-	nb = n;
-	if (n < 0)
-	{
-		nb = -n;
-		numlen++;
-	}
-	if (!(str = (char *)malloc(sizeof(char) * numlen + 1)))
-		return (0);
-	str[numlen] = '\0';
-	str[--numlen] = nb % 10 + '0';
-	while (nb /= 10)
-		str[--numlen] = nb % 10 + '0';
-	if (n < 0)
-		*(str) = '-';
-	return (str);
-}
+// 	numlen = num_len(n);
+// 	nb = n;
+// 	if (n < 0)
+// 	{
+// 		nb = -n;
+// 		numlen++;
+// 	}
+// 	if (!(str = (char *)malloc(sizeof(char) * numlen + 1)))
+// 		return (0);
+// 	str[numlen] = '\0';
+// 	str[--numlen] = nb % 10 + '0';
+// 	while (nb /= 10)
+// 		str[--numlen] = nb % 10 + '0';
+// 	if (n < 0)
+// 		*(str) = '-';
+// 	return (str);
+// }
+
+// void Server::responseHandling(int &accptSockFD)
+// {
+// 	std::string body;
+// 	std::string path = _request.getTarget().erase(0, 1);
+// 	char *header = strdup("HTTP/1.1 200 OK\r\nContent-Length: ");
+
+// 	Response _resp;
+// 	_resp.creatResponse(this->_servers, this->_request);
+// 	this->_request.clear();
+
+// 	std::string all = std::string(header) + std::string(ft_itoa(_resp.GetBody().size())) + "\r\n\r\n" + _resp.GetBody();
+
+// 	if (FD_ISSET(accptSockFD, &_writeFDs))
+// 	{
+// 		if (send(accptSockFD, _resp.getRespHeader().c_str(), _resp.getRespHeader().length(), 0) != (ssize_t)_resp.getRespHeader().length())
+// 			throw std::runtime_error("Unable to send the response to client in socket " + std::to_string(accptSockFD));
+// 		if (!this->_request.getReqValue("Connection").compare("close")) // if connection is set to close in request close
+// 		{
+// 			close(accptSockFD);
+// 			FD_CLR(accptSockFD, &_masterFDs);
+// 			FD_CLR(accptSockFD, &_writeFDs);
+// 		}
+// 	}
+// 	_resp.clear();
+// 	this->_request.clear();
+// }
