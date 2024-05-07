@@ -86,6 +86,7 @@ void Server::makeSockets()
 {
 	// fd_set structures initializing
 	FD_ZERO(&_masterFDs);
+
 	FD_ZERO(&_writeFDs);
 	FD_SET(STDIN_FILENO, &_masterFDs);
 	// making master sockets for()
@@ -261,37 +262,72 @@ void Server::newConnectHandling(int &sockFD)
 		_accptMaster.insert(std::pair<int, int>(accptSockFD, sockFD));
 }
 
+//void Server::accptedConnectHandling(int &accptSockFD)
+//{
+//	char _buffRes[BUFFER_SIZE + 1] = {0};
+//	bzero(_buffRes, sizeof(_buffRes));
+//	int valRead = recv(accptSockFD, _buffRes, BUFFER_SIZE, 0);
+//	if (valRead > 0)
+//	{
+//		_buffRes[valRead] = '\0';
+//		std::map<int, std::string>::iterator it = _clients.find(accptSockFD);
+//		if (it != _clients.end())
+//			it->second += _buffRes;
+//		std::string req(_buffRes);
+//		//_request.Request_start(req);
+//		if (FD_ISSET(accptSockFD, &_writeFDs))
+//		{
+//			std::cout << _buffRes << std::endl;
+//			std::cout << "FD_ISSET ACCPTSOCKFD BLABLA" << std::endl;
+//			//this->responseHandling(accptSockFD);
+//		}
+//	}
+//	if (valRead == 0)
+//	{
+//		close(accptSockFD);
+//		FD_CLR(accptSockFD, &_masterFDs);
+//		FD_CLR(accptSockFD, &_writeFDs);
+//		_clients.erase(accptSockFD);
+//	}
+//	else
+//		return; // Socket is connected but doesn't send request.
+//}
+
 void Server::accptedConnectHandling(int &accptSockFD)
 {
-	char _buffRes[BUFFER_SIZE + 1] = {0};
-	bzero(_buffRes, sizeof(_buffRes));
-	int valRead = recv(accptSockFD, _buffRes, BUFFER_SIZE, 0);
-	if (valRead > 0)
-	{
-		_buffRes[valRead] = '\0';
-		std::map<int, std::string>::iterator it = _clients.find(accptSockFD);
-		if (it != _clients.end())
-			it->second += _buffRes;
-		std::string req(_buffRes);
-		//_request.Request_start(req);
-		if (FD_ISSET(accptSockFD, &_writeFDs))
-		{
-			std::cout << _buffRes << std::endl;
-			std::cout << "FD_ISSET ACCPTSOCKFD BLABLA" << std::endl;
-			//this->responseHandling(accptSockFD);
-		}
-	}
-	if (valRead == 0)
-	{
-		close(accptSockFD);
-		FD_CLR(accptSockFD, &_masterFDs);
-		FD_CLR(accptSockFD, &_writeFDs);
-		_clients.erase(accptSockFD);
-	}
-	else
-		return; // Socket is connected but doesn't send request.
-}
+    char _buffRes[BUFFER_SIZE + 1] = {0};
+    bzero(_buffRes, sizeof(_buffRes));
+    int valRead = recv(accptSockFD, _buffRes, BUFFER_SIZE, 0);
+    if (valRead > 0)
+    {
+        _buffRes[valRead] = '\0';
+        std::map<int, std::string>::iterator it = _clients.find(accptSockFD);
+        if (it != _clients.end())
+            it->second += _buffRes;
+        std::string req(_buffRes);
+        //_request.Request_start(req);
+        if (FD_ISSET(accptSockFD, &_writeFDs))
+        {
+            std::cout << _buffRes << std::endl;
+            std::cout << "FD_ISSET ACCPTSOCKFD BLABLA" << std::endl;
+            //this->responseHandling(accptSockFD);
+        }
 
+        // Envío de la respuesta HTTP al cliente
+        std::string response = "HTTP/1.1 200 OK\r\nContent-Length: 11\r\n\r\nHola bola\n";
+        send(accptSockFD, response.c_str(), response.length(), 0);
+    }
+    else if (valRead == 0)
+    {
+        // Manejo si la lectura devuelve 0 (conexión cerrada por el cliente)
+        std::cerr << "Client closed connection" << std::endl;
+        close(accptSockFD);
+        FD_CLR(accptSockFD, &_masterFDs);
+        FD_CLR(accptSockFD, &_writeFDs);
+        _clients.erase(accptSockFD);
+    }
+    // No es necesario el bloque else, ya que solo queremos salir si valRead == 0
+}
 
 // std::string Server::get_body(std::string file_name)
 // {
