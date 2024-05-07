@@ -28,7 +28,8 @@ class Config
 	private:
 		int									_index;
 		int									_port; //uint16_t
-		int									_ip_host; //in_addr_t
+		std::vector<int> 					_ports;
+		std::string									_host; //in_addr_t
 		std::string							_servername;
 		std::string							_root;
 		std::string							_listen;
@@ -43,11 +44,13 @@ class Config
 		~Config();
 
 		std::vector<Config>		parseConfig(std::string configFile);
-		std::vector<Config>		parseServers(std::ifstream &file, int contador, int location_times);
+		std::vector<Config>		parseServers(std::ifstream &file, int contador);
 		Location				parseLocation(std::ifstream &file, std::string &line);
 		std::string 			trim_comillas(const std::string& line);
-		int     				getPorts();
+		std::vector<int>     	getPorts();
+		int 					getPort();
 		std::string 			getHost();
+		int						getIndex();
 };
 
 #endif
