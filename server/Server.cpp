@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include <string>
 
 Server::Server(Config config, std::string configFile) : _masterSockFD(0),
 				   _port(0),
@@ -253,35 +254,68 @@ void Server::newConnectHandling(int &sockFD)
 		_accptMaster.insert(std::pair<int, int>(accptSockFD, sockFD));
 }
 
+std::string intToString(int value) {
+    char buffer[50]; // Tamaño suficiente para manejar cualquier entero
+    std::sprintf(buffer, "%d", value); // Convierte el entero en una cadena de caracteres
+    return std::string(buffer); // Devuelve la cadena de caracteres como std::string
+}
+
 void Server::acceptedConnectHandling(int &accptSockFD)
 {
-	char _buffRes[BUFFER_SIZE + 1] = {0};
-	bzero(_buffRes, sizeof(_buffRes));
-	int valRead = recv(accptSockFD, _buffRes, BUFFER_SIZE, 0);
-	if (valRead > 0)
-	{
-		_buffRes[valRead] = '\0';
-		std::map<int, std::string>::iterator it = _clients.find(accptSockFD);
-		if (it != _clients.end())
-			it->second += _buffRes;
-		std::string req(_buffRes);
-		//_request.Request_start(req);
-		if (FD_ISSET(accptSockFD, &_writeFDs))
-		{
-			std::cout << _buffRes << std::endl;
-			//this->responseHandling(accptSockFD);
-		}
-	}
-	if (valRead == 0)
-	{
-		close(accptSockFD);
-		FD_CLR(accptSockFD, &_masterFDs);
-		FD_CLR(accptSockFD, &_writeFDs);
-		_clients.erase(accptSockFD);
-	}
-	else
-		return; // Socket is connected but doesn't send request.
+    char _buffRes[BUFFER_SIZE + 1] = {0};
+    bzero(_buffRes, sizeof(_buffRes));
+    int valRead = recv(accptSockFD, _buffRes, BUFFER_SIZE, 0);
+    if (valRead > 0)
+    {
+        _buffRes[valRead] = '\0';
+        std::map<int, std::string>::iterator it = _clients.find(accptSockFD);
+        if (it != _clients.end())
+            it->second += _buffRes;
+        std::string req(_buffRes);
+        if (FD_ISSET(accptSockFD, &_writeFDs))
+        {
+            std::cout << _buffRes << std::endl;
+            // Aquí envía la respuesta HTML si se conecta correctamente al cliente
+            std::ifstream file("index.html"); // Abre el archivo index.html
+
+            if (file.is_open()) {
+                std::stringstream buffer;
+                buffer << file.rdbuf(); // Lee todo el contenido del archivo a un buffer
+
+                // Prepara la respuesta HTTP con el contenido del archivo
+				// aqui tenemos que poner la funcion de respuesta, que lea la solicitud del cliente y que devuelva la respuesta congruente,
+				// lo que esta ahora es solo una solucion temporal para probar si la respuesta que enviamos se procesa en el cliente
+                std::string response = "HTTP/1.1 200 OK\r\n";
+                response += "Content-Type: text/html\r\n";
+                response += "Content-Length: " + intToString(buffer.str().length()) + "\r\n\r\n";
+                response += buffer.str();
+
+                // Envia la respuesta al cliente
+                send(accptSockFD, response.c_str(), response.length(), 0);
+            } else {
+                // Si el archivo no se puede abrir, envía un error 404 Not Found
+                std::string response = "HTTP/1.1 404 Not Found\r\n\r\n";
+                send(accptSockFD, response.c_str(), response.length(), 0);
+            }
+
+            // Cierra la conexión
+            close(accptSockFD);
+            FD_CLR(accptSockFD, &_masterFDs);
+            FD_CLR(accptSockFD, &_writeFDs);
+            _clients.erase(accptSockFD);
+        }
+    }
+    if (valRead == 0)
+    {
+        close(accptSockFD);
+        FD_CLR(accptSockFD, &_masterFDs);
+        FD_CLR(accptSockFD, &_writeFDs);
+        _clients.erase(accptSockFD);
+    }
+    else
+        return; // Socket is connected but doesn't send request.
 }
+
 
 // std::string Server::get_body(std::string file_name)
 // {
