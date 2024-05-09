@@ -47,10 +47,10 @@ Server::Server(Server const &ths)
 Server::~Server()
 {
 	std::cout << RED << "Server destructor is closing fds..." << std::endl;
-	for (std::vector<int>::iterator it = _masterSockFDs.begin(); it != _masterSockFDs.end(); it++)
-	{
-		close(*it);
-	}
+	// for (std::vector<int>::iterator it = _masterSockFDs.begin(); it != _masterSockFDs.end(); it++)
+	// {
+	// 	close(*it);
+	// }
 	servers_parsed.clear();
 	_masterSockFDs.clear();
 	_ports.clear();
@@ -211,6 +211,7 @@ void Server::waitingForConnections()
 			}
 			for (int sockFD = 1; sockFD < _maxSockFD + 1; sockFD++)
 			{
+				int cantidad = 0;
 				if (FD_ISSET(sockFD, &_readFDs))
 				{
 					int newConnect = 0;
@@ -218,6 +219,7 @@ void Server::waitingForConnections()
 					{
 						if (sockFD == *it)
 						{
+							std::cout << "entra estas veces: " << cantidad++ << std::endl;
 							newConnect = 1;
 							break;
 						}
