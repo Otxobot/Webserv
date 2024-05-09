@@ -216,7 +216,6 @@ void Server::waitingForConnections()
 					int newConnect = 0;
 					for (std::vector<int>::iterator it = _masterSockFDs.begin(); it != _masterSockFDs.end(); it++)
 					{
-						std::cout << "_masterSockFDs: " << *it << " || sockFD: " << sockFD << std::endl;
 						if (sockFD == *it)
 						{
 							newConnect = 1;
