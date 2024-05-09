@@ -78,6 +78,8 @@
 //   close(sockfd);
 // }
 
+//change for ssh
+
 int main(int ac, char **av)
 {
 	if (ac != 2)
