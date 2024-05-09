@@ -198,7 +198,7 @@ void Server::waitingForConnections()
 		{
 			if (FD_ISSET(0, &_readFDs))
 			{
-				std::cout << BLUE << "Shutting down server gracefuly" << std::endl;
+				std::cout << BLUE << "Shutting down server gracefuly" << RESET << std::endl;
 				running = 0;
 				for (std::vector<int>::iterator it = _masterSockFDs.begin(); it != _masterSockFDs.end(); it++)
 				{
@@ -268,7 +268,7 @@ void Server::acceptedConnectHandling(int &accptSockFD)
 		//_request.Request_start(req);
 		if (FD_ISSET(accptSockFD, &_writeFDs))
 		{
-			std::cout << _buffRes << std::endl;
+			std::cout << RESET <<_buffRes << std::endl;
 			//this->responseHandling(accptSockFD);
 		}
 	}
