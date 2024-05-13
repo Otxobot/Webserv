@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 13:26:21 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/02 13:29:48 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/13 16:35:38 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define LOCATION_HPP
 
 #include "../Webserv.hpp"
+#include "../request/Request.hpp"
 #include "Config.hpp"
 #include <string>
 #include <vector>

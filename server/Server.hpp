@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:08 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/02 16:55:19 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/13 16:41:40 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,36 +21,39 @@
 #define CYAN "\033[36m"
 #define RESET "\033[0m"
 
-
 #include "../Webserv.hpp"
 #include "../config/Config.hpp"
-#include <iostream>
+#include "../request/Request.hpp"
 #include <cstring>
 #include <string>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <sys/select.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
-#include <iostream>
-#include <fstream>
-#include <unistd.h>
 #include <fcntl.h>
-#include <sys/stat.h>
-#include <algorithm>
 #include <vector>
 #include <map>
-#include <sstream>
-#define BUFFER_SIZE 1024
+#include <sys/socket.h> //listen, recv
+#include <sys/select.h> //select
+#include <sys/types.h>
+#include <utility>
+
+// #include <iostream>
+// #include <netinet/in.h>
+// #include <fstream>
+// #include <unistd.h>
+// #include <sys/stat.h>
+// #include <algorithm>
+// #include <sstream>
+
+#define BUFFER_SIZE 1024	
 #define BACKLOG 2048
 
 class Config;
+class Request;
 
 class Server
 {
     private:
         std::vector<Config> servers_parsed;
-        //Request _request;
+        Request _request;
 	    // Making sockets
 	    int _masterSockFD;
 	    std::vector<int> _masterSockFDs;

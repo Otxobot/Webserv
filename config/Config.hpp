@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:14 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/02 16:55:54 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/13 16:35:31 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include "../Webserv.hpp"
 #include "../server/Server.hpp"
+#include "../request/Request.hpp"
 #include "./Location.hpp"
 #include <string>
 #include <fstream>
