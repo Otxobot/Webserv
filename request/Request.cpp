@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:33 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/13 16:40:44 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/13 16:54:17 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 Request::Request()
 {
     //Default constructor
+    std::cout << "LLAMA AL CONSTRUCTOR DE REQUEST" << std::endl;
 }
 
 Request::~Request()
@@ -39,7 +40,6 @@ int Request::Request_start(std::string request)
 
 	return 0;
 }
-
 
 int Request::request_line()
 {

@@ -6,11 +6,12 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 11:50:38 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/13 11:50:40 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/13 17:43:00 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
+#include "./request/Request.hpp"
 
 int main(int ac, char **av)
 {
