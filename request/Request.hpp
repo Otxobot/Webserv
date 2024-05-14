@@ -6,14 +6,13 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:36 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/13 17:11:00 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/14 12:40:44 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef REQUEST_HPP
 #define REQUEST_HPP
 
-#include "../Webserv.hpp"
 #include "../server/Server.hpp"
 
 #include <string>

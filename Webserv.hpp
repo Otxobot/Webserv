@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:21 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/13 16:42:09 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/14 12:41:51 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "./server/Server.hpp"
 #include "./config/Config.hpp"
 #include "./config/Location.hpp"
+#include "./request/Request.hpp"
 
 //Aqui van todos los includes que se usaran en el proyecto, en los archivos incluimos Webserv.hpp y ya.
 //La configuración va a ser una clase, el servidor va a ser una clase, el request y la respuesta tambien van a ser una clase.
