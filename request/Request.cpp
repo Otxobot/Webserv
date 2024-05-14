@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:33 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/14 12:50:00 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/14 17:07:48 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ Request::~Request()
 
 int Request::Request_start(std::string request)
 {
-    std::cout << "entra aqui cada vez que hace un request" << std::endl;
     int ret = 0;
 	this->request = request;
 	if ((ret = this->request_line()) || (ret = this->request_headers()) || (ret = this->request_body()))
