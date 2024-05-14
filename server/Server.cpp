@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:11 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/14 12:15:33 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/14 13:36:25 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,11 +95,8 @@ void Server::makeSockets()
 		_host = itServer->getHost();
 			try
 			{
-				// Socket creating
-				this->createSocket();
-				// Bind a name to a socket
+				this->createSocket();	
 				this->bindSocket();
-				// Listen for socket connections
 				this->listenSocket();
 			}
 			catch (const std::exception &e)
@@ -181,7 +178,6 @@ void Server::waitingForConnections()
 	std::cout << BLUE <<"\t<Server running... waiting for connections./>" << std::endl;
 	while (running)
 	{
-
 		FD_ZERO(&_readFDs);
 		_readFDs = _masterFDs;
 		usleep(2000);
@@ -232,9 +228,8 @@ void Server::newConnectHandling(int &sockFD)
 	int accptSockFD = accept(sockFD, (struct sockaddr *)&_clientAddr, &_addrLen);
 	if (accptSockFD == -1)
 		throw std::runtime_error("Unable to accept the connection from client by the socket ");
-	//nose si hace falta el fcntl aqui o no todavia, lo voy a dejar comentado, no lo quites
-	// if (fcntl(accptSockFD, F_SETFL, O_NONBLOCK) == -1)
-	// 	throw std::runtime_error("Unable to set the socket to non-blocking.");
+	if (fcntl(accptSockFD, F_SETFL, O_NONBLOCK) == -1)
+		throw std::runtime_error("Unable to set the socket to non-blocking.");
 	FD_SET(accptSockFD, &_masterFDs);
 	FD_SET(accptSockFD, &_writeFDs);
 	if (accptSockFD > _maxSockFD)
@@ -278,77 +273,77 @@ void Server::acceptedConnectHandling(int &accptSockFD)
 		return; // Socket is connected but doesn't send request.
 }
 
-// std::string Server::get_body(std::string file_name)
-// {
-// 	std::string _body;
-// 	std::ifstream file(file_name.c_str());
-// 	if (file)
-// 	{
-// 		std::ostringstream ss;
-// 		ss << file.rdbuf();
-// 		_body = ss.str();
-// 		file.close(); // close the file(filename)
-// 	}
-// 	return _body;
-// }
+std::string Server::get_body(std::string file_name)
+{
+	std::string _body;
+	std::ifstream file(file_name.c_str());
+	if (file)
+	{
+		std::ostringstream ss;
+		ss << file.rdbuf();
+		_body = ss.str();
+		file.close(); // close the file(filename)
+	}
+	return _body;
+}
 
-// int Server::num_len(int n)
-// {
-// 	int i;
+int Server::num_len(int n)
+{
+	int i;
 
-// 	i = 1;
-// 	while (n /= 10)
-// 		i++;
-// 	return (i);
-// }
+	i = 1;
+	while (n /= 10)
+		i++;
+	return (i);
+}
 
-// char *Server::ft_itoa(int n)
-// {
-// 	char *str;
-// 	int numlen;
-// 	unsigned int nb;
+char *Server::ft_itoa(int n)
+{
+	char *str;
+	int numlen;
+	unsigned int nb;
 
-// 	numlen = num_len(n);
-// 	nb = n;
-// 	if (n < 0)
-// 	{
-// 		nb = -n;
-// 		numlen++;
-// 	}
-// 	if (!(str = (char *)malloc(sizeof(char) * numlen + 1)))
-// 		return (0);
-// 	str[numlen] = '\0';
-// 	str[--numlen] = nb % 10 + '0';
-// 	while (nb /= 10)
-// 		str[--numlen] = nb % 10 + '0';
-// 	if (n < 0)
-// 		*(str) = '-';
-// 	return (str);
-// }
+	numlen = num_len(n);
+	nb = n;
+	if (n < 0)
+	{
+		nb = -n;
+		numlen++;
+	}
+	if (!(str = (char *)malloc(sizeof(char) * numlen + 1)))
+		return (0);
+	str[numlen] = '\0';
+	str[--numlen] = nb % 10 + '0';
+	while (nb /= 10)
+		str[--numlen] = nb % 10 + '0';
+	if (n < 0)
+		*(str) = '-';
+	return (str);
+}
 
-// void Server::responseHandling(int &accptSockFD)
-// {
-// 	std::string body;
-// 	std::string path = _request.getTarget().erase(0, 1);
-// 	char *header = strdup("HTTP/1.1 200 OK\r\nContent-Length: ");
+void Server::responseHandling(int &accptSockFD)
+{
+	std::string body;
+	std::string path = _request.getTarget().erase(0, 1);
+	char *header = strdup("HTTP/1.1 200 OK\r\nContent-Length: ");
 
-// 	Response _resp;
-// 	_resp.creatResponse(this->_servers, this->_request);
-// 	this->_request.clear();
+	Response _resp;
+	_resp.creatResponse(this->_servers, this->_request);
+	this->_request.clear();
 
-// 	std::string all = std::string(header) + std::string(ft_itoa(_resp.GetBody().size())) + "\r\n\r\n" + _resp.GetBody();
+	std::string all = std::string(header) + std::string(ft_itoa(_resp.GetBody().size())) + "\r\n\r\n" + _resp.GetBody();
 
-// 	if (FD_ISSET(accptSockFD, &_writeFDs))
-// 	{
-// 		if (send(accptSockFD, _resp.getRespHeader().c_str(), _resp.getRespHeader().length(), 0) != (ssize_t)_resp.getRespHeader().length())
-// 			throw std::runtime_error("Unable to send the response to client in socket " + std::to_string(accptSockFD));
-// 		if (!this->_request.getReqValue("Connection").compare("close")) // if connection is set to close in request close
-// 		{
-// 			close(accptSockFD);
-// 			FD_CLR(accptSockFD, &_masterFDs);
-// 			FD_CLR(accptSockFD, &_writeFDs);
-// 		}
-// 	}
-// 	_resp.clear();
-// 	this->_request.clear();
-// }
+	if (FD_ISSET(accptSockFD, &_writeFDs))
+	{
+		if (send(accptSockFD, _resp.getRespHeader().c_str(), _resp.getRespHeader().length(), 0) != (ssize_t)_resp.getRespHeader().length())
+			throw std::runtime_error("Unable to send the response to client in socket " + std::to_string(accptSockFD));
+		if (!this->_request.getReqValue("Connection").compare("close")) // if connection is set to close in request close
+		{
+			close(accptSockFD);
+			FD_CLR(accptSockFD, &_masterFDs);
+			FD_CLR(accptSockFD, &_writeFDs);
+		}
+	}
+	_resp.clear();
+	this->_request.clear();
+}

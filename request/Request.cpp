@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:33 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/14 12:34:36 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/14 12:50:00 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,17 +42,17 @@ int Request::Request_start(std::string request)
 
 int Request::request_line()
 {
-
+	return (0);
 }
 
 int Request::request_headers()
 {
-    
+    return (0);
 }
 
 int Request::request_body()
 {
-    
+    return (0);
 }
 
 void Request::printRequestInformation()
