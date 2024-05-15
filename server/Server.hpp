@@ -81,7 +81,7 @@ class Server
 	    std::map<int, int> _accptMaster;
 
 	    // HttpServer _server;
-	    int _isvalid;
+	    //int _isvalid;
 
     public:
 	    Server(Config config, std::string configFile);

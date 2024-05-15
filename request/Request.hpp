@@ -13,22 +13,42 @@
 #ifndef REQUEST_HPP
 #define REQUEST_HPP
 
-#define RED "\033[31m"
-#define GREEN "\033[32m"
-#define YELLOW "\033[33m"
-#define BLUE "\033[34m"
-#define MAGENTA "\033[35m"
-#define CYAN "\033[36m"
-#define RESET "\033[0m"
+#define REQUEST_URI_MAX_LENGTH 2048
+#define HEADER_MAX_LENGTH 1000
+#define VALUE_MAX_LENGTH 4000
+
+#define BAD_REQUEST 400
+#define NOT_IMPLEMENTED 501
+#define HTTP_VERSION_NOT_SUPPORTED 505
+#define REQUEST_URI_TOO_LONG 414
+
+#define EXIT_SUCCESS 0
 
 #include <string>
 #include <iostream>
+#include <map>
+#include <string.h>
+# include <stdlib.h>
 
 class Request
 {
     private:
         std::string request;
-        std::string _status;
+        //std::string _status;
+        std::string Method;
+        std::string target;
+        std::string url;
+        std::string protocol;
+        std::string queryUrl;
+        std::string body;
+        std::map<std::string, std::string> headers;
+        int			port;
+        int         _status;
+        std::string ContentDiposition;
+        std::string name;
+        std::string value;
+
+        std::string contentType;
     public:
         Request();
         ~Request();
@@ -37,7 +57,17 @@ class Request
         int     request_headers();
         int     request_body();
         void    printRequestInformation();
-        
+        std::string &getMethod();
+        std::string &getTarget();
+        std::string &getProtocol();
+        int			&getPort1();
+        std::string		getQueryString();
+        std::map<std::string, std::string> &getHeaders();
+        std::string	autoindex_run(std::string rooted_path);
+        std::string		getReqValue(std::string _key);
+        std::string		getUrl();
+        void	setTarget(std::string _target);
+	    void	clear();
 };
 
 #endif

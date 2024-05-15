@@ -89,31 +89,22 @@ std::vector<Config> Config::parseServers(std::ifstream &file, int contador)
 	{
 		while (line.find("location:") != std::string::npos)
 		{
-			// std::cout << "=========================" << std::endl;
-			// std::cout << line << std::endl;
-			// std::cout << "line.substr(12):" << line.substr(12) << std::endl;
-			//std::cout << line << std::endl;
 			line_sin_comillas = this->trim_comillas(line.substr(12));
-			//std::cout << "line_sin_comillas:" << line_sin_comillas << std::endl;
 			this->_locations[line_sin_comillas] = this->parseLocation(file, line);
 		}
 		if (line.find("server:") != std::string::npos)
 		{
-			//std::cout << std::endl << std::endl << std::endl << std::endl;
 			i++;
 			_serversConfig[i]._index = i;
-			//std::cout << std::endl << std::endl <<std::endl << std::endl;
 			continue;
 		}
 		if (line.find("servername:") != std::string::npos)
 		{
 			_serversConfig[i]._servername = trim_comillas(line.substr(14));
-			//std::cout << "servername: " << _serversConfig[i]._servername << std::endl;
 		}
 		if (line.find("root:") != std::string::npos)
 		{
 			_serversConfig[i]._root = trim_comillas(line.substr(8));
-			//std::cout << "root: " << _serversConfig[i]._root << std::endl;
 		}
 		if (line.find("listen:") != std::string::npos)
 		{
@@ -126,22 +117,9 @@ std::vector<Config> Config::parseServers(std::ifstream &file, int contador)
 			_serversConfig[i]._host = host;
 			_serversConfig[i]._port = port;
 			_serversConfig[i]._ports.push_back(port);
-			//std::cout << "host: " << _serversConfig[i]._host << std::endl;
-			//std::cout << "port: " << _serversConfig[i]._port << std::endl;
-			//std::cout << "listen: " << _serversConfig[i]._listen << std::endl;
 		}
-		// if (line.find("buffer_size:") != std::string::npos)
-		// {
-		// 	//_serversConfig[i]._buffer_size = std::stoi(line.substr(15));
-		// 	std::string buffer_size_str = line.substr(12); // Assuming "buffer_size:" has a fixed length of 12
-
-    	// 	int buffer_size = atoi(buffer_size_str.c_str());
-		// 	_serversConfig[i]._buffer_size = buffer_size;
-		// 	//std::cout << "buffer_size: " << _serversConfig[i]._buffer_size << std::endl;
-		// }
 		if (line.find("buffer_size: ") != std::string::npos)
         {
-			//std::string line_sin_comillas = trim_comillas(line.substr(17));
 			std::string line_to_num = line.substr(15);
 			int buffer_size = std::atoi(line_to_num.c_str());
 			_serversConfig[i]._buffer_size = buffer_size;
@@ -210,32 +188,9 @@ Location Config::parseLocation(std::ifstream &file, std::string &line)
         {
             loc.setUpload(trim_comillas(line.substr(12)));
         }
-        // if (line.find("buffer_size: ") != std::string::npos)
-        // {
-		// 	std::cout << "ENTRO EN BUFFERSIZE" << std::endl;
-		// 	std::string line_sin_comillas = trim_comillas(line.substr(17));
-		// 	int buffer_size = std::atoi(line_sin_comillas.c_str());
-		// 	std::cout << buffer_size << std::endl;
-        //     loc.setBufferSize(buffer_size);
-        // }
     }
     return (loc);
 }
-
-// std::string Config::trim_comillas(const std::string& line)
-// {
-//     std::string line_sin_espacios = line;
-
-//     size_t first_non_space = line_sin_espacios.find_first_not_of(" \t");
-//     if (first_non_space != std::string::npos && line_sin_espacios[first_non_space] == '"')
-//         line_sin_espacios.erase(0, first_non_space);
-//     while (!line_sin_espacios.empty() && line_sin_espacios[0] == '"')
-//         line_sin_espacios = line_sin_espacios.substr(1);
-//     while (!line_sin_espacios.empty() && line_sin_espacios.back() == '"')
-//         line_sin_espacios.pop_back();
-
-//     return line_sin_espacios;
-// }
 
 std::string Config::trim_comillas(const std::string& line) {
     std::string line_sin_espacios = line;

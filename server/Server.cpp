@@ -16,8 +16,7 @@ Server::Server(Config config, std::string configFile) : _masterSockFD(0),
 				   _port(0),
 				   _host(""),
 				   _addrLen(0),
-				   _maxSockFD(0),
-				   _isvalid(1) 
+				   _maxSockFD(0)
 {
 				   this->servers_parsed = config.parseConfig(configFile);
 				   this->makeSockets();
@@ -29,24 +28,20 @@ Server::Server(std::vector<Config> &servers) : servers_parsed(servers),
 												   _port(0),
 												   _host(""),
 												   _addrLen(0),
-												   _maxSockFD(0),
-												   _isvalid(1)
+												   _maxSockFD(0)
 {
 	this->makeSockets();
 	this->waitingForConnections();
 }
 
-// Copy constructor
 Server::Server(Server const &ths)
 {
 	*this = ths;
 	return;
 }
 
-// Destructor
 Server::~Server()
 {
-	std::cout << RED << "Server destructor is closing fds..." << std::endl;
 	servers_parsed.clear();
 	_masterSockFDs.clear();
 	_ports.clear();
@@ -74,7 +69,6 @@ Server &Server::operator=(Server const &ths)
 		this->_maxSockFD = ths._maxSockFD;
 		this->_clients = ths._clients;
 		this->_accptMaster = ths._accptMaster;
-		this->_isvalid = ths._isvalid;
 	}
 	return *this;
 }
@@ -107,13 +101,6 @@ void Server::makeSockets()
 	}
 }
 
-/*Server::createSocket(): Esta función crea un nuevo socket y configura algunas de sus opciones. 
-Primero, crea un nuevo socket utilizando la función socket(). 
-Luego, utiliza la función fcntl() para configurar el socket como no bloqueante, 
-lo que significa que las llamadas a funciones como recv() y send() no bloquearán el programa si no hay datos disponibles. 
-Finalmente, utiliza setsockopt() para configurar la opción SO_REUSEADDR del socket, 
-lo que permite que el socket reutilice un puerto local sin esperar que el kernel libere el puerto después de cerrar el socket.*/
-
 void Server::createSocket()
 {
 	if ((_masterSockFD = socket(AF_INET, SOCK_STREAM, 0)) == -1)
@@ -128,11 +115,6 @@ void Server::createSocket()
 		throw std::runtime_error("Unable to set socket option to the socket" /* + std::wstring(_masterSockFD)*/);
 }
 
-/*Server::bindSocket(): Esta función vincula el socket creado en createSocket() a una dirección y puerto específicos. 
-Primero, inicializa la estructura _serverAddr a cero y luego establece la familia de direcciones a AF_INET (IPv4), 
-el puerto a _port y la dirección IP a _host. 
-Luego, utiliza la función bind() para vincular el socket a la dirección y puerto especificados.*/
-
 // Socket binding
 void Server::bindSocket()
 {
@@ -145,30 +127,18 @@ void Server::bindSocket()
 		_serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	else
 		_serverAddr.sin_addr.s_addr = inet_addr(_host.c_str());
-	//_serverAddr.sin_addr.s_addr = (_host == "ANY") ? htonl(INADDR_ANY) : inet_addr(_host.c_str());
 	bind(_masterSockFD, (struct sockaddr *)&_serverAddr, sizeof(_serverAddr));
 }
 
-/*Server::listenSocket(): Esta función pone el socket en modo de escucha, 
-lo que significa que el socket está listo para aceptar conexiones entrantes. 
-Utiliza la función listen() para hacer esto. 
-Luego, agrega el descriptor del socket al conjunto de descriptores de archivo _masterFDs utilizando la macro FD_SET(). 
-Esto permite que el programa monitoree el socket para ver si hay datos entrantes.
-Finalmente, agrega el descriptor del socket al vector _masterSockFDs.*/
-
-// Listen for incoming connections from clients
 void Server::listenSocket()
 {
 	if (listen(_masterSockFD, BACKLOG) == -1)
 		throw std::runtime_error("Unable to listen for connections in the socket ");
-	// set socket to fd_set struct
 	FD_SET(_masterSockFD, &_masterFDs);
 	if (_masterSockFD > _maxSockFD)
 	{
-		//aqui se esta renovando el maximo socket constantemente. 
 		_maxSockFD = _masterSockFD;
 	}
-	// Add the socket to the sockets vector _masterSockFDs
 	_masterSockFDs.push_back(_masterSockFD);
 }
 
@@ -184,7 +154,10 @@ void Server::waitingForConnections()
 		struct timeval _tv = {1, 0};
 		int activity = select(_maxSockFD + 1, &_readFDs, &_writeFDs, NULL, &_tv);
 		if (activity == -1)
-			throw std::runtime_error("Select failed to multiplexing Input/Output.");
+		{
+			std::cout << RED << "Select failed to multiplexing Input/Output." << RESET << std::endl;
+			break;
+		}
 		if (activity > 0)
 		{
 			if (FD_ISSET(0, &_readFDs))
@@ -244,20 +217,19 @@ void Server::newConnectHandling(int &sockFD)
 
 void Server::acceptedConnectHandling(int &accptSockFD)
 {
-	char _buffRes[BUFFER_SIZE + 1] = {0};
-	bzero(_buffRes, sizeof(_buffRes));
-	int valRead = recv(accptSockFD, _buffRes, BUFFER_SIZE, 0);
+	char buffer[BUFFER_SIZE + 1] = {0};
+	bzero(buffer, sizeof(buffer));
+	int valRead = recv(accptSockFD, buffer, BUFFER_SIZE, 0);
 	if (valRead > 0)
 	{
-		_buffRes[valRead] = '\0';
+		buffer[valRead] = '\0';
 		std::map<int, std::string>::iterator it = _clients.find(accptSockFD);
 		if (it != _clients.end())
-			it->second += _buffRes;
-		std::string req(_buffRes);
+			it->second += buffer;
+		std::string req(buffer);
 		this->_request.Request_start(req);
 		if (FD_ISSET(accptSockFD, &_writeFDs))
 		{
-			//std::cout << RESET <<_buffRes << std::endl;
 			//this->responseHandling(accptSockFD);
 		}
 	}
