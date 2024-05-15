@@ -22,13 +22,11 @@
 #define HTTP_VERSION_NOT_SUPPORTED 505
 #define REQUEST_URI_TOO_LONG 414
 
-#define EXIT_SUCCESS 0
-
 #include <string>
 #include <iostream>
 #include <map>
 #include <string.h>
-# include <stdlib.h>
+#include <stdlib.h>
 
 class Request
 {
@@ -43,7 +41,7 @@ class Request
         std::string body;
         std::map<std::string, std::string> headers;
         int			port;
-        int         _status;
+        int         _statusCode;
         std::string ContentDiposition;
         std::string name;
         std::string value;

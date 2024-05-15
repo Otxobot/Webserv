@@ -15,7 +15,6 @@
 Request::Request()
 {
     //Default constructor
-    std::cout << "LLAMA AL CONSTRUCTOR DE REQUEST" << std::endl;
 }
 
 Request::~Request()
@@ -23,6 +22,23 @@ Request::~Request()
     //Default destructor
 	this->target.clear();
 	this->url.clear();
+}
+
+void	Request::printRequestInformation()
+{
+	std::cout << "Method: " << this->Method << std::endl;
+	std::cout << "Target: " << this->target << std::endl;
+	std::cout << "Protocol: " << this->protocol << std::endl; 
+	for (std::map<std::string, std::string>::iterator it = this->headers.begin(); it != this->headers.end(); it++)
+	{
+		if (!it->second.empty())
+			std::cout << "" << it->first << ": " << it->second  << std::endl;
+	}
+	if (!this->queryUrl.empty())
+		std::cout << "Query: " << this->queryUrl << std::endl;
+	if (!this->url.empty())
+		std::cout << "Url: " << this->url << std::endl;
+	std::cout << this->body << std::endl;
 }
 
 int Request::Request_start(std::string request)
@@ -35,26 +51,10 @@ int Request::Request_start(std::string request)
 			return ret;
 		}
 	std::cout <<"+++++++++++++++++++++++++++++ Request ++++++++++++++++++++++++++++++++" << std::endl;
-	printRequestInformation();
+	//printRequestInformation();
 	return 0;
 }
 
-void	Request::printRequestInformation()
-{
-	std::cout << "\e[1;32mMethod:\e[1;36m " << this->Method << std::endl;
-	std::cout << "\e[1;32mTarget:\e[1;36m " << this->target<<"\e[1;37m" << std::endl;
-	std::cout << "\e[1;32mProtocol: \e[1;36m" << this->protocol <<"\e[1;37m"<< std::endl; 
-	for (std::map<std::string, std::string>::iterator it = this->headers.begin(); it != this->headers.end(); it++)
-	{
-		if (!it->second.empty())
-			std::cout << "\e[1;32m" << it->first << ":\e[1;36m " << it->second <<"\e[1;37m" << std::endl;
-	}
-	if (!this->queryUrl.empty())
-		std::cout << "\e[1;32mQuery: \e[1;36m" << this->queryUrl << "\e[1;37m" << std::endl;
-	if (!this->url.empty())
-		std::cout << "\e[1;32mUrl: \e[1;36m" << this->url << "\e[1;37m" << std::endl;
-	std::cout << this->body << std::endl;
-}
 
 int		Request::request_line()
 {
