@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:36 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/15 16:42:50 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/16 12:02:20 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@
 #define BAD_GETEWAY 502
 #define SERVICE_UNABAILABLE 503
 #define GATEWAY_TIMEOUT 504
-#define HTTP_VERSOIN_NOT_SUPPORTED 505
+#define HTTP_VERSION_NOT_SUPPORTED 505
 
 #include <string>
 #include <iostream>

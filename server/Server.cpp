@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:11 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/15 16:41:57 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/16 12:56:08 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,7 @@ void Server::listenSocket()
 void Server::waitingForConnections()
 {
 	int running = 1;
-	std::cout << BLUE <<"\t<Server running... waiting for connections./>" << std::endl;
+	std::cout << BLUE <<"\t<Server running... waiting for connections./>" << RESET << std::endl;
 	while (running)
 	{
 		FD_ZERO(&_readFDs);

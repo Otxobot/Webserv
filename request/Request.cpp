@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:33 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/14 17:07:48 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/16 16:23:29 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,18 +43,18 @@ void	Request::printRequestInformation()
 
 int Request::Request_start(std::string request)
 {
-    int ret = 0;
+    int status_code = 0;
 	this->request = request;
-	if ((ret = this->request_line()) || (ret = this->request_headers()) || (ret = this->request_body()))
+	std::cout << this->request << std::endl;
+	if ((status_code = this->request_line()) || (status_code = this->request_headers()) || (status_code = this->request_body()))
 		{
-			this->_status = ret;
-			return ret;
+			this->_statusCode = status_code;
+			return (status_code);
 		}
 	std::cout <<"+++++++++++++++++++++++++++++ Request ++++++++++++++++++++++++++++++++" << std::endl;
 	//printRequestInformation();
 	return 0;
 }
-
 
 int		Request::request_line()
 {
@@ -90,7 +90,7 @@ int		Request::request_line()
 		}
 		else
 			return REQUEST_URI_TOO_LONG;
-		
+
 		if (request.find(' ') == 0)
 			return BAD_REQUEST;
 		
@@ -107,7 +107,6 @@ int		Request::request_line()
 	}
 	return EXIT_SUCCESS;
 }
-
 
 std::string ltrim(const std::string &s)
 {
@@ -230,7 +229,6 @@ int		Request::request_body()
 	}
 	return EXIT_SUCCESS;
 }
-
 
 std::string &Request::getMethod()
 {
