@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:11 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/16 12:56:08 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/16 18:47:16 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,11 +75,9 @@ Server &Server::operator=(Server const &ths)
 
 void Server::makeSockets()
 {
-	// fd_set structures initializing
 	FD_ZERO(&_masterFDs);
 	FD_ZERO(&_writeFDs);
 	FD_SET(STDIN_FILENO, &_masterFDs);
-	// making master sockets for()
 	for (std::vector<Config>::iterator itServer = servers_parsed.begin(); itServer != servers_parsed.end(); itServer++)
 	{
 		std::cout << "============================================" << std::endl;
@@ -87,6 +85,7 @@ void Server::makeSockets()
 		_port = itServer->getPort();
 		std::cout << "EL PUERTO ES: " << _port << std::endl;
 		_host = itServer->getHost();
+		std::cout << "EL HOST ES: " << _host << std::endl;
 			try
 			{
 				this->createSocket();	
@@ -105,17 +104,13 @@ void Server::createSocket()
 {
 	if ((_masterSockFD = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 		throw std::runtime_error("Unable to create a socket.");
-
-	// set socket to non-blocking
 	if (fcntl(_masterSockFD, F_SETFL, O_NONBLOCK) == -1)
 		throw std::runtime_error("Unable to set the socket  /*(+ std::wstring(_masterSockFD) +*/  to non-blocking.");
-	// set socket option of reusing address
 	int opt = 1;
 	if (setsockopt(_masterSockFD, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(int)) == -1)
 		throw std::runtime_error("Unable to set socket option to the socket" /* + std::wstring(_masterSockFD)*/);
 }
 
-// Socket binding
 void Server::bindSocket()
 {
 	std::memset(&_serverAddr, 0, sizeof(_serverAddr));
@@ -227,6 +222,7 @@ void Server::acceptedConnectHandling(int &accptSockFD)
 		if (it != _clients.end())
 			it->second += buffer;
 		std::string req(buffer);
+		this->_request.reset();
 		this->_request.Request_start(req);
 		if (FD_ISSET(accptSockFD, &_writeFDs))
 		{

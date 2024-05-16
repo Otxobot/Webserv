@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:36 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/16 12:02:20 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/16 18:41:52 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,12 +76,11 @@ class Request
 {
     private:
         std::string request;
-        //std::string _status;
         std::string Method;
         std::string target;
+        std::string queryUrl;
         std::string url;
         std::string protocol;
-        std::string queryUrl;
         std::string body;
         std::map<std::string, std::string> headers;
         int			port;
@@ -109,7 +108,8 @@ class Request
         std::string		getReqValue(std::string _key);
         std::string		getUrl();
         void	setTarget(std::string _target);
-	    void	clear();
+	    //void	clear();
+        void    reset();
 };
 
 #endif

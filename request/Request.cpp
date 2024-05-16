@@ -6,15 +6,15 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:33 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/16 16:23:29 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/16 18:49:09 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request()
+Request::Request() : target(""), queryUrl(""), url(""), _statusCode(200)
 {
-    //Default constructor
+	this->headers.clear();
 }
 
 Request::~Request()
@@ -161,6 +161,7 @@ int		Request::request_headers()
 
 int		Request::request_body()
 {
+	std::cout << "Request body" << std::endl;
 	if (this->headers["Content-Type"].find("boundary") != std::string::npos && this->request.find("filename=") == std::string::npos)
 	{
 		if (this->request.find("Content-Disposition") != std::string::npos)
@@ -228,6 +229,16 @@ int		Request::request_body()
 		}
 	}
 	return EXIT_SUCCESS;
+}
+
+void Request::reset()
+{
+	this->Method.clear();
+    this->target.clear();
+    this->protocol.clear();
+    this->headers.clear();
+    this->queryUrl.clear();
+    this->url.clear();
 }
 
 std::string &Request::getMethod()

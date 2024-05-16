@@ -6,10 +6,10 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/02 16:55:58 by abasante         ###   ########.fr       */
-/*   Updated: 2024/05/02 16:48:46 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/16 18:46:40 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "Config.hpp"
 #include "Location.hpp"
@@ -112,9 +112,12 @@ std::vector<Config> Config::parseServers(std::ifstream &file, int contador)
 			std::string listen = line.substr(10);
 			size_t colonPos = listen.find(":");
 			std::string host = listen.substr(0, colonPos);
+			if (host.empty())
+				_serversConfig[i]._host = "ANY";
+			else
+				_serversConfig[i]._host = host;
 			std::string port_str = listen.substr(colonPos + 1);
     		int port = atoi(port_str.c_str());
-			_serversConfig[i]._host = host;
 			_serversConfig[i]._port = port;
 			_serversConfig[i]._ports.push_back(port);
 		}
