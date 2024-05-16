@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:36 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/16 18:41:52 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/16 19:02:20 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ class Request
         std::string protocol;
         std::string body;
         std::map<std::string, std::string> headers;
-        int			port;
+        //int			port;
         int         _statusCode;
         std::string ContentDiposition;
         std::string name;
@@ -98,17 +98,6 @@ class Request
         int     request_headers();
         int     request_body();
         void    printRequestInformation();
-        std::string &getMethod();
-        std::string &getTarget();
-        std::string &getProtocol();
-        int			&getPort1();
-        std::string		getQueryString();
-        std::map<std::string, std::string> &getHeaders();
-        std::string	autoindex_run(std::string rooted_path);
-        std::string		getReqValue(std::string _key);
-        std::string		getUrl();
-        void	setTarget(std::string _target);
-	    //void	clear();
         void    reset();
 };
 

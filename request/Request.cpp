@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:33 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/16 18:49:09 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/16 19:02:16 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,61 +240,3 @@ void Request::reset()
     this->queryUrl.clear();
     this->url.clear();
 }
-
-std::string &Request::getMethod()
-{
-	return this->Method;
-}
-
-void	Request::setTarget(std::string _target)
-{
-	this->target = _target;
-}
-std::string &Request::getTarget()
-{
-	if (this->target[0] != '/')
-		this->target = "/" + this->target;
-	return this->target;
-}
-
-std::string &Request::getProtocol()
-{
-	return this->protocol;
-}
-
-std::map<std::string, std::string> &Request::getHeaders()
-{
-	return this->headers;
-}
-
-std::string		Request::getQueryString()
-{
-	return (this->queryUrl);
-}
-
-std::string		Request::getReqValue(std::string _key)
-{
-	return (this->headers[_key]);
-}
-
-std::string		Request::getUrl()
-{
-	return this->url;
-}
-
-// int		&Request::getPort1()
-// {
-// 	std::string tmp;
-// 	for (std::map<std::string, std::string>::iterator it = this->headers.begin(); it != this->headers.end(); it++)
-// 		if (it->first == "Host")
-// 			tmp = it->second;
-// 	if (tmp.find(":") != std::string::npos)
-// 	{
-// 		tmp.erase(0, tmp.find(":") + 1);
-// 		this->port = atoi(tmp.c_str());
-// 	}
-// 	else
-// 		this->port = 80;
-	
-// 	return this->port;
-// }
