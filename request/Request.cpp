@@ -45,14 +45,14 @@ int Request::Request_start(std::string request)
 {
     int status_code = 0;
 	this->request = request;
-	std::cout << this->request << std::endl;
+	//std::cout << this->request << std::endl;
 	if ((status_code = this->request_line()) || (status_code = this->request_headers()) || (status_code = this->request_body()))
 		{
 			this->_statusCode = status_code;
 			return (status_code);
 		}
 	std::cout <<"+++++++++++++++++++++++++++++ Request ++++++++++++++++++++++++++++++++" << std::endl;
-	//printRequestInformation();
+	printRequestInformation();
 	return 0;
 }
 
@@ -131,16 +131,16 @@ int		Request::request_headers()
 	 std::string header;
 	 std::string value;
 
-	 while ((header_end = this->request.find("\r\n")) != std::string::npos)
-	 {
-		 std::string tmp = this->request.substr(0, header_end);
-		 if (header_end == 0)
-		 {
-			 this->request.erase(0, 2);
-			 break;
-		 }
-		 if ((header_dil = tmp.find(':', 0)) != std::string::npos)
-		 {
+	while ((header_end = this->request.find("\r\n")) != std::string::npos)
+	{
+		std::string tmp = this->request.substr(0, header_end);
+		if (header_end == 0)
+		{
+			this->request.erase(0, 2);
+			break;
+		}
+		if ((header_dil = tmp.find(':', 0)) != std::string::npos)
+		{
 			if (header_dil == 0 || tmp[header_dil - 1] == ' ')
 			 	return BAD_REQUEST;
 			header = tmp.substr(0, header_dil);
@@ -150,18 +150,17 @@ int		Request::request_headers()
 			if (header.length() > HEADER_MAX_LENGTH || value.length() > VALUE_MAX_LENGTH)
 				return BAD_REQUEST;
 			this->headers[header] = trim(value);
-		 }
-		 else
+		}
+		else
 		 	return BAD_REQUEST;
 		request.erase(0, header_end + 2);
 		tmp.clear();
-	 }
-	 return EXIT_SUCCESS;
+	}
+	return EXIT_SUCCESS;
 }
 
 int		Request::request_body()
 {
-	std::cout << "Request body" << std::endl;
 	if (this->headers["Content-Type"].find("boundary") != std::string::npos && this->request.find("filename=") == std::string::npos)
 	{
 		if (this->request.find("Content-Disposition") != std::string::npos)
