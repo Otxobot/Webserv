@@ -12,7 +12,7 @@
 
 NAME = webserv
 
-FILES = main ./server/Server ./config/Config ./config/Location ./request/Request
+FILES = main ./server/Server ./config/Config ./config/Location ./request/Request ./response/Response
 
 SRC = $(addsuffix .cpp, $(FILES))
 
