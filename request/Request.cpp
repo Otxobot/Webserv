@@ -236,6 +236,14 @@ int		Request::request_body()
 	return EXIT_SUCCESS;
 }
 
+std::string &Request::getTarget()
+{
+	std::cout << "THIS IS TARGET->"<<this->target << std::endl;
+	if (this->target[0] != '/')
+		this->target = "/" + this->target;
+	return (this->target);
+}
+
 void Request::reset()
 {
 	this->Method.clear();

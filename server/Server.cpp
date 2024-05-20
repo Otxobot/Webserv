@@ -226,7 +226,7 @@ void Server::acceptedConnectHandling(int &accptSockFD)
 		this->_request.Request_start(req);
 		if (FD_ISSET(accptSockFD, &_writeFDs))
 		{
-			//this->responseHandling(accptSockFD);
+			this->responseHandling(accptSockFD);
 		}
 	}
 	if (valRead == 0)
@@ -288,29 +288,30 @@ void Server::acceptedConnectHandling(int &accptSockFD)
 // 	return (str);
 // }
 
-// void Server::responseHandling(int &accptSockFD)
-// {
-// 	std::string body;
-// 	std::string path = _request.getTarget().erase(0, 1);
-// 	char *header = strdup("HTTP/1.1 200 OK\r\nContent-Length: ");
+void Server::responseHandling(int &accptSockFD)
+{
+	std::string body;
+	std::string path = _request.getTarget().erase(0, 1);
+	//char *header = strdup("HTTP/1.1 200 OK\r\nContent-Length: ");
 
-// 	Response _resp;
-// 	_resp.creatResponse(this->_servers, this->_request);
-// 	this->_request.clear();
+	Response _resp;
+	_resp.responseCreation(this->servers_parsed, this->_request);
+	// this->_request.clear();
 
-// 	std::string all = std::string(header) + std::string(ft_itoa(_resp.GetBody().size())) + "\r\n\r\n" + _resp.GetBody();
+	// std::string all = std::string(header) + std::string(ft_itoa(_resp.GetBody().size())) + "\r\n\r\n" + _resp.GetBody();
 
-// 	if (FD_ISSET(accptSockFD, &_writeFDs))
-// 	{
-// 		if (send(accptSockFD, _resp.getRespHeader().c_str(), _resp.getRespHeader().length(), 0) != (ssize_t)_resp.getRespHeader().length())
-// 			throw std::runtime_error("Unable to send the response to client in socket " + std::to_string(accptSockFD));
-// 		if (!this->_request.getReqValue("Connection").compare("close")) // if connection is set to close in request close
-// 		{
-// 			close(accptSockFD);
-// 			FD_CLR(accptSockFD, &_masterFDs);
-// 			FD_CLR(accptSockFD, &_writeFDs);
-// 		}
-// 	}
-// 	_resp.clear();
-// 	this->_request.clear();
-// }
+	 if (FD_ISSET(accptSockFD, &_writeFDs))
+	{
+		std::cout << "something with the socket" << std::endl;
+	// 	if (send(accptSockFD, _resp.getRespHeader().c_str(), _resp.getRespHeader().length(), 0) != (ssize_t)_resp.getRespHeader().length())
+	// 		throw std::runtime_error("Unable to send the response to client in socket " + std::to_string(accptSockFD));
+	// 	if (!this->_request.getReqValue("Connection").compare("close")) // if connection is set to close in request close
+	// 	{
+	// 		close(accptSockFD);
+	// 		FD_CLR(accptSockFD, &_masterFDs);
+	// 		FD_CLR(accptSockFD, &_writeFDs);
+	// 	}
+	 }
+	// _resp.clear();
+	// this->_request.clear();
+}

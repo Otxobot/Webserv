@@ -5,17 +5,18 @@
 #include "../config/Location.hpp"
 #include "../request/Request.hpp"
 
-#include <unistd.h>
-#include <fstream>
-#include <sstream>
-#include <sys/stat.h>
-#include <dirent.h>
+// #include <unistd.h>
+// #include <fstream>
+// #include <sstream>
+// #include <sys/stat.h>
+// #include <dirent.h>
+#include <string>
 
 #define DEFAULT "/index.html"
 
 class Config;
-Class Location;
-Class Request;
+class Location;
+class Request;
 
 class Response
 {
@@ -32,8 +33,11 @@ class Response
     public:
         Response();
         ~Response();
+        void        responseCreation(std::vector<Config> &servers, Request &request);
         std::string getHeaders();
-        
+        std::string getStatusCodeTranslate();
+        void        makeBody();
+
 };
 
 #endif

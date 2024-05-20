@@ -99,6 +99,7 @@ class Request
         int     request_body();
         void    printRequestInformation();
         void    reset();
+        std::string &getTarget();
 };
 
 #endif

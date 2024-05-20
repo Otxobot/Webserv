@@ -60,3 +60,21 @@ std::string Response::getStatusCodeTranslate()
     return status;
 }
 
+void Response::makeBody()
+{
+    
+}
+
+void Response::responseCreation(std::vector<Config> &servers, Request &request)
+{
+    time_t _time;
+	std::string tm;
+	time(&_time);
+	tm = ctime(&_time);
+
+    tm.erase(tm.length() - 1);
+    this->_request = request;
+    this->_servers = servers;
+    this->makeBody();
+
+}

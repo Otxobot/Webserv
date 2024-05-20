@@ -24,6 +24,7 @@
 #include "../Webserv.hpp"
 #include "../config/Config.hpp"
 #include "../request/Request.hpp"
+#include "../response/Response.hpp"
 #include <cstring>
 #include <string>
 #include <arpa/inet.h>
@@ -48,6 +49,7 @@
 
 class Config;
 class Request;
+class Response;
 
 class Server
 {
