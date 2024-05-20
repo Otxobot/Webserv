@@ -213,13 +213,19 @@ int		Request::request_body()
 	}
 	else
 	{
+		std::cout << "This is where the code will go in these cases:" << std::endl;
 		if (this->request.find("\n") == std::string::npos)
+		{
+			std::cout << "it didn't find a newline" << std::endl;
 			this->body = this->request;
+		}
 		else
 		{
+			std::cout << "it found a newline" << std::endl;
 			while (this->request.length())
 			{	
 				std::string tmp = this->request.substr(0, this->request.find("\n"));
+				std::cout << "tmp: " << tmp << std::endl;
 				if (tmp[tmp.size() - 1] == '\r')
     				tmp.erase(tmp.size() - 1);
 				this->body.append(tmp);
