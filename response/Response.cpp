@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/21 13:00:33 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/21 13:02:30 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,5 +88,5 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     this->_request = request;
     this->_servers = servers;
     this->makeBody();
-
+    
 }

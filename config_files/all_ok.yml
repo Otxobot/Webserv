@@ -104,7 +104,7 @@ server:
 server:
   servername: register.com
   listen: 127.0.0.1:61009
-  root: "www/register"
+  root: "./www/register"
   location: /
     file: index.html
     handle_post: "setCookie"

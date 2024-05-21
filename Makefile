@@ -6,13 +6,14 @@
 #    By: abasante <abasante@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/29 11:39:15 by abasante          #+#    #+#              #
-#    Updated: 2024/05/09 15:29:31 by abasante         ###   ########.fr        #
+#    Updated: 2024/05/21 13:19:19 by abasante         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = webserv
 
-FILES = main ./server/Server ./config/Config ./config/Location ./request/Request ./response/Response
+FILES = main ./server/Server ./config/Config ./config/Location ./request/Request ./response/Response \
+		parseo utils_parseo location_utils
 
 SRC = $(addsuffix .cpp, $(FILES))
 
