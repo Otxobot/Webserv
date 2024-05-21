@@ -1,0 +1,16 @@
+server:
+  servername: site1.com
+  listen: 127.0.0.1:61001
+  root: "./www/site1"
+  location: /
+    file: "index.html"
+  location: "/goto42"
+    redirect: "www.42urduliz.com"
+  location: "/ai"
+    root: "www"
+    autoindex: on
+  location: "/favicon.ico"
+    file: "icon1.png"
+  location: "/images/sample"
+    file: "images/sample_image1.jpg"
+
