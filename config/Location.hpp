@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 13:26:21 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/13 16:35:38 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/21 17:26:51 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ class Location
 		bool			_allowGET;
 		bool			_allowPOST;
 		bool			_allowDELETE;
-		std::string					_file;
 		std::string					_redirect;
 		std::string					_root;
 		bool						_autoindex;
@@ -37,6 +36,7 @@ class Location
 		std::string					_upload;
 		int							_buffer_size;
 	public:
+		std::string					_file;
 		Location();
 		Location(const Location &other);
 		Location &operator=(const Location &rhs);

@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/21 13:02:30 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/21 17:27:59 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,33 @@ std::string Response::getStatusCodeTranslate()
 
 void Response::makeBody()
 {
-    
+    std::string path_to_requested = this->_request.getTarget();
+    this->_isLocation = false;
+    this->_isCGI = false;
+
+    if (path_to_requested.empty())
+        path_to_requested.append("/");
+    for (size_t i = 0; i < this->_servers.size(); i++)
+    {
+        if (this->_servers[i].getPort() == this->_request.getPort())
+        {
+            this->_server = this->_servers[i];
+            break;
+        }
+    }
+    std::map<std::string, Location> locations = this->_server._locations;
+    for (std::map<std::string, Location>::iterator it = locations.begin(); it != locations.end(); it++)
+    {
+        std::cout << it->first << " and " << it->second._ << std::endl;
+        
+    }
+    // std::vector<Location> all_locations;
+    // for (std::map<std::string, Location>::iterator it = locations.begin(); it != locations.end() ; it++)
+    // {
+    //     std::cout << "entro aqui" << std::endl;
+    //     std::cout << it->first << std::endl;
+    //     all_locations.push_back(it->second);
+    // }
 }
 
 void Response::responseCreation(std::vector<Config> &servers, Request &request)

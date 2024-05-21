@@ -6,14 +6,14 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:14 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/13 16:35:31 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/21 16:55:26 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
-#include "../Webserv.hpp"
+//#include "../Webserv.hpp"
 #include "../server/Server.hpp"
 #include "../request/Request.hpp"
 #include "./Location.hpp"
@@ -37,10 +37,10 @@ class Config
 		std::string							_file;
 		bool								_autoindex;
 		std::map<int, std::string>			_errorpage;
-		std::map<std::string, Location>		_locations;
 		unsigned long						_client_max_body_size;
 		int									_buffer_size;
 	public:
+		std::map<std::string, Location>		_locations;
 		Config();
 		~Config();
 
@@ -52,6 +52,7 @@ class Config
 		int 					getPort();
 		std::string 			getHost();
 		int						getIndex();
+		//std::map<std::string, Location>	getLocations();
 };
 
 #endif

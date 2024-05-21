@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:33 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/16 19:02:16 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/21 16:37:02 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,15 +213,12 @@ int		Request::request_body()
 	}
 	else
 	{
-		std::cout << "This is where the code will go in these cases:" << std::endl;
 		if (this->request.find("\n") == std::string::npos)
 		{
-			std::cout << "it didn't find a newline" << std::endl;
 			this->body = this->request;
 		}
 		else
 		{
-			std::cout << "it found a newline" << std::endl;
 			while (this->request.length())
 			{	
 				std::string tmp = this->request.substr(0, this->request.find("\n"));
@@ -238,10 +235,26 @@ int		Request::request_body()
 
 std::string &Request::getTarget()
 {
-	std::cout << "THIS IS TARGET->"<<this->target << std::endl;
 	if (this->target[0] != '/')
 		this->target = "/" + this->target;
 	return (this->target);
+}
+
+int		&Request::getPort()
+{
+	std::string tmp;
+	for (std::map<std::string, std::string>::iterator it = this->headers.begin(); it != this->headers.end(); it++)
+		if (it->first == "Host")
+			tmp = it->second;
+	if (tmp.find(":") != std::string::npos)
+	{
+		tmp.erase(0, tmp.find(":") + 1);
+		this->port = atoi(tmp.c_str());
+	}
+	else
+		this->port = 80;
+	
+	return this->port;
 }
 
 void Request::reset()

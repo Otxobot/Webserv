@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:43 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/21 13:00:45 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/21 16:07:34 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ class Response
 {
     private:
         std::vector<Config> _servers;
+        Config  _server;
         Request _request;
         std::string _body;
         std::string _statusLine;

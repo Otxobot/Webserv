@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:36 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/16 19:02:20 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/21 15:59:54 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ class Request
         std::string protocol;
         std::string body;
         std::map<std::string, std::string> headers;
-        //int			port;
+        int			port;
         int         _statusCode;
         std::string ContentDiposition;
         std::string name;
@@ -100,6 +100,7 @@ class Request
         void    printRequestInformation();
         void    reset();
         std::string &getTarget();
+        int     &getPort();
 };
 
 #endif

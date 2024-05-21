@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/16 18:46:40 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/21 17:25:50 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,11 @@ std::vector<Config> Config::parseConfig(std::string configFile)
 		}
 	}
 	serversConfig = parseServers(file, contador);
+	if(serversConfig[1]._locations.empty())
+	{
+		std::cout << "esta vacio al salir de parseServers" << std::endl;
+	}
+	std::cout << "no esta vacio" << std::endl;
 	return (serversConfig);
 }
 
@@ -90,7 +95,8 @@ std::vector<Config> Config::parseServers(std::ifstream &file, int contador)
 		while (line.find("location:") != std::string::npos)
 		{
 			line_sin_comillas = this->trim_comillas(line.substr(12));
-			this->_locations[line_sin_comillas] = this->parseLocation(file, line);
+			_serversConfig[i]._locations[line_sin_comillas] = this->parseLocation(file, line);
+
 		}
 		if (line.find("server:") != std::string::npos)
 		{
@@ -234,3 +240,9 @@ int Config::getIndex()
 {
 	return this->_index;
 }
+
+// std::map<std::string, Location> Config::getLocations()
+// {
+// 	std::cout << "entro a get locations" << std::endl;
+// 	return (this->_locations);
+// }

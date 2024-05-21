@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:08 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/14 12:48:19 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/21 16:12:40 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@
 #include "../Webserv.hpp"
 #include "../config/Config.hpp"
 #include "../request/Request.hpp"
-#include "../response/Response.hpp"
 #include <cstring>
 #include <string>
 #include <arpa/inet.h>
