@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:36 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 15:04:11 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/22 15:55:25 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,8 @@ class Request
         int     &getPort();
         std::string &getProtocol();
         std::string getMethod();
+        std::string getQueryString() const; // nuevo método
+        std::string getReqValue(const std::string& key) const; // nuevo método
 };
 
 #endif

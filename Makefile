@@ -3,17 +3,17 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: abasante <abasante@student.42.fr>          +#+  +:+       +#+         #
+#    By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/29 11:39:15 by abasante          #+#    #+#              #
-#    Updated: 2024/05/21 16:02:48 by abasante         ###   ########.fr        #
+#    Updated: 2024/05/22 16:00:13 by mikferna         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = webserv
 
 FILES = main ./server/Server ./config/Config ./config/Location ./request/Request ./response/Response \
-		./parseo_conf/parseo ./parseo_conf/utils_parseo ./parseo_conf/location_utils
+		./parseo_conf/parseo ./parseo_conf/utils_parseo ./parseo_conf/location_utils ./cgi/cgi
 
 SRC = $(addsuffix .cpp, $(FILES))
 
