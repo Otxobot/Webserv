@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/21 17:27:59 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/22 12:52:08 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,18 +89,12 @@ void Response::makeBody()
         }
     }
     std::map<std::string, Location> locations = this->_server._locations;
-    for (std::map<std::string, Location>::iterator it = locations.begin(); it != locations.end(); it++)
+    std::vector<Location> all_locations;
+    for (std::map<std::string, Location>::iterator it = locations.begin(); it != locations.end() ; it++)
     {
-        std::cout << it->first << " and " << it->second._ << std::endl;
-        
+        all_locations.push_back(it->second);
     }
-    // std::vector<Location> all_locations;
-    // for (std::map<std::string, Location>::iterator it = locations.begin(); it != locations.end() ; it++)
-    // {
-    //     std::cout << "entro aqui" << std::endl;
-    //     std::cout << it->first << std::endl;
-    //     all_locations.push_back(it->second);
-    // }
+    
 }
 
 void Response::responseCreation(std::vector<Config> &servers, Request &request)
