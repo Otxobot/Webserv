@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:43 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/21 16:07:34 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/22 15:31:23 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 // #include <sys/stat.h>
 // #include <dirent.h>
 #include <string>
+#include <sstream>
 
 #define DEFAULT "/index.html"
 

@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:33 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/21 16:37:02 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/22 15:04:32 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,6 +255,16 @@ int		&Request::getPort()
 		this->port = 80;
 	
 	return this->port;
+}
+
+std::string &Request::getProtocol()
+{
+	return (this->protocol);
+}
+
+std::string Request::getMethod()
+{
+	return (this->Method);
 }
 
 void Request::reset()

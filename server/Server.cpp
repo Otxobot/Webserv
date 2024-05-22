@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:11 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 13:18:51 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/22 15:05:13 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -300,20 +300,19 @@ void Server::responseHandling(int &accptSockFD)
 	_resp.responseCreation(this->servers_parsed, this->_request);
 	// this->_request.clear();
 
-	// std::string all = std::string(header) + std::string(ft_itoa(_resp.GetBody().size())) + "\r\n\r\n" + _resp.GetBody();
+	//std::string all = std::string(header) + std::string(ft_itoa(_resp.GetBody().size())) + "\r\n\r\n" + _resp.GetBody();
 
-	 if (FD_ISSET(accptSockFD, &_writeFDs))
+	if (FD_ISSET(accptSockFD, &_writeFDs))
 	{
 		std::cout << "something with the socket" << std::endl;
-	// 	if (send(accptSockFD, _resp.getRespHeader().c_str(), _resp.getRespHeader().length(), 0) != (ssize_t)_resp.getRespHeader().length())
-	// 		throw std::runtime_error("Unable to send the response to client in socket " + std::to_string(accptSockFD));
-	// 	if (!this->_request.getReqValue("Connection").compare("close")) // if connection is set to close in request close
+		//if (send)
+	// 	if () // if connection is set to close in request close
 	// 	{
 	// 		close(accptSockFD);
 	// 		FD_CLR(accptSockFD, &_masterFDs);
 	// 		FD_CLR(accptSockFD, &_writeFDs);
 	// 	}
-	 }
+	}
 	// _resp.clear();
 	// this->_request.clear();
 }

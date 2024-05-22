@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 13:32:43 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/22 15:32:31 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,11 +91,6 @@ void Response::makeBody()
     std::map<std::string, Location> locations = this->_server._locations;
     
     std::vector<Location> all_locations;
-    for (std::map<std::string, Location>::iterator it = locations.begin(); it != locations.end() ; it++)
-    {
-        std::cout << "it->second:" << it->second._file << std::endl;
-        all_locations.push_back(it->second);
-    }
     
 }
 
@@ -105,10 +100,25 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
 	std::string tm;
 	time(&_time);
 	tm = ctime(&_time);
+    std::string protocol = request.getProtocol();
+    std::cout << protocol << std::endl;
 
     tm.erase(tm.length() - 1);
     this->_request = request;
     this->_servers = servers;
-    this->makeBody();
-    
+    //this->makeBody();
+    if (request.getMethod() == "GET")
+    {
+        std::cout << request.getMethod() << std::endl;
+        std::cout << "entro en el trozo del response de GET" << std::endl;
+        //en caso de que el get estuviera accediendo a un archivo que si puede coger
+        this->_response.append(protocol);
+        this->_response.append(" ");
+        int number = this->_statusCode;
+        std::ostringstream oss;
+        oss << number;
+        std::string status_code = oss.str();
+        this->_response.append(status_code);
+        std::cout << "response:" << this->_response << std::endl;
+    }
 }
