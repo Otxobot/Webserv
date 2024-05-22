@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 17:45:23 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/22 18:12:19 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,6 +155,7 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
             oss.str("");
             oss << htmlContent.size();
             this->_response.append(oss.str());
+            this->_response.append("\r\nConnection: Closed\r\n");
             this->_response.append("\r\n\r\n");
             this->_response.append(ss.str());
         }else{
