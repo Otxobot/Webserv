@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/21 17:25:50 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/22 13:25:36 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,11 +68,6 @@ std::vector<Config> Config::parseConfig(std::string configFile)
 		}
 	}
 	serversConfig = parseServers(file, contador);
-	if(serversConfig[1]._locations.empty())
-	{
-		std::cout << "esta vacio al salir de parseServers" << std::endl;
-	}
-	std::cout << "no esta vacio" << std::endl;
 	return (serversConfig);
 }
 
@@ -144,6 +139,7 @@ Location Config::parseLocation(std::ifstream &file, std::string &line)
     {
         if (line.find("location:") != std::string::npos || line.find("server:") != std::string::npos)
         {
+		
             break;
         }
         if (line.find("allow: ") != std::string::npos)

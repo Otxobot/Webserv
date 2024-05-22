@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 13:26:21 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/21 17:26:51 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/22 13:25:42 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 class Location
 {
 	private:
+		std::string		
 		//int					_index;
 		bool			_allowGET;
 		bool			_allowPOST;

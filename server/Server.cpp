@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:11 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/21 17:04:27 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/22 13:18:51 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,6 @@ Server::Server(Config config, std::string configFile) : _masterSockFD(0),
 				   _maxSockFD(0)
 {
 				   this->servers_parsed = config.parseConfig(configFile);
-				//    if (this->servers_parsed[0]._locations.empty())
-				//    {
-				// 		std::cout << "esta vacio desde aqui" << std::endl;
-					
-				//    }
-				//    else{
-				// 	std::cout << "no esta vacio" << std::endl;
-				//    }
-
 				   this->makeSockets();
 				   this->waitingForConnections();
 }
