@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 15:32:31 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/22 15:59:53 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,6 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
 	time(&_time);
 	tm = ctime(&_time);
     std::string protocol = request.getProtocol();
-    std::cout << protocol << std::endl;
 
     tm.erase(tm.length() - 1);
     this->_request = request;
@@ -109,7 +108,6 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     //this->makeBody();
     if (request.getMethod() == "GET")
     {
-        std::cout << request.getMethod() << std::endl;
         std::cout << "entro en el trozo del response de GET" << std::endl;
         //en caso de que el get estuviera accediendo a un archivo que si puede coger
         this->_response.append(protocol);
@@ -119,6 +117,21 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         oss << number;
         std::string status_code = oss.str();
         this->_response.append(status_code);
-        std::cout << "response:" << this->_response << std::endl;
+        this->_response.append(" OK\r\n");
+        this->_response.append("Date: ");
+        this->_response.append(tm);
+        this->_response.append(" GMT\r\n");
+        this->_response.append("Content-Type: ");
+        this->_response.append("");
+        std::cout << "response:\n" << this->_response << std::endl;
+        
+    }
+    if (request.getMethod() == "POST")
+    {
+        
+    }
+    if (request.getMethod() == "DELETE")
+    {
+        
     }
 }
