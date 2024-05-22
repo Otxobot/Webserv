@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 15:59:53 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/22 17:45:23 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,25 @@ void Response::makeBody()
     
 }
 
+// void    Response::get_body(std::string file_name)
+// {
+//     std::ifstream file(file_name);
+//     if (access(file_name.c_str(), F_OK) != 0) // Check if The file existe
+//         return; 
+//     else
+//     {
+// 	    if (file)
+// 	    {
+// 	        std::ostringstream ss;
+// 	        ss << file.rdbuf();
+// 	        this->_body = ss.str();
+// 	    }
+//         else
+//             return ;
+// 	    file.close(); // close the file(filename)
+//     }
+// }
+
 void Response::responseCreation(std::vector<Config> &servers, Request &request)
 {
     time_t _time;
@@ -101,6 +120,10 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
 	time(&_time);
 	tm = ctime(&_time);
     std::string protocol = request.getProtocol();
+    std::string url = request.getTarget();
+    std::cout << url << std::endl;
+    //int a = sizeof("./html/index.html");
+    //std::cout << a << std::endl;
 
     tm.erase(tm.length() - 1);
     this->_request = request;
@@ -108,7 +131,6 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     //this->makeBody();
     if (request.getMethod() == "GET")
     {
-        std::cout << "entro en el trozo del response de GET" << std::endl;
         //en caso de que el get estuviera accediendo a un archivo que si puede coger
         this->_response.append(protocol);
         this->_response.append(" ");
@@ -122,9 +144,23 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         this->_response.append(tm);
         this->_response.append(" GMT\r\n");
         this->_response.append("Content-Type: ");
-        this->_response.append("");
-        std::cout << "response:\n" << this->_response << std::endl;
-        
+        this->_response.append("text/html\r\n");
+        std::ifstream file1("./html/index.html");
+        if (file1)
+        {
+            std::ostringstream ss;
+            ss << file1.rdbuf();
+            std::string htmlContent = ss.str();
+            this->_response.append("Content-Length: ");
+            oss.str("");
+            oss << htmlContent.size();
+            this->_response.append(oss.str());
+            this->_response.append("\r\n\r\n");
+            this->_response.append(ss.str());
+        }else{
+            std::cerr << "Error opening file" << std::endl;
+        }
+
     }
     if (request.getMethod() == "POST")
     {

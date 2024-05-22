@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:43 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 15:31:23 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/22 17:18:08 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,21 +37,22 @@ class Response
         std::vector<Config> _servers;
         Config  _server;
         Request _request;
-        std::string _body;
+        //std::string _body;
         std::string _statusLine;
         std::string _headers;
-        std::string _response;
         int _statusCode;
         bool _isCGI;
         bool _isLocation;
     public:
+        std::string _body;
+        std::string _response;
         Response();
         ~Response();
         void        responseCreation(std::vector<Config> &servers, Request &request);
         std::string getHeaders();
         std::string getStatusCodeTranslate();
         void        makeBody();
-
+        //void        get_body();
 };
 
 #endif
