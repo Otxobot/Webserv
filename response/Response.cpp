@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/23 15:54:20 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/23 16:18:21 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,10 +112,12 @@ void Response::enter_location(Config server, std::string uri)
     Location our_location;
     if (uri.empty())
         uri.append("/");
-    
     std::cout << server._port << std::endl;
     our_location = server._locations[uri];
-    std::cout <<"aasdfasdf->"<< our_location._file << std::endl;
+    if (!our_location._file.empty())
+    {
+        std::cout <<"our_location._file->"<< our_location._file << std::endl;
+    }
 }
 
 void Response::responseCreation(std::vector<Config> &servers, Request &request)
@@ -125,7 +127,7 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
 	time(&_time);
 	tm = ctime(&_time);
     std::string protocol = request.getProtocol();
-    
+
     tm.erase(tm.length() - 1);
     this->_request = request;
     this->_servers = servers;
@@ -139,6 +141,7 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         std::string uri = this->_request.getTarget();
         std::cout << uri << std::endl;
         this->enter_location(this->_server, uri);
+        
         //this->check_for_statusCode();
         // int number = this->_statusCode;
         // std::ostringstream oss;

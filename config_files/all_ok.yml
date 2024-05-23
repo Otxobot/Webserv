@@ -16,7 +16,7 @@ server:
 server:
   servername: site2.com
   listen: 127.0.0.1:61002
-  root: "./www/site2"
+  root: "./html/segunda_pagina"
   location: /
     file: "index.html"
   location: "/favicon.ico"
