@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:33 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 15:04:32 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/23 13:40:13 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,14 +233,14 @@ int		Request::request_body()
 	return EXIT_SUCCESS;
 }
 
-std::string &Request::getTarget()
+std::string Request::getTarget()
 {
 	if (this->target[0] != '/')
 		this->target = "/" + this->target;
 	return (this->target);
 }
 
-int		&Request::getPort()
+int		Request::getPort()
 {
 	std::string tmp;
 	for (std::map<std::string, std::string>::iterator it = this->headers.begin(); it != this->headers.end(); it++)

@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:43 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 17:18:08 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/23 13:55:41 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,10 @@ class Response
         void        responseCreation(std::vector<Config> &servers, Request &request);
         std::string getHeaders();
         std::string getStatusCodeTranslate();
-        void        makeBody();
+        //void        makeBody();
         //void        get_body();
+        Config      calibrate_host_location(std::vector<Config> _servers, Request _request);
+        void        enter_location(Config server, std::string uri);
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:36 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 15:04:11 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/23 13:38:03 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,8 +99,8 @@ class Request
         int     request_body();
         void    printRequestInformation();
         void    reset();
-        std::string &getTarget();
-        int     &getPort();
+        std::string getTarget();
+        int     getPort();
         std::string &getProtocol();
         std::string getMethod();
 };

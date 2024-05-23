@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 18:12:19 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/23 14:01:38 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,27 +72,27 @@ std::string Response::getStatusCodeTranslate()
     return status;
 }
 
-void Response::makeBody()
-{
-    std::string path_to_requested = this->_request.getTarget();
-    this->_isLocation = false;
-    this->_isCGI = false;
+// void Response::makeBody()
+// {
+//     std::string path_to_requested = this->_request.getTarget();
+//     this->_isLocation = false;
+//     this->_isCGI = false;
 
-    if (path_to_requested.empty())
-        path_to_requested.append("/");
-    for (size_t i = 0; i < this->_servers.size(); i++)
-    {
-        if (this->_servers[i].getPort() == this->_request.getPort())
-        {
-            this->_server = this->_servers[i];
-            break;
-        }
-    }
-    std::map<std::string, Location> locations = this->_server._locations;
+//     if (path_to_requested.empty())
+//         path_to_requested.append("/");
+//     for (size_t i = 0; i < this->_servers.size(); i++)
+//     {
+//         if (this->_servers[i].getPort() == this->_request.getPort())
+//         {
+//             this->_server = this->_servers[i];
+//             break;
+//         }
+//     }
+//     std::map<std::string, Location> locations = this->_server._locations;
     
-    std::vector<Location> all_locations;
+//     std::vector<Location> all_locations;
     
-}
+// }
 
 // void    Response::get_body(std::string file_name)
 // {
@@ -113,6 +113,29 @@ void Response::makeBody()
 //     }
 // }
 
+Config Response::calibrate_host_location(std::vector<Config> _servers, Request _request)
+{
+    int i = 0;
+    int size = _servers.size();
+    while (i < size)
+    {
+        if (_servers[i]._port == _request.getPort())
+        {
+            std::cout << "SE HA CALIBRADO:" <<i<< std::endl;
+            return (_servers[i]);
+        }
+        i++;
+    }
+    return _servers[i];
+}
+
+void Response::enter_location(Config server, std::string uri)
+{
+    Location our_location;
+    our_location = server._locations[uri];
+    std::cout << our_location._file << std::endl;
+}
+
 void Response::responseCreation(std::vector<Config> &servers, Request &request)
 {
     time_t _time;
@@ -120,11 +143,7 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
 	time(&_time);
 	tm = ctime(&_time);
     std::string protocol = request.getProtocol();
-    std::string url = request.getTarget();
-    std::cout << url << std::endl;
-    //int a = sizeof("./html/index.html");
-    //std::cout << a << std::endl;
-
+    
     tm.erase(tm.length() - 1);
     this->_request = request;
     this->_servers = servers;
@@ -134,33 +153,38 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         //en caso de que el get estuviera accediendo a un archivo que si puede coger
         this->_response.append(protocol);
         this->_response.append(" ");
-        int number = this->_statusCode;
-        std::ostringstream oss;
-        oss << number;
-        std::string status_code = oss.str();
-        this->_response.append(status_code);
-        this->_response.append(" OK\r\n");
-        this->_response.append("Date: ");
-        this->_response.append(tm);
-        this->_response.append(" GMT\r\n");
-        this->_response.append("Content-Type: ");
-        this->_response.append("text/html\r\n");
-        std::ifstream file1("./html/index.html");
-        if (file1)
-        {
-            std::ostringstream ss;
-            ss << file1.rdbuf();
-            std::string htmlContent = ss.str();
-            this->_response.append("Content-Length: ");
-            oss.str("");
-            oss << htmlContent.size();
-            this->_response.append(oss.str());
-            this->_response.append("\r\nConnection: Closed\r\n");
-            this->_response.append("\r\n\r\n");
-            this->_response.append(ss.str());
-        }else{
-            std::cerr << "Error opening file" << std::endl;
-        }
+        this->_server = this->calibrate_host_location(this->_servers, this->_request);
+        std::string uri = this->_request.getTarget();
+        std::cout << uri << std::endl;
+        this->enter_location(this->_server, uri);
+        
+        // int number = this->_statusCode;
+        // std::ostringstream oss;
+        // oss << number;
+        // std::string status_code = oss.str();
+        // this->_response.append(status_code);
+        // this->_response.append(" OK\r\n");
+        // this->_response.append("Date: ");
+        // this->_response.append(tm);
+        // this->_response.append(" GMT\r\n");
+        // this->_response.append("Content-Type: ");
+        // this->_response.append("text/html\r\n");
+        // std::ifstream file1("./html/index.html");
+        // if (file1)
+        // {
+        //     std::ostringstream ss;
+        //     ss << file1.rdbuf();
+        //     std::string htmlContent = ss.str();
+        //     this->_response.append("Content-Length: ");
+        //     oss.str("");
+        //     oss << htmlContent.size();
+        //     this->_response.append(oss.str());
+        //     this->_response.append("\r\nConnection: Closed\r\n");
+        //     this->_response.append("\r\n\r\n");
+        //     this->_response.append(ss.str());
+        // }else{
+        //     std::cerr << "Error opening file" << std::endl;
+        // }
 
     }
     if (request.getMethod() == "POST")
