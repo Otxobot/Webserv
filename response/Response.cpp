@@ -27,10 +27,10 @@ std::string Response::getHeaders()
     return this->_headers;
 }
 
-std::string Response::getStatusCodeTranslate()
+std::string Response::getStatusCodeTranslate(int status_code)
 {
     std::string status = "";
-    switch (this->_statusCode)
+    switch (status_code)
     {
         case 200:
             status = "OK";
@@ -120,6 +120,47 @@ void Response::enter_location(Config server, std::string uri)
     }
 }
 
+
+// int Response::check_for_statusCode()
+// {
+
+// }
+
+void Response::handle_SC_error(int sc)
+{
+    std::ostringstream oss;
+    oss << sc;
+    std::string statusCodeStr = oss.str();
+
+    std::string html = 
+        "<!DOCTYPE html>"
+        "<html>"
+        "<head>"
+        "<title>Error Page</title>"
+        "<style>"
+        "body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }"
+        "h1 { font-size: 50px; }"
+        "p { font-size: 24px; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<h1>Error page</h1>"
+        "<p>Status code: " + statusCodeStr + "</p>"
+        "<p>" + this->getStatusCodeTranslate(sc) + "</p>"
+        "</body>"
+        "</html>";
+
+    // Print the HTML to the console (or to an HTTP response, etc.)
+    this->_body = html;
+    std::cout << html << std::endl;
+    this->_response.append("Content-Type: ");
+    this->_response.append("text/html\r\n");
+            this->_response.append("Content-Length: ");
+            this->_response.append("\r\nConnection: Closed\r\n");
+            this->_response.append("\r\n\r\n");
+            this->_response.append(html);
+}
+
 void Response::responseCreation(std::vector<Config> &servers, Request &request)
 {
     time_t _time;
@@ -131,29 +172,58 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     tm.erase(tm.length() - 1);
     this->_request = request;
     this->_servers = servers;
-    //this->makeBody();
+    this->_server = this->calibrate_host_location(this->_servers, this->_request);
+    std::string uri = this->_request.getTarget();
+    std::cout << uri << std::endl;
+    this->enter_location(this->_server, uri);
+    this->_statusCode = this->_request.getStatusCode();
+    if (this->_request.getMethod() != "GET" && this->_request.getMethod() != "POST" && this->_request.getMethod() != "DELETE")
+    {
+            this->_statusCode = 501;
+            this->handle_SC_error(this->_statusCode);
+    }
+    // else
+    // {
+    //     this->_statusCode = 405;
+    //     this->handle_SC_error(this->_statusCode);
+    // }
     if (request.getMethod() == "GET")
     {
-        //en caso de que el get estuviera accediendo a un archivo que si puede coger
         this->_response.append(protocol);
         this->_response.append(" ");
-        this->_server = this->calibrate_host_location(this->_servers, this->_request);
-        std::string uri = this->_request.getTarget();
-        std::cout << uri << std::endl;
-        this->enter_location(this->_server, uri);
         
         //this->check_for_statusCode();
-        // int number = this->_statusCode;
-        // std::ostringstream oss;
-        // oss << number;
-        // std::string status_code = oss.str();
-        // this->_response.append(status_code);
-        // this->_response.append(" OK\r\n");
-        // this->_response.append("Date: ");
-        // this->_response.append(tm);
-        // this->_response.append(" GMT\r\n");
-        // this->_response.append("Content-Type: ");
-        // this->_response.append("text/html\r\n");
+        int number = this->_statusCode;
+        //int number = 505;
+        std::ostringstream oss;
+        oss << number;
+        std::string status_code = oss.str();
+        std::cout << status_code << std::endl;
+        if (status_code == "200")
+        {
+            this->_response.append(status_code);
+            this->_response.append(" OK\r\n");
+        }
+        else
+        {
+            this->_response.append(status_code);
+            std::string message = this->getStatusCodeTranslate(number);
+            this->_response.append(" ");
+            this->_response.append(message);
+            this->_response.append("Date: ");
+            this->_response.append(tm);
+            this->_response.append(" GMT\r\n");
+            this->handle_SC_error(number);
+            std::cout << this->_response << std::endl;
+            return ;
+        }
+        this->_response.append("Date: ");
+        this->_response.append(tm);
+        this->_response.append(" GMT\r\n");
+        this->_response.append("Content-Type: ");
+        this->_response.append("text/html\r\n");
+        std::cout << this->_response << std::endl;
+        this->createBody();
         // std::ifstream file1("./html/index.html");
         // if (file1)
         // {

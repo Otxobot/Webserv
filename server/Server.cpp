@@ -306,7 +306,7 @@ void Server::responseHandling(int &accptSockFD)
 	{
 		std::string response = _resp._response;
 		send(accptSockFD, response.c_str(), response.size(), 0);
-		//shutdown(accptSockFD, SHUT_WR);
+		shutdown(accptSockFD, SHUT_WR);
 	// 	if () // if connection is set to close in request close
 	// 	{
 	// 		close(accptSockFD);

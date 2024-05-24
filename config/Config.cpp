@@ -157,6 +157,12 @@ Location Config::parseLocation(std::ifstream &file, std::string &line)
                 loc.setAllowDELETE(true);
             }
         }
+		if (line.find("allow: ") == std::string::npos)
+		{
+			loc.setAllowGET(true);
+			loc.setAllowPOST(true);
+			loc.setAllowDELETE(true);
+		}
         if (line.find("file: ") != std::string::npos)
         {
             loc.setFile(trim_comillas(line.substr(10)));

@@ -50,11 +50,13 @@ class Response
         ~Response();
         void        responseCreation(std::vector<Config> &servers, Request &request);
         std::string getHeaders();
-        std::string getStatusCodeTranslate();
-        //void        makeBody();
+        std::string getStatusCodeTranslate(int status_code);
+        void        createBody();
         //void        get_body();
         Config      calibrate_host_location(std::vector<Config> _servers, Request _request);
         void        enter_location(Config server, std::string uri);
+        int         check_for_statusCode();
+        void        handle_SC_error(int sc);
 };
 
 #endif

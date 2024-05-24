@@ -267,6 +267,11 @@ std::string Request::getMethod()
 	return (this->Method);
 }
 
+int Request::getStatusCode()
+{
+	return (this->_statusCode);
+}
+
 void Request::reset()
 {
 	this->Method.clear();

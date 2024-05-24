@@ -103,6 +103,7 @@ class Request
         int     getPort();
         std::string &getProtocol();
         std::string getMethod();
+        int     getStatusCode();
 };
 
 #endif
