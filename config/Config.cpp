@@ -3,13 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   Config.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 13:25:36 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/22 16:28:16 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "Config.hpp"
 #include "Location.hpp"

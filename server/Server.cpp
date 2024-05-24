@@ -6,11 +6,12 @@
 /*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:11 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 16:00:32 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/23 12:31:01 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include "../response/Response.hpp"
 
 Server::Server(Config config, std::string configFile) : _masterSockFD(0),
 				   _port(0),
@@ -289,31 +290,16 @@ void Server::acceptedConnectHandling(int &accptSockFD)
 // 	return (str);
 // }
 
-#include "../response/Response.hpp"
+//#include "../response/Response.hpp"
 
-void Server::responseHandling(int &accptSockFD)
-{
-	std::string body;
-	std::string path = _request.getTarget().erase(0, 1);
-	//char *header = strdup("HTTP/1.1 200 OK\r\nContent-Length: ");
+void Server::responseHandling(int &accptSockFD) {
+    Response _resp;
+    _resp.createResponse(this->servers_parsed, this->_request);
 
-	Response _resp;
-	_resp.responseCreation(this->servers_parsed, this->_request);
-	// this->_request.clear();
-
-	//std::string all = std::string(header) + std::string(ft_itoa(_resp.GetBody().size())) + "\r\n\r\n" + _resp.GetBody();
-
-	if (FD_ISSET(accptSockFD, &_writeFDs))
-	{
-		std::cout << "something with the socket" << std::endl;
-		//if (send)
-	// 	if () // if connection is set to close in request close
-	// 	{
-	// 		close(accptSockFD);
-	// 		FD_CLR(accptSockFD, &_masterFDs);
-	// 		FD_CLR(accptSockFD, &_writeFDs);
-	// 	}
-	}
-	// _resp.clear();
-	// this->_request.clear();
+    if (FD_ISSET(accptSockFD, &_writeFDs)) {
+        send(accptSockFD, _resp.getStatusLine().c_str(), _resp.getStatusLine().size(), 0);
+        send(accptSockFD, _resp.getRespHeader().c_str(), _resp.getRespHeader().size(), 0);
+        send(accptSockFD, _resp.getBodyContent().c_str(), _resp.getBodyContent().size(), 0);
+        // Aquí puedes agregar la lógica para cerrar la conexión si es necesario
+    }
 }

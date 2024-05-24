@@ -6,7 +6,7 @@
 /*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:21 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 16:00:52 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/22 17:24:02 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "./config/Config.hpp"
 #include "./config/Location.hpp"
 #include "./request/Request.hpp"
+#include "./response/Response.hpp"
 #include "./cgi/cgi.hpp"
 
 //Aqui van todos los includes que se usaran en el proyecto, en los archivos incluimos Webserv.hpp y ya.
