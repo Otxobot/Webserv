@@ -107,18 +107,18 @@ Config Response::calibrate_host_location(std::vector<Config> _servers, Request _
     return _servers[i];
 }
 
-void Response::enter_location(Config server, std::string uri)
-{
-    Location our_location;
-    if (uri.empty())
-        uri.append("/");
-    std::cout << server._port << std::endl;
-    our_location = server._locations[uri];
-    if (!our_location._file.empty())
-    {
-        std::cout <<"our_location._file->"<< our_location._file << std::endl;
-    }
-}
+// void Response::enter_location(Config server, std::string uri)
+// {
+//     Location our_location;
+//     if (uri.empty())
+//         uri.append("/");
+//     std::cout << server._port << std::endl;
+//     our_location = server._locations[uri];
+//     if (!our_location._file.empty())
+//     {
+//         std::cout <<"our_location._file->"<< our_location._file << std::endl;
+//     }
+// }
 
 
 // int Response::check_for_statusCode()
@@ -161,6 +161,22 @@ void Response::handle_SC_error(int sc)
             this->_response.append(html);
 }
 
+void Response::createBody()
+{
+    std::string uri = this->_request.getTarget();
+    Location our_location;
+
+    if (uri.empty())
+        uri.append("/");
+    std::cout << this->_server._port << std::endl;
+    our_location = this->_server._locations[uri];
+    std::ifstream file(our_location._file.c_str());
+    if (our_location._file)
+    std::cout <<"our_location._file->"<< our_location._file << std::endl;
+
+
+}
+
 void Response::responseCreation(std::vector<Config> &servers, Request &request)
 {
     time_t _time;
@@ -175,7 +191,7 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     this->_server = this->calibrate_host_location(this->_servers, this->_request);
     std::string uri = this->_request.getTarget();
     std::cout << uri << std::endl;
-    this->enter_location(this->_server, uri);
+    //this->enter_location(this->_server, uri);
     this->_statusCode = this->_request.getStatusCode();
     if (this->_request.getMethod() != "GET" && this->_request.getMethod() != "POST" && this->_request.getMethod() != "DELETE")
     {
@@ -220,6 +236,7 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         this->_response.append("Date: ");
         this->_response.append(tm);
         this->_response.append(" GMT\r\n");
+        //aqui faltaria algo, un tipo de parseo del request o algo para saber que headers hay que meter en el response para cada caso diferente
         this->_response.append("Content-Type: ");
         this->_response.append("text/html\r\n");
         std::cout << this->_response << std::endl;

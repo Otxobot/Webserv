@@ -37,7 +37,6 @@ class Response
         std::vector<Config> _servers;
         Config  _server;
         Request _request;
-        //std::string _body;
         std::string _statusLine;
         std::string _headers;
         int _statusCode;
