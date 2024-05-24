@@ -171,7 +171,6 @@ void Response::createBody()
     std::cout << this->_server._port << std::endl;
     our_location = this->_server._locations[uri];
     std::ifstream file(our_location._file.c_str());
-    if (our_location._file)
     std::cout <<"our_location._file->"<< our_location._file << std::endl;
 
 
