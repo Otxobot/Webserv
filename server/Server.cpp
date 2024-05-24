@@ -6,7 +6,7 @@
 /*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:11 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/24 13:00:53 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/24 16:06:48 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,11 +188,13 @@ void Server::waitingForConnections()
 				}
 			}
 		}
+	//std::cout << "fusi" << std::endl;
 	}
 }
 
 void Server::newConnectHandling(int &sockFD)
 {
+	std::cout << "fusi" << std::endl;
 	int accptSockFD = accept(sockFD, (struct sockaddr *)&_clientAddr, &_addrLen);
 	if (accptSockFD == -1)
 		throw std::runtime_error("Unable to accept the connection from client by the socket ");
@@ -212,6 +214,7 @@ void Server::newConnectHandling(int &sockFD)
 
 void Server::acceptedConnectHandling(int &accptSockFD)
 {
+	std::cout << "fusi2" << std::endl;
 	char buffer[BUFFER_SIZE + 1] = {0};
 	bzero(buffer, sizeof(buffer));
 	int valRead = recv(accptSockFD, buffer, BUFFER_SIZE, 0);
@@ -294,6 +297,7 @@ void Server::responseHandling(int &accptSockFD)
 {
 	std::string body;
 	std::string path = _request.getTarget().erase(0, 1);
+	std::cout << "el target es-> " << path << std::endl;
 	//char *header = strdup("HTTP/1.1 200 OK\r\nContent-Length: ");
 
 	Response _resp;

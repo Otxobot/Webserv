@@ -6,7 +6,7 @@
 /*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/24 13:43:58 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/24 16:02:07 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,11 +169,11 @@ void Response::createBody()
     if (uri.empty())
         uri.append("/");
     std::cout << this->_server._port << std::endl;
+    std::cout << "lolaso" << std::endl;
     our_location = this->_server._locations[uri];
     std::ifstream file(our_location._file.c_str());
     if (!our_location._file.empty())
         std::cout <<"our_location._file->"<< our_location._file << std::endl;
-
 
 }
 
@@ -190,7 +190,7 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     this->_servers = servers;
     this->_server = this->calibrate_host_location(this->_servers, this->_request);
     std::string uri = this->_request.getTarget();
-    //std::cout << "nonas" << std::endl;
+    std::cout << "el maldito uri es -> " << uri << std::endl;
     std::cout << uri << std::endl;
     //this->enter_location(this->_server, uri);
     this->_statusCode = this->_request.getStatusCode();
