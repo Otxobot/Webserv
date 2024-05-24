@@ -1,14 +1,13 @@
 server:
   servername: site1.com
   listen: 127.0.0.1:61001
-  root: "./www/site1"
+  root: "./html/primera_pagina"
   location: /
     file: "index.html"
   location: "/goto42"
     redirect: "www.42urduliz.com"
-  location: "/ai"
-    root: "www"
-    autoindex: on
+  location: "/hola"
+    file: "hola.html"
   location: "/favicon.ico"
     file: "icon1.png"
   location: "/images/sample"
@@ -17,7 +16,7 @@ server:
 server:
   servername: site2.com
   listen: 127.0.0.1:61002
-  root: "./www/site2"
+  root: "./html/segunda_pagina"
   location: /
     file: "index.html"
   location: "/favicon.ico"

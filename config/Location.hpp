@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 13:26:21 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/24 13:08:13 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/23 14:01:02 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LOCATION_HPP
 #define LOCATION_HPP
 
-// #include "../Webserv.hpp"
-// #include "../request/Request.hpp"
+#include "../Webserv.hpp"
+#include "../request/Request.hpp"
 #include "Config.hpp"
 #include <string>
 #include <vector>

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:33 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/24 16:09:20 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/23 13:40:13 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ void	Request::printRequestInformation()
 int Request::Request_start(std::string request)
 {
     int status_code = 0;
-	//aqui de alguna manera imposible request lleva dentro a favicon.ico, aunque no exista
 	this->request = request;
 	std::cout << this->request << std::endl;
 	if ((status_code = this->request_line()) || (status_code = this->request_headers()) || (status_code = this->request_body()))

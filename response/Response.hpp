@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:43 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/24 13:11:51 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/23 13:55:41 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,8 @@
 #define RESPONSE_HPP
 
 #include "../config/Config.hpp"
-// #include "../config/Location.hpp"
+#include "../config/Location.hpp"
 #include "../request/Request.hpp"
-
-// #include "../Webserv.hpp"
 
 // #include <unistd.h>
 // #include <fstream>
@@ -39,7 +37,6 @@ class Response
         std::vector<Config> _servers;
         Config  _server;
         Request _request;
-        //std::string _body;
         std::string _statusLine;
         std::string _headers;
         int _statusCode;

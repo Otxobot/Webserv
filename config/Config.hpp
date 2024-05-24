@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Config.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:14 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/24 13:12:41 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/23 13:39:18 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 #define CONFIG_HPP
 
 //#include "../Webserv.hpp"
-// #include "../server/Server.hpp"
-// #include "../request/Request.hpp"
+#include "../server/Server.hpp"
+#include "../request/Request.hpp"
 #include "./Location.hpp"
 #include <string>
 #include <fstream>

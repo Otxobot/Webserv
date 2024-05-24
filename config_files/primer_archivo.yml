@@ -4,3 +4,7 @@ server:
   root: "./www/site3"
   location: /
     file: "index.html"
+  location: "/favicon.ico"
+    file: "icon1.png"
+  location: "/images/sample"
+    file: "images/sample_image3.jpg"
