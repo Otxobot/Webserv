@@ -6,12 +6,12 @@
 /*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 16:28:16 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/24 13:11:26 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "Config.hpp"
-#include "Location.hpp"
 #include "../server/Server.hpp"
 
 class Config;
@@ -156,6 +156,12 @@ Location Config::parseLocation(std::ifstream &file, std::string &line)
                 loc.setAllowDELETE(true);
             }
         }
+		if (line.find("allow: ") == std::string::npos)
+		{
+			loc.setAllowGET(true);
+			loc.setAllowPOST(true);
+			loc.setAllowDELETE(true);
+		}
         if (line.find("file: ") != std::string::npos)
         {
             loc.setFile(trim_comillas(line.substr(10)));

@@ -6,7 +6,7 @@
 /*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:36 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/23 12:38:44 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/24 13:01:15 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,12 +99,11 @@ class Request
         int     request_body();
         void    printRequestInformation();
         void    reset();
-        std::string &getTarget();
-        int     &getPort();
+        std::string getTarget();
+        int     getPort();
         std::string &getProtocol();
         std::string getMethod();
-        std::string getQueryString() const; // nuevo método
-        std::string getReqValue(const std::string& key) const; // nuevo método
+        int     getStatusCode();
 };
 
 #endif

@@ -6,19 +6,19 @@
 /*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:21 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 17:24:02 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/24 13:09:54 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WEBSERV_HPP
 #define WEBSERV_HPP
 
-#include "./server/Server.hpp"
-#include "./config/Config.hpp"
-#include "./config/Location.hpp"
-#include "./request/Request.hpp"
-#include "./response/Response.hpp"
-#include "./cgi/cgi.hpp"
+// #include "./server/Server.hpp"
+// #include "./config/Config.hpp"
+// #include "./config/Location.hpp"
+// #include "./request/Request.hpp"
+// #include "./response/Response.hpp"
+// #include "./cgi/cgi.hpp"
 
 //Aqui van todos los includes que se usaran en el proyecto, en los archivos incluimos Webserv.hpp y ya.
 //La configuración va a ser una clase, el servidor va a ser una clase, el request y la respuesta tambien van a ser una clase.

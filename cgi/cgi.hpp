@@ -6,7 +6,7 @@
 /*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 15:53:02 by mikferna          #+#    #+#             */
-/*   Updated: 2024/05/22 15:57:09 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/24 13:13:00 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@
 #include <vector>
 #include <map>
 #include <sstream>
-#include "../Webserv.hpp"
+#include "../request/Request.hpp"
+// #include "../Webserv.hpp"
 
 std::string runCGI(Request& _request, const std::string& root, const std::string& cgi_path);
 

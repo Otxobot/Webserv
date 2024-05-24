@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Config.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:14 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/21 16:55:26 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/24 13:12:41 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 #define CONFIG_HPP
 
 //#include "../Webserv.hpp"
-#include "../server/Server.hpp"
-#include "../request/Request.hpp"
+// #include "../server/Server.hpp"
+// #include "../request/Request.hpp"
 #include "./Location.hpp"
 #include <string>
 #include <fstream>
@@ -28,7 +28,6 @@ class Config
 {
 	private:
 		int									_index;
-		int									_port; //uint16_t
 		std::vector<int> 					_ports;
 		std::string									_host; //in_addr_t
 		std::string							_servername;
@@ -40,6 +39,7 @@ class Config
 		unsigned long						_client_max_body_size;
 		int									_buffer_size;
 	public:
+		int									_port; //uint16_t
 		std::map<std::string, Location>		_locations;
 		Config();
 		~Config();

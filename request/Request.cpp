@@ -6,7 +6,7 @@
 /*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:33 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 15:58:11 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/24 13:01:08 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,14 +233,14 @@ int		Request::request_body()
 	return EXIT_SUCCESS;
 }
 
-std::string &Request::getTarget()
+std::string Request::getTarget()
 {
 	if (this->target[0] != '/')
 		this->target = "/" + this->target;
 	return (this->target);
 }
 
-int		&Request::getPort()
+int		Request::getPort()
 {
 	std::string tmp;
 	for (std::map<std::string, std::string>::iterator it = this->headers.begin(); it != this->headers.end(); it++)
@@ -267,6 +267,11 @@ std::string Request::getMethod()
 	return (this->Method);
 }
 
+int Request::getStatusCode()
+{
+	return (this->_statusCode);
+}
+
 void Request::reset()
 {
 	this->Method.clear();
@@ -275,19 +280,4 @@ void Request::reset()
     this->headers.clear();
     this->queryUrl.clear();
     this->url.clear();
-}
-
-std::string Request::getQueryString() const {
-    return this->queryUrl;
-}
-
-std::string Request::getReqValue(const std::string& key) const {
-    // Comprueba si la clave existe en el mapa de encabezados
-    if (this->headers.find(key) != this->headers.end()) {
-        // Si la clave existe, devuelve el valor asociado
-        return this->headers.at(key);
-    } else {
-        // Si la clave no existe, devuelve una cadena vacía
-        return "";
-    }
 }
