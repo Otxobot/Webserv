@@ -161,6 +161,25 @@ void Response::handle_SC_error(int sc)
             this->_response.append(html);
 }
 
+std::string getExtension(const std::string& fileName) {
+    size_t pos = fileName.find_last_of('.');
+    if (pos != std::string::npos && pos < fileName.size() - 1) {
+        return fileName.substr(pos + 1);
+    }
+    return "";
+}
+
+std::string getContentType(const std::string& extension) {
+    if (extension == "html" || extension == "htm") {
+        return "text/html";
+    } else if (extension == "jpg" || extension == "jpeg") {
+        return "image/jpeg";
+    } else if (extension == "png") {
+        return "image/png";
+    }
+    return "application/octet-stream"; // predeterminado
+}
+
 void Response::createBody()
 {
     std::string uri = this->_request.getTarget();
@@ -175,11 +194,18 @@ void Response::createBody()
     std::ifstream file(filePath.c_str());
     if (file && !our_location._file.empty())
     {
-        std::cout << "fileExists" << std::endl;
+        std::string extension = getExtension(our_location._file);
+        std::string contentType = getContentType(extension);
+
+        this->_response.append("Content-Type: ");
+        this->_response.append(contentType);
+        this->_response.append("\r\n");
+
         std::ostringstream ss;
         ss << file.rdbuf();
         this->_body = ss.str();
         file.close();
+
         std::ostringstream oss;
         oss << this->_body.length();
         this->_response.append("Content-Length: ");
@@ -258,9 +284,9 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         this->_response.append(" GMT\r\n");
         //aqui faltaria algo, un tipo de parseo del request o algo para saber que headers hay que meter en el response para cada caso diferente
         this->_response.append("Content-Type: ");
-        this->_response.append("text/html\r\n");
-        std::cout << this->_response << std::endl;
+        //this->_response.append("text/html\r\n");
         this->createBody();
+        std::cout << this->_response << std::endl;
         // std::ifstream file1("./html/index.html");
         // if (file1)
         // {
