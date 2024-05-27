@@ -170,10 +170,20 @@ void Response::createBody()
         uri.append("/");
     std::cout << this->_server._port << std::endl;
     our_location = this->_server._locations[uri];
-    std::ifstream file(our_location._file.c_str());
-    std::cout <<"our_location._file->"<< our_location._file << std::endl;
+    std::string path = this->_server._root + "/" + our_location._file;
+    std::cout << "string path----------> " << path << std::endl;
+    std::ifstream file(path.c_str());
+    std::cout << our_location._file << std::endl;
+    if (!file.is_open())
+    {
+        std::cout << "Failed to open file: " << our_location._file << std::endl;
+        this->handle_SC_error(404);
+    }
+    else
+    {
+        std::cout <<"Successfully opened file: our_location._file->"<< our_location._file << std::endl;
 
-
+    }
 }
 
 void Response::responseCreation(std::vector<Config> &servers, Request &request)
@@ -188,6 +198,7 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     this->_request = request;
     this->_servers = servers;
     this->_server = this->calibrate_host_location(this->_servers, this->_request);
+    std::cout << this->_server._root << std::endl;
     std::string uri = this->_request.getTarget();
     std::cout << uri << std::endl;
     //this->enter_location(this->_server, uri);

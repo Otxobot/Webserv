@@ -31,7 +31,6 @@ class Config
 		std::vector<int> 					_ports;
 		std::string									_host; //in_addr_t
 		std::string							_servername;
-		std::string							_root;
 		std::string							_listen;
 		std::string							_file;
 		bool								_autoindex;
@@ -39,6 +38,7 @@ class Config
 		unsigned long						_client_max_body_size;
 		int									_buffer_size;
 	public:
+		std::string							_root;
 		int									_port; //uint16_t
 		std::map<std::string, Location>		_locations;
 		Config();
