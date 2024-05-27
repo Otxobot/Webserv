@@ -28,7 +28,6 @@ class Location
 		bool			_allowPOST;
 		bool			_allowDELETE;
 		std::string					_redirect;
-		std::string					_root;
 		bool						_autoindex;
 		std::string					_handle_delete;
 		std::string					_handle_post;
@@ -37,6 +36,7 @@ class Location
 		std::string					_upload;
 		int							_buffer_size;
 	public:
+		std::string					_root;
 		std::string					_file;
 		Location();
 		Location(const Location &other);

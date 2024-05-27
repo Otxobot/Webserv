@@ -168,13 +168,34 @@ void Response::createBody()
 
     if (uri.empty())
         uri.append("/");
-    std::cout << this->_server._port << std::endl;
     our_location = this->_server._locations[uri];
-    std::ifstream file(our_location._file.c_str());
-    std::cout <<"our_location._file->"<< our_location._file << std::endl;
-
-
+    std::string filePath = this->_server._root + "/" + our_location._file;
+    std::cout << "filePath-- " << filePath << std::endl;
+    std::cout << "our_location._file-- " << our_location._file << std::endl;
+    std::ifstream file(filePath.c_str());
+    if (file && !our_location._file.empty())
+    {
+        std::cout << "fileExists" << std::endl;
+        std::ostringstream ss;
+        ss << file.rdbuf();
+        this->_body = ss.str();
+        file.close();
+        std::ostringstream oss;
+        oss << this->_body.length();
+        this->_response.append("Content-Length: ");
+        this->_response.append(oss.str());
+        this->_response.append("\r\nConnection: Closed\r\n");
+        this->_response.append("\r\n");
+        this->_response.append(this->_body);
+    }
+    else
+    {
+        this->_statusCode = 404;
+        this->handle_SC_error(this->_statusCode);
+    }
 }
+
+
 
 void Response::responseCreation(std::vector<Config> &servers, Request &request)
 {
