@@ -128,9 +128,11 @@ Config Response::calibrate_host_location(std::vector<Config> _servers, Request _
 
 void Response::handle_SC_error(int sc)
 {
+    this->_statusCode = sc;
     std::ostringstream oss;
     oss << sc;
     std::string statusCodeStr = oss.str();
+
 
     std::string html = 
         "<!DOCTYPE html>"
@@ -150,15 +152,19 @@ void Response::handle_SC_error(int sc)
         "</body>"
         "</html>";
 
+    std::ostringstream ossSize;
+    ossSize << html.size();
+    std::string html_size = ossSize.str();
     // Print the HTML to the console (or to an HTTP response, etc.)
     this->_body = html;
-    std::cout << html << std::endl;
-    this->_response.append("Content-Type: ");
+    this->_response.append(oss.str());
+    this->_response.append(" " + this->getStatusCodeTranslate(sc) + "Content-Type: ");
     this->_response.append("text/html\r\n");
             this->_response.append("Content-Length: ");
-            this->_response.append("\r\nConnection: Closed\r\n");
+            this->_response.append(html_size);
+            this->_response.append("\r\nConnection: Closed");
             this->_response.append("\r\n\r\n");
-            this->_response.append(html);
+            this->_response.append(_body);
 }
 
 void Response::createBody()
@@ -169,20 +175,38 @@ void Response::createBody()
     if (uri.empty())
         uri.append("/");
     std::cout << this->_server._port << std::endl;
+    
+    std::map<std::string, Location>::iterator it = this->_server._locations.find(uri);
+    if (it == this->_server._locations.end())
+    {
+        std::cout << "URI not found in locations: " << uri << std::endl;
+        this->handle_SC_error(404);
+        return ;
+    }
     our_location = this->_server._locations[uri];
     std::string path = this->_server._root + "/" + our_location._file;
-    std::cout << "string path----------> " << path << std::endl;
+    std::cout << "path--------->" << path << std::endl;
     std::ifstream file(path.c_str());
-    std::cout << our_location._file << std::endl;
     if (!file.is_open())
     {
         std::cout << "Failed to open file: " << our_location._file << std::endl;
-        this->handle_SC_error(404);
+        this->handle_SC_error(500);
     }
     else
     {
         std::cout <<"Successfully opened file: our_location._file->"<< our_location._file << std::endl;
-
+        //aqui crearemos el body
+        std::ostringstream ss;
+        ss << file.rdbuf();
+        std::string htmlContent = ss.str();
+        this->_body.append("Content-Length: ");
+        std::ostringstream oss;
+        oss.str("");
+        oss << htmlContent.size();
+        this->_body.append(oss.str());
+        this->_body.append("\r\nConnection: Closed\r\n");
+        this->_body.append("\r\n\r\n");
+        this->_body.append(ss.str());
     }
 }
 
@@ -200,13 +224,13 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     this->_server = this->calibrate_host_location(this->_servers, this->_request);
     std::cout << this->_server._root << std::endl;
     std::string uri = this->_request.getTarget();
-    std::cout << uri << std::endl;
     //this->enter_location(this->_server, uri);
     this->_statusCode = this->_request.getStatusCode();
     if (this->_request.getMethod() != "GET" && this->_request.getMethod() != "POST" && this->_request.getMethod() != "DELETE")
     {
             this->_statusCode = 501;
             this->handle_SC_error(this->_statusCode);
+            return ;
     }
     // else
     // {
@@ -218,9 +242,11 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         this->_response.append(protocol);
         this->_response.append(" ");
         
-        //this->check_for_statusCode();
+        this->createBody();
+        std::cout << this->_response << std::endl;
         int number = this->_statusCode;
-        //int number = 505;
+        if (number != 200)
+            return ;
         std::ostringstream oss;
         oss << number;
         std::string status_code = oss.str();
@@ -230,44 +256,28 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
             this->_response.append(status_code);
             this->_response.append(" OK\r\n");
         }
-        else
-        {
-            this->_response.append(status_code);
-            std::string message = this->getStatusCodeTranslate(number);
-            this->_response.append(" ");
-            this->_response.append(message);
-            this->_response.append("Date: ");
-            this->_response.append(tm);
-            this->_response.append(" GMT\r\n");
-            this->handle_SC_error(number);
-            std::cout << this->_response << std::endl;
-            return ;
-        }
+        // else
+        // {
+        //     this->_response.append(status_code);
+        //     std::string message = this->getStatusCodeTranslate(number);
+        //     this->_response.append(" ");
+        //     this->_response.append(message);
+        //     this->_response.append("Date: ");
+        //     this->_response.append(tm);
+        //     this->_response.append(" GMT\r\n");
+        //     this->handle_SC_error(number);
+        //     std::cout << this->_response << std::endl;
+        //     return ;
+        // }
         this->_response.append("Date: ");
         this->_response.append(tm);
         this->_response.append(" GMT\r\n");
         //aqui faltaria algo, un tipo de parseo del request o algo para saber que headers hay que meter en el response para cada caso diferente
         this->_response.append("Content-Type: ");
         this->_response.append("text/html\r\n");
+        this->_response.append(this->_body);
+        std::cout << "=====================RESPONSE====================" << std::endl;
         std::cout << this->_response << std::endl;
-        this->createBody();
-        // std::ifstream file1("./html/index.html");
-        // if (file1)
-        // {
-        //     std::ostringstream ss;
-        //     ss << file1.rdbuf();
-        //     std::string htmlContent = ss.str();
-        //     this->_response.append("Content-Length: ");
-        //     oss.str("");
-        //     oss << htmlContent.size();
-        //     this->_response.append(oss.str());
-        //     this->_response.append("\r\nConnection: Closed\r\n");
-        //     this->_response.append("\r\n\r\n");
-        //     this->_response.append(ss.str());
-        // }else{
-        //     std::cerr << "Error opening file" << std::endl;
-        // }
-
     }
     if (request.getMethod() == "POST")
     {
