@@ -6,7 +6,7 @@
 /*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/28 16:59:58 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/28 17:18:57 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,7 +246,7 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
             ((!this->_server._locations[uri]._allowPOST && method == "POST"))))
     {
         this->_statusCode = 501;
-        this->handle_SC_error(this->_statusCode);
+        //this->handle_SC_error(this->_statusCode);
     }
     // else
     // {
@@ -288,25 +288,8 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         this->_response.append(" GMT\r\n");
         //aqui faltaria algo, un tipo de parseo del request o algo para saber que headers hay que meter en el response para cada caso diferente
         this->_response.append("Content-Type: ");
-        //this->_response.append("text/html\r\n");
         this->createBody();
         std::cout << this->_response << std::endl;
-        // std::ifstream file1("./html/index.html");
-        // if (file1)
-        // {
-        //     std::ostringstream ss;
-        //     ss << file1.rdbuf();
-        //     std::string htmlContent = ss.str();
-        //     this->_response.append("Content-Length: ");
-        //     oss.str("");
-        //     oss << htmlContent.size();
-        //     this->_response.append(oss.str());
-        //     this->_response.append("\r\nConnection: Closed\r\n");
-        //     this->_response.append("\r\n\r\n");
-        //     this->_response.append(ss.str());
-        // }else{
-        //     std::cerr << "Error opening file" << std::endl;
-        // }
 
     }
     if (request.getMethod() == "POST")
