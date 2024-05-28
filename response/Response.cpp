@@ -11,164 +11,129 @@
 /* ************************************************************************** */
 
 #include "Response.hpp"
+#include <fstream>
+#include <sstream>
+#include <sys/stat.h>
+#include <dirent.h>
 
-Response::Response(): _headers(""), _statusCode(200)
-{
-    //Default constructor
+Response::Response() : statusCode(200) {
+    initStatusMessages();
 }
 
-Response::~Response()
-{
-    //Default destructor
+void Response::initStatusMessages() {
+    statusMessages[200] = "OK";
+    statusMessages[201] = "Created";
+    statusMessages[202] = "Accepted";
+    statusMessages[204] = "No Content";
+    statusMessages[301] = "Moved Permanently";
+    statusMessages[302] = "Found";
+    statusMessages[400] = "Bad Request";
+    statusMessages[401] = "Unauthorized";
+    statusMessages[403] = "Forbidden";
+    statusMessages[404] = "Not Found";
+    statusMessages[405] = "Method Not Allowed";
+    statusMessages[500] = "Internal Server Error";
+    statusMessages[501] = "Not Implemented";
+    statusMessages[502] = "Bad Gateway";
+    statusMessages[503] = "Service Unavailable";
 }
 
-std::string Response::getHeaders()
-{
-    return this->_headers;
+std::string Response::generateStatusLine() {
+    std::ostringstream oss;
+    oss << "HTTP/1.1 " << statusCode << " " << statusMessages[statusCode] << "\r\n";
+    return oss.str();
 }
 
-std::string Response::getStatusCodeTranslate()
-{
-    std::string status = "";
-    switch (this->_statusCode)
-    {
-        case 200:
-            status = "OK";
-            break;
-        case 301:
-            status = "Moved Permanently\r\n";
-            break;
-        case 400:
-            status = "Bad Request\r\n";
-            break;
-        case 403:
-            status = "Forbidden\r\n";
-            break;
-        case 404:
-            status = "Not Found\r\n";
-            break;
-        case 405:
-            status = "Method Not Allowed\r\n";
-            break;
-        case 500:
-            status = "Internal Server Error\r\n";
-            break;
-        case 501:
-            status = "Not Implemented\n\r";
-            break;
-        case 502:
-            status = "Bad Geteway\r\n";
-            break;
-        case 413:
-            status = "Payload Too Large\r\n";
-            break;
-        case 505:
-            status = "HTTP Version Not Supported\r\n";
-            break;
-        default:
-            status = "Internal Server Error\r\n";
-            break;
+std::string Response::generateHeaders() {
+    std::ostringstream oss;
+    for (std::map<std::string, std::string>::iterator it = headers.begin(); it != headers.end(); ++it) {
+        oss << it->first << ": " << it->second << "\r\n";
     }
-    return status;
+    oss << "\r\n";
+    return oss.str();
 }
 
-void Response::makeBody()
-{
-    std::string path_to_requested = this->_request.getTarget();
-    this->_isLocation = false;
-    this->_isCGI = false;
+std::string Response::readFile(const std::string& path) {
+    std::ifstream file(path.c_str());
+    if (!file.is_open()) {
+        statusCode = 404;
+        return "404 Not Found";
+    }
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return buffer.str();
+}
 
-    if (path_to_requested.empty())
-        path_to_requested.append("/");
-    for (size_t i = 0; i < this->_servers.size(); i++)
-    {
-        if (this->_servers[i].getPort() == this->_request.getPort())
-        {
-            this->_server = this->_servers[i];
-            break;
+std::string Response::directoryListing(const std::string& path) {
+    std::ostringstream oss;
+    oss << "<html><body><h1>Directory listing for " << path << "</h1><ul>";
+    DIR* dir;
+    struct dirent* ent;
+    if ((dir = opendir(path.c_str())) != NULL) {
+        while ((ent = readdir(dir)) != NULL) {
+            oss << "<li><a href=\"" << ent->d_name << "\">" << ent->d_name << "</a></li>";
+        }
+        closedir(dir);
+    }
+    oss << "</ul></body></html>";
+    return oss.str();
+}
+
+std::string Response::getContentType(const std::string& path) {
+    size_t dot = path.find_last_of('.');
+    if (dot == std::string::npos) return "text/plain";
+    std::string ext = path.substr(dot + 1);
+    if (ext == "html" || ext == "htm") return "text/html";
+    if (ext == "css") return "text/css";
+    if (ext == "js") return "application/javascript";
+    if (ext == "png") return "image/png";
+    if (ext == "jpg" || ext == "jpeg") return "image/jpeg";
+    if (ext == "gif") return "image/gif";
+    return "text/plain";
+}
+
+std::string Response::generateResponse(Request& request, const std::string& root) {
+    std::string target = root + request.getTarget();
+    struct stat info;
+    std::string method = request.getMethod();
+
+    if (stat(target.c_str(), &info) != 0) {
+        statusCode = 404;
+        body = "404 Not Found";
+    } else if (S_ISDIR(info.st_mode)) {
+        if (method == "GET") {
+            body = directoryListing(target);
+            headers["Content-Type"] = "text/html";
+        } else {
+            statusCode = 405;
+            body = "405 Method Not Allowed";
+        }
+    } else {
+        if (method == "GET") {
+            body = readFile(target);
+            headers["Content-Type"] = getContentType(target);
+        } else if (method == "POST") {
+            // Assuming CGI scripts are used for POST methods
+            std::string cgi_path = "./cgi/cgiscript.py"; // Define the correct path to your CGI script here
+            body = runCGI(request, root, cgi_path);
+            headers["Content-Type"] = "text/html"; // Assuming CGI returns HTML
+        } else if (method == "DELETE") {
+            if (remove(target.c_str()) == 0) {
+                statusCode = 204;
+                body = "204 No Content";
+            } else {
+                statusCode = 500;
+                body = "500 Internal Server Error";
+            }
+        } else {
+            statusCode = 405;
+            body = "405 Method Not Allowed";
         }
     }
-    std::map<std::string, Location> locations = this->_server._locations;
-    
-    std::vector<Location> all_locations;
-    
-}
 
-// void    Response::get_body(std::string file_name)
-// {
-//     std::ifstream file(file_name);
-//     if (access(file_name.c_str(), F_OK) != 0) // Check if The file existe
-//         return; 
-//     else
-//     {
-// 	    if (file)
-// 	    {
-// 	        std::ostringstream ss;
-// 	        ss << file.rdbuf();
-// 	        this->_body = ss.str();
-// 	    }
-//         else
-//             return ;
-// 	    file.close(); // close the file(filename)
-//     }
-// }
+    std::ostringstream contentLengthStream;
+    contentLengthStream << body.size();
+    headers["Content-Length"] = contentLengthStream.str();
 
-void Response::responseCreation(std::vector<Config> &servers, Request &request)
-{
-    time_t _time;
-	std::string tm;
-	time(&_time);
-	tm = ctime(&_time);
-    std::string protocol = request.getProtocol();
-    std::string url = request.getTarget();
-    std::cout << url << std::endl;
-    //int a = sizeof("./html/index.html");
-    //std::cout << a << std::endl;
-
-    tm.erase(tm.length() - 1);
-    this->_request = request;
-    this->_servers = servers;
-    //this->makeBody();
-    if (request.getMethod() == "GET")
-    {
-        //en caso de que el get estuviera accediendo a un archivo que si puede coger
-        this->_response.append(protocol);
-        this->_response.append(" ");
-        int number = this->_statusCode;
-        std::ostringstream oss;
-        oss << number;
-        std::string status_code = oss.str();
-        this->_response.append(status_code);
-        this->_response.append(" OK\r\n");
-        this->_response.append("Date: ");
-        this->_response.append(tm);
-        this->_response.append(" GMT\r\n");
-        this->_response.append("Content-Type: ");
-        this->_response.append("text/html\r\n");
-        std::ifstream file1("./html/index.html");
-        if (file1)
-        {
-            std::ostringstream ss;
-            ss << file1.rdbuf();
-            std::string htmlContent = ss.str();
-            this->_response.append("Content-Length: ");
-            oss.str("");
-            oss << htmlContent.size();
-            this->_response.append(oss.str());
-            this->_response.append("\r\nConnection: Closed\r\n");
-            this->_response.append("\r\n\r\n");
-            this->_response.append(ss.str());
-        }else{
-            std::cerr << "Error opening file" << std::endl;
-        }
-
-    }
-    if (request.getMethod() == "POST")
-    {
-        
-    }
-    if (request.getMethod() == "DELETE")
-    {
-        
-    }
+    return generateStatusLine() + generateHeaders() + body;
 }

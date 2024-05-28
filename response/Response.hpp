@@ -13,46 +13,29 @@
 #ifndef RESPONSE_HPP
 #define RESPONSE_HPP
 
-#include "../config/Config.hpp"
-#include "../config/Location.hpp"
-#include "../request/Request.hpp"
-
-// #include <unistd.h>
-// #include <fstream>
-// #include <sstream>
-// #include <sys/stat.h>
-// #include <dirent.h>
 #include <string>
-#include <sstream>
+#include <map>
+#include "../request/Request.hpp"
+#include "../cgi/cgi.hpp"// Agrega la inclusión de Request.hpp aquí
 
-#define DEFAULT "/index.html"
+class Response {
+private:
+    int statusCode;
+    std::string body;
+    std::map<std::string, std::string> headers;
+    std::map<int, std::string> statusMessages;
 
-class Config;
-class Location;
-class Request;
+    void initStatusMessages();
 
-class Response
-{
-    private:
-        std::vector<Config> _servers;
-        Config  _server;
-        Request _request;
-        //std::string _body;
-        std::string _statusLine;
-        std::string _headers;
-        int _statusCode;
-        bool _isCGI;
-        bool _isLocation;
-    public:
-        std::string _body;
-        std::string _response;
-        Response();
-        ~Response();
-        void        responseCreation(std::vector<Config> &servers, Request &request);
-        std::string getHeaders();
-        std::string getStatusCodeTranslate();
-        void        makeBody();
-        //void        get_body();
+public:
+    Response();
+
+    std::string generateStatusLine();
+    std::string generateHeaders();
+    std::string readFile(const std::string& path);
+    std::string directoryListing(const std::string& path);
+    std::string getContentType(const std::string& path);
+    std::string generateResponse(Request& request, const std::string& root); // Declaración de generateResponse
 };
 
-#endif
+#endif // RESPONSE_HPP

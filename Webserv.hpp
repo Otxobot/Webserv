@@ -17,6 +17,7 @@
 #include "./config/Config.hpp"
 #include "./config/Location.hpp"
 #include "./request/Request.hpp"
+#include "./cgi/cgi.hpp"
 
 //Aqui van todos los includes que se usaran en el proyecto, en los archivos incluimos Webserv.hpp y ya.
 //La configuración va a ser una clase, el servidor va a ser una clase, el request y la respuesta tambien van a ser una clase.

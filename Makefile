@@ -13,7 +13,7 @@
 NAME = webserv
 
 FILES = main ./server/Server ./config/Config ./config/Location ./request/Request ./response/Response \
-		./parseo_conf/parseo ./parseo_conf/utils_parseo ./parseo_conf/location_utils
+		./parseo_conf/parseo ./parseo_conf/utils_parseo ./parseo_conf/location_utils ./cgi/cgi
 
 SRC = $(addsuffix .cpp, $(FILES))
 
