@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:36 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/23 13:38:03 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/28 12:05:56 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,8 @@ class Request
         std::string &getProtocol();
         std::string getMethod();
         int     getStatusCode();
+        std::string getQueryString() const; // nuevo método
+        std::string getReqValue(const std::string& key) const; // nuevo método
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/23 16:18:21 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/28 12:21:26 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,25 +72,6 @@ std::string Response::getStatusCodeTranslate(int status_code)
     return status;
 }
 
-// void    Response::get_body(std::string file_name)
-// {
-//     std::ifstream file(file_name);
-//     if (access(file_name.c_str(), F_OK) != 0) // Check if The file existe
-//         return; 
-//     else
-//     {
-// 	    if (file)
-// 	    {
-// 	        std::ostringstream ss;
-// 	        ss << file.rdbuf();
-// 	        this->_body = ss.str();
-// 	    }
-//         else
-//             return ;
-// 	    file.close(); // close the file(filename)
-//     }
-// }
-
 Config Response::calibrate_host_location(std::vector<Config> _servers, Request _request)
 {
     int i = 0;
@@ -99,32 +80,12 @@ Config Response::calibrate_host_location(std::vector<Config> _servers, Request _
     {
         if (_servers[i]._port == _request.getPort())
         {
-            std::cout << "SE HA CALIBRADO:" <<i<< std::endl;
             return (_servers[i]);
         }
         i++;
     }
     return _servers[i];
 }
-
-// void Response::enter_location(Config server, std::string uri)
-// {
-//     Location our_location;
-//     if (uri.empty())
-//         uri.append("/");
-//     std::cout << server._port << std::endl;
-//     our_location = server._locations[uri];
-//     if (!our_location._file.empty())
-//     {
-//         std::cout <<"our_location._file->"<< our_location._file << std::endl;
-//     }
-// }
-
-
-// int Response::check_for_statusCode()
-// {
-
-// }
 
 void Response::handle_SC_error(int sc)
 {
@@ -174,8 +135,7 @@ void Response::createBody()
 
     if (uri.empty())
         uri.append("/");
-    std::cout << this->_server._port << std::endl;
-    
+
     std::map<std::string, Location>::iterator it = this->_server._locations.find(uri);
     if (it == this->_server._locations.end())
     {
@@ -185,7 +145,6 @@ void Response::createBody()
     }
     our_location = this->_server._locations[uri];
     std::string path = this->_server._root + "/" + our_location._file;
-    std::cout << "path--------->" << path << std::endl;
     std::ifstream file(path.c_str());
     if (!file.is_open())
     {
@@ -194,7 +153,7 @@ void Response::createBody()
     }
     else
     {
-        std::cout <<"Successfully opened file: our_location._file->"<< our_location._file << std::endl;
+        std::cout <<"Successfully opened file: "<< our_location._file << std::endl;
         //aqui crearemos el body
         std::ostringstream ss;
         ss << file.rdbuf();
@@ -216,16 +175,16 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
 	std::string tm;
 	time(&_time);
 	tm = ctime(&_time);
-    std::string protocol = request.getProtocol();
-
     tm.erase(tm.length() - 1);
+
     this->_request = request;
     this->_servers = servers;
     this->_server = this->calibrate_host_location(this->_servers, this->_request);
-    std::cout << this->_server._root << std::endl;
+    
+    std::string protocol = request.getProtocol();
     std::string uri = this->_request.getTarget();
-    //this->enter_location(this->_server, uri);
     this->_statusCode = this->_request.getStatusCode();
+
     if (this->_request.getMethod() != "GET" && this->_request.getMethod() != "POST" && this->_request.getMethod() != "DELETE")
     {
             this->_statusCode = 501;
@@ -241,21 +200,19 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     {
         this->_response.append(protocol);
         this->_response.append(" ");
-        
+
         this->createBody();
-        std::cout << this->_response << std::endl;
         int number = this->_statusCode;
         if (number != 200)
             return ;
         std::ostringstream oss;
         oss << number;
         std::string status_code = oss.str();
-        std::cout << status_code << std::endl;
-        if (status_code == "200")
-        {
-            this->_response.append(status_code);
-            this->_response.append(" OK\r\n");
-        }
+        // if (status_code == "200")
+        // {
+        //     this->_response.append(status_code);
+        //     this->_response.append(" OK\r\n");
+        // }
         // else
         // {
         //     this->_response.append(status_code);
@@ -269,12 +226,15 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         //     std::cout << this->_response << std::endl;
         //     return ;
         // }
+        this->_response.append(status_code);
+        this->_response.append(" OK\r\n");
         this->_response.append("Date: ");
         this->_response.append(tm);
         this->_response.append(" GMT\r\n");
         //aqui faltaria algo, un tipo de parseo del request o algo para saber que headers hay que meter en el response para cada caso diferente
         this->_response.append("Content-Type: ");
         this->_response.append("text/html\r\n");
+        this->_response.append("Server: Linux\r\n");
         this->_response.append(this->_body);
         std::cout << "=====================RESPONSE====================" << std::endl;
         std::cout << this->_response << std::endl;

@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:33 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/23 13:40:13 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/28 12:05:41 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -280,4 +280,18 @@ void Request::reset()
     this->headers.clear();
     this->queryUrl.clear();
     this->url.clear();
+}
+
+std::string Request::getQueryString() const {
+    return this->queryUrl;
+}
+std::string Request::getReqValue(const std::string& key) const {
+    // Comprueba si la clave existe en el mapa de encabezados
+    if (this->headers.find(key) != this->headers.end()) {
+        // Si la clave existe, devuelve el valor asociado
+        return this->headers.at(key);
+    } else {
+        // Si la clave no existe, devuelve una cadena vacía
+        return "";
+    }
 }
