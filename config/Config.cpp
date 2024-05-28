@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Config.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 13:25:36 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/28 16:41:42 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,14 +148,20 @@ Location Config::parseLocation(std::ifstream &file, std::string &line)
             {
                 loc.setAllowGET(true);
             }
+			else
+				loc.setAllowGET(false);
             if (line.substr(12).find("POST") != std::string::npos)
             {
                 loc.setAllowPOST(true);
             }
+			else
+				loc.setAllowPOST(false);
             if (line.substr(12).find("DELETE") != std::string::npos)
             {
                 loc.setAllowDELETE(true);
             }
+			else
+				loc.setAllowDELETE(false);
         }
 		if (line.find("allow: ") == std::string::npos)
 		{

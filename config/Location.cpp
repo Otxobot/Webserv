@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 13:26:19 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/02 14:42:54 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/28 16:35:37 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 Location::Location()
 {
 	//Constructor Default
-	_allowGET = false;
-	_allowPOST = false;
-	_allowDELETE = false;
+	_allowGET = true;
+	_allowPOST = true;
+	_allowDELETE = true;
 	_file = "";
 	_redirect = "";
 	_root = "";

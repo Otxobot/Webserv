@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/23 16:18:21 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/28 16:59:58 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,13 +236,17 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     this->_servers = servers;
     this->_server = this->calibrate_host_location(this->_servers, this->_request);
     std::string uri = this->_request.getTarget();
-    std::cout << uri << std::endl;
+    std::cout << "uritron-> " << uri << std::endl;
     //this->enter_location(this->_server, uri);
     this->_statusCode = this->_request.getStatusCode();
-    if (this->_request.getMethod() != "GET" && this->_request.getMethod() != "POST" && this->_request.getMethod() != "DELETE")
+    std::string method = this->_request.getMethod(); 
+    std::cout << "method-> ." << method << "." << std::endl;
+    if ((method != "GET" && method != "POST" && method != "DELETE") ||
+        ((!this->_server._locations[uri]._allowGET && method == "GET") || (!this->_server._locations[uri]._allowDELETE && method == "DELETE") ||
+            ((!this->_server._locations[uri]._allowPOST && method == "POST"))))
     {
-            this->_statusCode = 501;
-            this->handle_SC_error(this->_statusCode);
+        this->_statusCode = 501;
+        this->handle_SC_error(this->_statusCode);
     }
     // else
     // {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 13:26:21 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/23 14:01:02 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/28 16:22:02 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,6 @@ class Location
 	private:
 		std::string		location_path;
 		//int					_index;
-		bool			_allowGET;
-		bool			_allowPOST;
-		bool			_allowDELETE;
 		std::string					_redirect;
 		bool						_autoindex;
 		std::string					_handle_delete;
@@ -36,6 +33,9 @@ class Location
 		std::string					_upload;
 		int							_buffer_size;
 	public:
+		bool			_allowGET;
+		bool			_allowPOST;
+		bool			_allowDELETE;
 		std::string					_root;
 		std::string					_file;
 		Location();

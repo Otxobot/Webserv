@@ -4,6 +4,7 @@ server:
   root: "./html/primera_pagina"
   location: /
     file: "index.html"
+    allow: POST
   location: "/goto42"
     redirect: "www.42urduliz.com"
   location: "/hola"
@@ -41,6 +42,7 @@ server:
   root: "./www/stressTestSite"
   location: /
     file: "index.html"
+    file: "lol.html"
     allow: GET POST DELETE
 
 server:

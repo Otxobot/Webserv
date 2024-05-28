@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: abasante <abasante@student.42.fr>          +#+  +:+       +#+         #
+#    By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/29 11:39:15 by abasante          #+#    #+#              #
-#    Updated: 2024/05/21 16:02:48 by abasante         ###   ########.fr        #
+#    Updated: 2024/05/28 16:45:28 by mikferna         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ SRC = $(addsuffix .cpp, $(FILES))
 
 OBJ = $(addsuffix .o, $(FILES))
 
-CFLAGS = c++ -Wall -Wextra -Werror --std=c++98 #-fsanitize=address -g3
+CFLAGS = c++ -Wall -Wextra -Werror --std=c++98 #-O3 #-fsanitize=address -g3
 
 all : $(NAME)
 
