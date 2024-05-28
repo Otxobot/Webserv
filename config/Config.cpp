@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 13:25:36 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/28 13:47:58 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,7 @@ std::vector<Config> Config::parseServers(std::ifstream &file, int contador)
 		if (line.find("servername:") != std::string::npos)
 		{
 			_serversConfig[i]._servername = trim_comillas(line.substr(14));
+			std::cout << _serversConfig[i]._servername << std::endl;
 		}
 		if (line.find("root:") != std::string::npos)
 		{

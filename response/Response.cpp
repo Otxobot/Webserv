@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/28 12:21:26 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/28 13:47:05 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,7 +234,8 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         //aqui faltaria algo, un tipo de parseo del request o algo para saber que headers hay que meter en el response para cada caso diferente
         this->_response.append("Content-Type: ");
         this->_response.append("text/html\r\n");
-        this->_response.append("Server: Linux\r\n");
+        this->_response.append("Server: ");
+        this->_response.append(this->_server._servername + "\r\n");
         this->_response.append(this->_body);
         std::cout << "=====================RESPONSE====================" << std::endl;
         std::cout << this->_response << std::endl;

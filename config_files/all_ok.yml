@@ -10,8 +10,6 @@ server:
     file: "hola.html"
   location: "/favicon.ico"
     file: "icon1.png"
-  location: "/images/sample"
-    file: "images/sample_image1.jpg"
 
 server:
   servername: site2.com

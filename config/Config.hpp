@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:14 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/23 13:39:18 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/28 13:46:54 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ class Config
 		int									_index;
 		std::vector<int> 					_ports;
 		std::string									_host; //in_addr_t
-		std::string							_servername;
 		std::string							_listen;
 		std::string							_file;
 		bool								_autoindex;
@@ -38,6 +37,7 @@ class Config
 		unsigned long						_client_max_body_size;
 		int									_buffer_size;
 	public:
+		std::string							_servername;
 		std::string							_root;
 		int									_port; //uint16_t
 		std::map<std::string, Location>		_locations;
