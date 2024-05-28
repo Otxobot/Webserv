@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:17:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/21 13:19:37 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/28 16:31:54 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,11 +226,3 @@ bool	verifyConf(const std::string &fileName) {
 	std::cout << "Conf file correct" << std::endl;
 	return true;
 }
-
-// int main(int argc, char **argv) {
-// 	if (argc != 2) {
-// 		std::cout << "Error: Invalid arguments cantity" << std::endl;
-// 	}
-//     verifyConf(argv[1]);
-//     return 0;
-// }

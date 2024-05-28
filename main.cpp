@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 11:50:38 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/22 13:11:20 by mikferna         ###   ########.fr       */
+/*   Updated: 2024/05/28 16:18:00 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,10 @@ int main(int ac, char **av)
     	std::cout << "Usage: " << av[0] << " <config file>" << std::endl;
     	return 1;
   	}
-	verifyConf(av[1]);
+	if (!verifyConf(av[1]))
+	{
+		return (1);
+	}
 	std::string confFilename;
 	Config config;
 	confFilename = av[1];

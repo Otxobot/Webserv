@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/28 13:47:05 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/28 16:46:30 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,6 +169,12 @@ void Response::createBody()
     }
 }
 
+void Response::parse_cgi_server_GET()
+{
+    //aqui hay que hacer el cgi
+    
+}
+
 void Response::responseCreation(std::vector<Config> &servers, Request &request)
 {
     time_t _time;
@@ -185,6 +191,8 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     std::string uri = this->_request.getTarget();
     this->_statusCode = this->_request.getStatusCode();
 
+    //int how_many_methods = 0;
+
     if (this->_request.getMethod() != "GET" && this->_request.getMethod() != "POST" && this->_request.getMethod() != "DELETE")
     {
             this->_statusCode = 501;
@@ -200,7 +208,10 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     {
         this->_response.append(protocol);
         this->_response.append(" ");
-
+        if (uri = "/cgi")
+        {
+            this->parse_cgi_server_GET();
+        }
         this->createBody();
         int number = this->_statusCode;
         if (number != 200)
@@ -208,24 +219,6 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         std::ostringstream oss;
         oss << number;
         std::string status_code = oss.str();
-        // if (status_code == "200")
-        // {
-        //     this->_response.append(status_code);
-        //     this->_response.append(" OK\r\n");
-        // }
-        // else
-        // {
-        //     this->_response.append(status_code);
-        //     std::string message = this->getStatusCodeTranslate(number);
-        //     this->_response.append(" ");
-        //     this->_response.append(message);
-        //     this->_response.append("Date: ");
-        //     this->_response.append(tm);
-        //     this->_response.append(" GMT\r\n");
-        //     this->handle_SC_error(number);
-        //     std::cout << this->_response << std::endl;
-        //     return ;
-        // }
         this->_response.append(status_code);
         this->_response.append(" OK\r\n");
         this->_response.append("Date: ");
