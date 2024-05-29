@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:11 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/23 13:34:23 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/29 15:12:38 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -294,13 +294,10 @@ void Server::responseHandling(int &accptSockFD)
 {
 	std::string body;
 	std::string path = _request.getTarget().erase(0, 1);
-	//char *header = strdup("HTTP/1.1 200 OK\r\nContent-Length: ");
 
 	Response _resp;
 	_resp.responseCreation(this->servers_parsed, this->_request);
-	// this->_request.clear();
-
-	//std::string all = std::string(header) + std::string(ft_itoa(_resp.GetBody().size())) + "\r\n\r\n" + _resp.GetBody();
+	//this->_request.reset();
 
 	if (FD_ISSET(accptSockFD, &_writeFDs))
 	{

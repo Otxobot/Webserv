@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/28 16:46:30 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/29 16:34:27 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,7 @@ void Response::createBody()
     std::map<std::string, Location>::iterator it = this->_server._locations.find(uri);
     if (it == this->_server._locations.end())
     {
+        std::cout << "por que coño no entra aqui " << std::endl;
         std::cout << "URI not found in locations: " << uri << std::endl;
         this->handle_SC_error(404);
         return ;
@@ -150,11 +151,10 @@ void Response::createBody()
     {
         std::cout << "Failed to open file: " << our_location._file << std::endl;
         this->handle_SC_error(500);
+        return ;
     }
     else
     {
-        std::cout <<"Successfully opened file: "<< our_location._file << std::endl;
-        //aqui crearemos el body
         std::ostringstream ss;
         ss << file.rdbuf();
         std::string htmlContent = ss.str();
@@ -163,16 +163,21 @@ void Response::createBody()
         oss.str("");
         oss << htmlContent.size();
         this->_body.append(oss.str());
-        this->_body.append("\r\nConnection: Closed\r\n");
+        this->_body.append("\r\nConnection: close\r\n");
         this->_body.append("\r\n\r\n");
         this->_body.append(ss.str());
     }
 }
 
 void Response::parse_cgi_server_GET()
-{
-    //aqui hay que hacer el cgi
+{ 
+    //aqui hay que hacer el cgi en caso de que sea un get
     
+}
+
+void Response::addHeaders()
+{
+    //
 }
 
 void Response::responseCreation(std::vector<Config> &servers, Request &request)
@@ -186,32 +191,38 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     this->_request = request;
     this->_servers = servers;
     this->_server = this->calibrate_host_location(this->_servers, this->_request);
-    
+
     std::string protocol = request.getProtocol();
     std::string uri = this->_request.getTarget();
+    std::string cgi = "/cgi";
+    std::string method = this->_request.getMethod();
     this->_statusCode = this->_request.getStatusCode();
 
-    //int how_many_methods = 0;
-
-    if (this->_request.getMethod() != "GET" && this->_request.getMethod() != "POST" && this->_request.getMethod() != "DELETE")
-    {
-            this->_statusCode = 501;
-            this->handle_SC_error(this->_statusCode);
-            return ;
-    }
-    // else
+    // if (this->_request.getMethod() != "GET" && this->_request.getMethod() != "POST" && this->_request.getMethod() != "DELETE")
     // {
-    //     this->_statusCode = 405;
-    //     this->handle_SC_error(this->_statusCode);
+    //         this->_statusCode = 501;
+    //         this->handle_SC_error(this->_statusCode);
+    //         return ;
     // }
+    if ((method != "GET" && method != "POST" && method != "DELETE") ||
+    ((!this->_server._locations[uri]._allowGET && method == "GET") || (!this->_server._locations[uri]._allowDELETE && method == "DELETE") ||
+    ((!this->_server._locations[uri]._allowPOST && method == "POST"))))
+    {
+        std::cout << "esta entrando aqui " << std::endl;
+        this->_response.append(protocol);
+        this->_response.append(" ");
+        this->_statusCode = 405;
+        this->handle_SC_error(this->_statusCode);
+    }
     if (request.getMethod() == "GET")
     {
         this->_response.append(protocol);
         this->_response.append(" ");
-        if (uri = "/cgi")
-        {
-            this->parse_cgi_server_GET();
-        }
+        // if (uri == cgi)
+        // {
+        //     std::cout << "ENTRA A PARSE CGI" << std::endl;
+        //     this->parse_cgi_server_GET();
+        // }
         this->createBody();
         int number = this->_statusCode;
         if (number != 200)
@@ -224,6 +235,7 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         this->_response.append("Date: ");
         this->_response.append(tm);
         this->_response.append(" GMT\r\n");
+        //this->addHeaders();
         //aqui faltaria algo, un tipo de parseo del request o algo para saber que headers hay que meter en el response para cada caso diferente
         this->_response.append("Content-Type: ");
         this->_response.append("text/html\r\n");

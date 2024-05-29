@@ -10,6 +10,8 @@ server:
     file: "hola.html"
   location: "/favicon.ico"
     file: "icon1.png"
+  location: "/cgi"
+    file: "cgi.html"
 
 server:
   servername: site2.com
@@ -73,12 +75,11 @@ server:
 server:
   servername: dechunker.com
   listen: 127.0.0.1:61007
-  root: "./www/chunkerSite"
+  root: "./html/septima_pagina"
   location: /
     file: "index.html"
     allow: POST
     autoindex: on
-    error_page: "404" "customErrors/404.html"
     handle_post: "dechunk"
   location: "/favicon.ico"
     file: "icon1.png"
@@ -86,7 +87,7 @@ server:
 server:
   servername: calculator.com
   listen: 127.0.0.1:61008
-  root: "./www/calculator"
+  root: "./html/octava_pagina"
   buffer_size: 30
   location: /
     file: "index.html"
@@ -94,7 +95,7 @@ server:
   location: "/cgi"
     cgi: "sh"
     allow: GET
-    root: "www/cgi-bin"
+    root: "html/cgi-bin"
   location: "/favicon.ico"
     file: "icon1.png"
 

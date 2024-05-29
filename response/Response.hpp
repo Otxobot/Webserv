@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:43 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/28 16:35:37 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/29 15:48:52 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ class Response
         int         check_for_statusCode();
         void        handle_SC_error(int sc);
         void        parse_cgi_server_GET();
+        void        addHeaders();
         
 };
 
