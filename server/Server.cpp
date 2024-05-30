@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:11 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/23 13:34:23 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/29 14:46:19 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -307,12 +307,12 @@ void Server::responseHandling(int &accptSockFD)
 		std::string response = _resp._response;
 		send(accptSockFD, response.c_str(), response.size(), 0);
 		shutdown(accptSockFD, SHUT_WR);
-	// 	if () // if connection is set to close in request close
-	// 	{
-	// 		close(accptSockFD);
-	// 		FD_CLR(accptSockFD, &_masterFDs);
-	// 		FD_CLR(accptSockFD, &_writeFDs);
-	// 	}
+		// if () // if connection is set to close in request close
+		// {
+		// 	close(accptSockFD);
+		// 	FD_CLR(accptSockFD, &_masterFDs);
+		// 	FD_CLR(accptSockFD, &_writeFDs);
+		// }
 	}
 	// _resp.clear();
 	// this->_request.clear();

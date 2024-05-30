@@ -33,9 +33,9 @@ class Config
 		std::string							_servername;
 		std::string							_listen;
 		std::string							_file;
+		unsigned long						_client_max_body_size;
 		bool								_autoindex;
 		std::map<int, std::string>			_errorpage;
-		unsigned long						_client_max_body_size;
 		int									_buffer_size;
 	public:
 		std::string							_root;

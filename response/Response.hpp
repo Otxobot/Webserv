@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:43 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/23 13:55:41 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/29 12:52:11 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,14 @@ class Response
         std::string getHeaders();
         std::string getStatusCodeTranslate(int status_code);
         void        createBody();
-        //void        get_body();
+        void        get_body();
         Config      calibrate_host_location(std::vector<Config> _servers, Request _request);
         void        enter_location(Config server, std::string uri);
         int         check_for_statusCode();
         void        handle_SC_error(int sc);
+        void        handleGetRequest(const std::string& protocol, const std::string& tm);
+        void        handlePostRequest(const std::string& protocol, const std::string& tm);
+        void        handleDeleteRequest(const std::string& protocol, const std::string& tm, std::string _Path);
 };
 
 #endif

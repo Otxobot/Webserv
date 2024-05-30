@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mikferna <mikferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:33 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/23 13:40:13 by abasante         ###   ########.fr       */
+/*   Updated: 2024/05/29 17:02:48 by mikferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,15 +219,28 @@ int		Request::request_body()
 		}
 		else
 		{
-			while (this->request.length())
-			{	
-				std::string tmp = this->request.substr(0, this->request.find("\n"));
-				std::cout << "tmp: " << tmp << std::endl;
-				if (tmp[tmp.size() - 1] == '\r')
-    				tmp.erase(tmp.size() - 1);
-				this->body.append(tmp);
-				this->request.erase(0, this->request.find("\n") + 1);	
-			}
+			while (this->request.length()) {
+    size_t pos = this->request.find("\r\n");
+    if (pos != std::string::npos) {
+        // Extraemos una línea completa
+        std::string line = this->request.substr(0, pos);
+        
+        // Verificamos si hay un retorno de carro al final y lo eliminamos si es necesario
+        if (line.length() > 0 && line[line.length() - 1] == '\r') {
+            line.erase(line.length() - 1);
+        }
+
+        // Añadimos la línea al cuerpo
+        this->body.append(line);
+
+        // Eliminamos la línea procesada de la solicitud
+        this->request.erase(0, pos + 2); // Sumamos 2 para eliminar también el "\r\n"
+    } else {
+        // Si no hay más saltos de línea, agregamos el restante de la solicitud al cuerpo y salimos del bucle
+        this->body.append(this->request);
+        break;
+    }
+}
 		}
 	}
 	return EXIT_SUCCESS;
@@ -270,6 +283,11 @@ std::string Request::getMethod()
 int Request::getStatusCode()
 {
 	return (this->_statusCode);
+}
+
+std::string Request::getBody()
+{
+	return (this->body);
 }
 
 void Request::reset()

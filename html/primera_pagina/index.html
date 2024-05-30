@@ -3,114 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebServer</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        header {
-            background: #333;
-            color: #fff;
-            padding: 1rem 0;
-            text-align: center;
-        }
-        nav {
-            background: #444;
-            padding: 0.5rem;
-        }
-        nav ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-        }
-        nav ul li {
-            margin: 0 1rem;
-        }
-        nav ul li a {
-            color: #fff;
-            text-decoration: none;
-        }
-        .container {
-            width: 80%;
-            margin: 2rem auto;
-        }
-        .content {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-        }
-        .content div {
-            background: #fff;
-            padding: 1rem;
-            margin: 1rem;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 45%;
-        }
-        footer {
-            background: #333;
-            color: #fff;
-            text-align: center;
-            padding: 1rem 0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-    </style>
+    <title>Calculadora</title>
 </head>
 <body>
+    <h2>Calculadora Simple</h2>
+    <form action="calc.cgi" method="get">
+        <label for="num1">Número 1:</label>
+        <input type="text" id="num1" name="num1"><br><br>
+        <label for="num2">Número 2:</label>
+        <input type="text" id="num2" name="num2"><br><br>
+        <input type="submit" value="Calcular">
+    </form>
 
-<header>
-    <h1>Welcome to our WebServer</h1>
-</header>
+    <div id="result"></div>
 
-<nav>
-    <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#services">Services</a></li>
-        <li><a href="#contact">Contact</a></li>
-    </ul>
-</nav>
-
-<div class="container">
-    <section id="home" class="content">
-        <div>
-            <h2>Home</h2>
-            <p>This is the homepage of WebServer. Here you will find the latest updates and news.</p>
-        </div>
-    </section>
-
-    <section id="about" class="content">
-        <div>
-            <h2>About</h2>
-            <p>WebServer is a comprehensive platform designed to provide you with the best web hosting solutions. Our mission is to deliver reliable and efficient services to our customers.</p>
-        </div>
-    </section>
-
-    <section id="services" class="content">
-        <div>
-            <h2>Services</h2>
-            <p>We offer a wide range of services including web hosting, domain registration, and cloud solutions. Our team is dedicated to providing you with top-notch support and services.</p>
-        </div>
-    </section>
-
-    <section id="contact" class="content">
-        <div>
-            <h2>Contact</h2>
-            <p>If you have any questions or need assistance, please don't hesitate to contact us. You can reach us via email at support@webserver.com or call us at (123) 456-7890.</p>
-        </div>
-    </section>
-</div>
-
-<footer>
-    <p>&copy; 2024 WebServer. All rights reserved.</p>
-</footer>
-
+    <script>
+        function showResult(result) {
+            document.getElementById('result').innerText = 'El resultado es: ' + result;
+        }
+    </script>
 </body>
 </html>
