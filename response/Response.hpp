@@ -56,9 +56,7 @@ class Response
         void        enter_location(Config server, std::string uri);
         int         check_for_statusCode();
         void        handle_SC_error(int sc);
-        void        parse_cgi_server_GET();
-        void        addHeaders();
-        
+        void        check_if_cgi();
 };
 
 #endif

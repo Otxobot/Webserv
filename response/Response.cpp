@@ -169,15 +169,16 @@ void Response::createBody()
     }
 }
 
-void Response::parse_cgi_server_GET()
-{ 
-    //aqui hay que hacer el cgi en caso de que sea un get
-    
-}
+void Response::check_if_cgi(std::string uri)
+{ // Assuming getURI() is a function that returns the URI of the request
+    std::size_t found = uri.find_last_of(".");
+    std::string extension = uri.substr(found+1);
 
-void Response::addHeaders()
-{
-    //
+    // List of CGI extensions
+    std::vector<std::string> cgi_extensions = {"cgi", "pl", "py", "php"};
+
+    // Check if the extension is in the list of CGI extensions
+    _isCGI = std::find(cgi_extensions.begin(), cgi_extensions.end(), extension) != cgi_extensions.end();
 }
 
 void Response::responseCreation(std::vector<Config> &servers, Request &request)
@@ -197,6 +198,8 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     std::string cgi = "/cgi";
     std::string method = this->_request.getMethod();
     this->_statusCode = this->_request.getStatusCode();
+
+    this->check_if_cgi(uri);
 
     // if (this->_request.getMethod() != "GET" && this->_request.getMethod() != "POST" && this->_request.getMethod() != "DELETE")
     // {
@@ -218,11 +221,6 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     {
         this->_response.append(protocol);
         this->_response.append(" ");
-        // if (uri == cgi)
-        // {
-        //     std::cout << "ENTRA A PARSE CGI" << std::endl;
-        //     this->parse_cgi_server_GET();
-        // }
         this->createBody();
         int number = this->_statusCode;
         if (number != 200)
@@ -235,7 +233,6 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         this->_response.append("Date: ");
         this->_response.append(tm);
         this->_response.append(" GMT\r\n");
-        //this->addHeaders();
         //aqui faltaria algo, un tipo de parseo del request o algo para saber que headers hay que meter en el response para cada caso diferente
         this->_response.append("Content-Type: ");
         this->_response.append("text/html\r\n");
