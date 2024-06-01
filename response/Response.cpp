@@ -169,17 +169,17 @@ void Response::createBody()
     }
 }
 
-void Response::check_if_cgi(std::string uri)
-{ // Assuming getURI() is a function that returns the URI of the request
-    std::size_t found = uri.find_last_of(".");
-    std::string extension = uri.substr(found+1);
+// void Response::check_if_cgi(std::string uri)
+// { // Assuming getURI() is a function that returns the URI of the request
+//     std::size_t found = uri.find_last_of(".");
+//     std::string extension = uri.substr(found+1);
 
-    // List of CGI extensions
-    std::vector<std::string> cgi_extensions = {"cgi", "pl", "py", "php"};
+//     // List of CGI extensions
+//     std::vector<std::string> cgi_extensions = {"cgi", "pl", "py", "php"};
 
-    // Check if the extension is in the list of CGI extensions
-    _isCGI = std::find(cgi_extensions.begin(), cgi_extensions.end(), extension) != cgi_extensions.end();
-}
+//     // Check if the extension is in the list of CGI extensions
+//     _isCGI = std::find(cgi_extensions.begin(), cgi_extensions.end(), extension) != cgi_extensions.end();
+// }
 
 void Response::responseCreation(std::vector<Config> &servers, Request &request)
 {
@@ -199,7 +199,7 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     std::string method = this->_request.getMethod();
     this->_statusCode = this->_request.getStatusCode();
 
-    this->check_if_cgi(uri);
+    //this->check_if_cgi(uri);
 
     // if (this->_request.getMethod() != "GET" && this->_request.getMethod() != "POST" && this->_request.getMethod() != "DELETE")
     // {
