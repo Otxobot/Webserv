@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 15:53:04 by mikferna          #+#    #+#             */
-/*   Updated: 2024/05/28 11:57:10 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/03 16:14:00 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ std::string runCGI(Request& _request, const std::string& root, const std::string
     setenv("SERVER_PROTOCOL", "HTTP/1.1", 1);
     setenv("SERVER_PORT", int_to_string(_request.getPort()).c_str(), 1);
     setenv("REQUEST_METHOD", _request.getMethod().c_str(), 1);
-    setenv("SERVER_NAME", "webserv", 1);
+    setenv("SERVER_NAME", "site1.com", 1);
     setenv("REDIRECT_STATUS", "1", 1);
     setenv("PATH_INFO", (root + _request.getTarget()).c_str(), 1);
     setenv("SCRIPT_FILENAME", (root + _request.getTarget()).c_str(), 1);
@@ -56,7 +56,8 @@ std::string runCGI(Request& _request, const std::string& root, const std::string
         argv[0] = cgi_path.c_str();
         argv[1] = (root + _request.getTarget()).c_str();
         argv[2] = NULL;
-        if (execve(argv[0], (char* const*)argv, environ) == -1) {
+        if (execve(argv[0], (char* const*)argv, environ) == -1) 
+        {
             perror("Error: Execve Can't run");
             exit(EXIT_FAILURE);
         }

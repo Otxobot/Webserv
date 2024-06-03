@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:43 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/03 14:30:32 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/03 15:23:25 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,9 @@ class Response
 
         void        handle_GET();
         void        handle_POST();
-        void        handle_DELETE();      
+        void        handle_DELETE();
+        
+        void        handle_GET_CGI();
 };
 
 #endif

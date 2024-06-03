@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/03 14:30:02 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/03 16:21:23 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,6 @@ void Response::handle_SC_error(int sc)
             this->_response.append(_body);
 }
 
-
 void Response::responseCreation(std::vector<Config> &servers, Request &request)
 {
     // time_t _time;
@@ -151,11 +150,9 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
 
     if (this->_request.getTarget() == cgi)
     {
-        std::cout << "this->_request.getTarget():" << this->_request.getTarget() << std::endl;
-        std::cout << "ENTRAMOS A PARSEAR EN CASO DE QUE EL REQUEST SEA CGI" << std::endl;
-        std::cout << "Este es el archivo que hay dentro de cgi-bin->" << this->_server._locations[cgi]._file << std::endl;
-        //ahora tengo que averiguar cual de los metodos es el CGI, primero hare el GET
-        
+        std::cout << "entro aqui" << std::endl;
+        this->handle_GET_CGI();
+        return ;
     }
 
     std::map<std::string, Location>::iterator it = this->_server._locations.find(uri);

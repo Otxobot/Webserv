@@ -5,7 +5,6 @@ import traceback
 import cgi
 # Función para manejar errores
 def handle_error():
-    print("Content-Type: text/html")
     print()
     print("<html>")
     print("<head>")
@@ -34,7 +33,7 @@ try:
     print("<h1>Hello, CGI!</h1>")
     print("<p>Este es un script CGI ejecutado desde el servidor web.</p>")
     # Mostrar los parámetros recibidos
-    print("<h2>Parámetros recibidos:</h2>")
+    print("<h2>Parametros recibidos:</h2>")
     print("<ul>")
     for key in form.keys():
         print(f"<li>{key}: {form.getvalue(key)}</li>")
