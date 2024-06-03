@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/03 16:21:23 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/03 16:47:36 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,6 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
 
     if (this->_request.getTarget() == cgi)
     {
-        std::cout << "entro aqui" << std::endl;
         this->handle_GET_CGI();
         return ;
     }

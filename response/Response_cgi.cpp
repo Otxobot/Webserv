@@ -11,7 +11,7 @@ void    Response::handle_GET_CGI()
     this->_response.append("\r\n");
     this->_response.append("Content-Type: text/html\r\n");
     this->_response.append("Content-Length: ");
-    this->_response.append(std::to_string(content.length()));
+    this->_response.append(std::wstring(content.length()));
     this->_response.append("\r\n");
     this->_response.append("\r\n");
     this->_response.append(content);

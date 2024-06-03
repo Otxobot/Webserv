@@ -6,7 +6,7 @@
 #    By: abasante <abasante@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/29 11:39:15 by abasante          #+#    #+#              #
-#    Updated: 2024/06/03 16:05:45 by abasante         ###   ########.fr        #
+#    Updated: 2024/06/03 16:48:17 by abasante         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ SRC = $(addsuffix .cpp, $(FILES))
 
 OBJ = $(addsuffix .o, $(FILES))
 
-CFLAGS = c++ -Wall -Wextra -Werror #--std=c++98 #-fsanitize=address -g3
+CFLAGS = c++ -Wall -Wextra -Werror --std=c++98 #-fsanitize=address -g3
 
 all : $(NAME)
 
