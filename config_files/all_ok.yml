@@ -10,8 +10,10 @@ server:
     file: "hola.html"
   location: "/favicon.ico"
     file: "icon1.png"
+  location: "/hola2"
+    file: "hola2.txt"
   location: "/cgi-bin"
-    file: "cgi.py"
+    file: "cgiscript.py"
 
 server:
   servername: site2.com

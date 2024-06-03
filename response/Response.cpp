@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/29 16:34:27 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/03 14:30:02 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,8 @@ Config Response::calibrate_host_location(std::vector<Config> _servers, Request _
 
 void Response::handle_SC_error(int sc)
 {
+    this->_response.append("HTTP/1.1");
+    this->_response.append(" ");
     this->_statusCode = sc;
     std::ostringstream oss;
     oss << sc;
@@ -128,22 +130,159 @@ void Response::handle_SC_error(int sc)
             this->_response.append(_body);
 }
 
+
+void Response::responseCreation(std::vector<Config> &servers, Request &request)
+{
+    // time_t _time;
+	// std::string tm;
+	// time(&_time);
+	// tm = ctime(&_time);
+    // tm.erase(tm.length() - 1);
+
+    this->_request = request;
+    this->_servers = servers;
+    this->_server = this->calibrate_host_location(this->_servers, this->_request);
+    
+    std::string protocol = request.getProtocol();
+    std::string uri = this->_request.getTarget();
+    std::string cgi = "/cgi-bin";
+    std::string method = this->_request.getMethod();
+    this->_statusCode = this->_request.getStatusCode();
+
+    if (this->_request.getTarget() == cgi)
+    {
+        std::cout << "this->_request.getTarget():" << this->_request.getTarget() << std::endl;
+        std::cout << "ENTRAMOS A PARSEAR EN CASO DE QUE EL REQUEST SEA CGI" << std::endl;
+        std::cout << "Este es el archivo que hay dentro de cgi-bin->" << this->_server._locations[cgi]._file << std::endl;
+        //ahora tengo que averiguar cual de los metodos es el CGI, primero hare el GET
+        
+    }
+
+    std::map<std::string, Location>::iterator it = this->_server._locations.find(uri);
+    if (it != this->_server._locations.end())
+    {    
+        if ((method != "GET" && method != "POST" && method != "DELETE") ||
+        ((!this->_server._locations[uri]._allowGET && method == "GET") || (!this->_server._locations[uri]._allowDELETE && method == "DELETE") ||
+        ((!this->_server._locations[uri]._allowPOST && method == "POST"))))
+        {
+            this->handle_SC_error(this->_statusCode);
+            return ;
+        }
+    }
+    else
+    {
+        this->handle_SC_error(404);
+        return ;
+    }
+
+    if (request.getMethod() == "GET")
+        this->handle_GET();
+    // if (request.getMethod() == "POST")
+    //     this->handle_POST();
+    if (request.getMethod() == "DELETE")
+        this->handle_DELETE();
+}
+
+void Response::handle_GET()
+{
+    time_t _time;
+	std::string tm;
+	time(&_time);
+	tm = ctime(&_time);
+    tm.erase(tm.length() - 1);
+
+    std::string contentType;
+    this->_response.append("HTTP/1.1");
+    this->_response.append(" ");
+    if (this->_server._locations[this->_request.getTarget()]._file.find(".html") != std::string::npos)
+        contentType = "text/html\r\n";
+    else if (this->_server._locations[this->_request.getTarget()]._file.find(".txt") != std::string::npos)
+        contentType = "text/plain\r\n";
+    this->createBody();
+    int number = this->_statusCode;
+    if (number != 200)
+        return ;
+    std::ostringstream oss;
+    oss << number;
+    std::string status_code = oss.str();
+    this->_response.append(status_code);
+    this->_response.append(" OK\r\n");
+    this->_response.append("Date: ");
+    this->_response.append(tm);
+    this->_response.append(" GMT\r\n");
+    this->_response.append("Content-Type: ");
+    this->_response.append(contentType);
+    this->_response.append("Server: ");
+    this->_response.append(this->_server._servername + "\r\n");
+    this->_response.append(this->_body);
+    std::cout << "=====================RESPONSE====================" << std::endl;
+    std::cout << this->_response << std::endl;
+}
+
+bool isDirectory(std::string path)
+{
+    DIR *dir;
+
+    if ((dir = opendir(path.c_str())))
+    {
+        closedir(dir);
+        return true;
+    }
+    return false;
+}
+
+void Response::handle_DELETE()
+{
+    time_t _time;
+	std::string tm;
+	time(&_time);
+	tm = ctime(&_time);
+    tm.erase(tm.length() - 1);
+
+    this->_response.append("HTTP/1.1");
+    this->_response.append(" ");
+    std::string _path = this->_request.getTarget();
+    if (isDirectory(_path))
+            this->handle_SC_error(409);
+        else
+        {
+            if (access(_path.c_str(), F_OK))
+               this->handle_SC_error(500);
+            else
+            {
+                if (!access(_path.c_str(), W_OK))
+                {
+                    if (std::remove(_path.c_str()))
+                        this->handle_SC_error(500);
+                    else
+                    {
+                        this->_response.append("204");
+                        this->_response.append(" ");
+                        this->_response.append("No Content\r\n");
+                        this->_response.append("Date: ");
+                        this->_response.append(tm);
+                        this->_response.append(" GMT\r\n");
+                        this->_response.append("Content-Length: 0\r\n");
+                        this->_response.append("Connection: close\r\n\r\n");
+                    }
+                }
+                else
+                    this->handle_SC_error(403);
+            }
+        }
+}
+
 void Response::createBody()
 {
     std::string uri = this->_request.getTarget();
+    std::cout << uri << std::endl;
+    uri.erase(0, uri.find_first_not_of(' '));       // leading spaces
+    uri.erase(uri.find_last_not_of(' ') + 1);       // trailing spaces
     Location our_location;
 
     if (uri.empty())
         uri.append("/");
 
-    std::map<std::string, Location>::iterator it = this->_server._locations.find(uri);
-    if (it == this->_server._locations.end())
-    {
-        std::cout << "por que coño no entra aqui " << std::endl;
-        std::cout << "URI not found in locations: " << uri << std::endl;
-        this->handle_SC_error(404);
-        return ;
-    }
     our_location = this->_server._locations[uri];
     std::string path = this->_server._root + "/" + our_location._file;
     std::ifstream file(path.c_str());
@@ -157,97 +296,15 @@ void Response::createBody()
     {
         std::ostringstream ss;
         ss << file.rdbuf();
-        std::string htmlContent = ss.str();
+        std::string Content = ss.str();
         this->_body.append("Content-Length: ");
         std::ostringstream oss;
         oss.str("");
-        oss << htmlContent.size();
+        std::cout << "Content.size():" << Content.size() << std::endl;
+        oss << Content.size();
         this->_body.append(oss.str());
         this->_body.append("\r\nConnection: close\r\n");
         this->_body.append("\r\n\r\n");
         this->_body.append(ss.str());
-    }
-}
-
-// void Response::check_if_cgi(std::string uri)
-// { // Assuming getURI() is a function that returns the URI of the request
-//     std::size_t found = uri.find_last_of(".");
-//     std::string extension = uri.substr(found+1);
-
-//     // List of CGI extensions
-//     std::vector<std::string> cgi_extensions = {"cgi", "pl", "py", "php"};
-
-//     // Check if the extension is in the list of CGI extensions
-//     _isCGI = std::find(cgi_extensions.begin(), cgi_extensions.end(), extension) != cgi_extensions.end();
-// }
-
-void Response::responseCreation(std::vector<Config> &servers, Request &request)
-{
-    time_t _time;
-	std::string tm;
-	time(&_time);
-	tm = ctime(&_time);
-    tm.erase(tm.length() - 1);
-
-    this->_request = request;
-    this->_servers = servers;
-    this->_server = this->calibrate_host_location(this->_servers, this->_request);
-
-    std::string protocol = request.getProtocol();
-    std::string uri = this->_request.getTarget();
-    std::string cgi = "/cgi";
-    std::string method = this->_request.getMethod();
-    this->_statusCode = this->_request.getStatusCode();
-
-    //this->check_if_cgi(uri);
-
-    // if (this->_request.getMethod() != "GET" && this->_request.getMethod() != "POST" && this->_request.getMethod() != "DELETE")
-    // {
-    //         this->_statusCode = 501;
-    //         this->handle_SC_error(this->_statusCode);
-    //         return ;
-    // }
-    if ((method != "GET" && method != "POST" && method != "DELETE") ||
-    ((!this->_server._locations[uri]._allowGET && method == "GET") || (!this->_server._locations[uri]._allowDELETE && method == "DELETE") ||
-    ((!this->_server._locations[uri]._allowPOST && method == "POST"))))
-    {
-        std::cout << "esta entrando aqui " << std::endl;
-        this->_response.append(protocol);
-        this->_response.append(" ");
-        this->_statusCode = 405;
-        this->handle_SC_error(this->_statusCode);
-    }
-    if (request.getMethod() == "GET")
-    {
-        this->_response.append(protocol);
-        this->_response.append(" ");
-        this->createBody();
-        int number = this->_statusCode;
-        if (number != 200)
-            return ;
-        std::ostringstream oss;
-        oss << number;
-        std::string status_code = oss.str();
-        this->_response.append(status_code);
-        this->_response.append(" OK\r\n");
-        this->_response.append("Date: ");
-        this->_response.append(tm);
-        this->_response.append(" GMT\r\n");
-        //aqui faltaria algo, un tipo de parseo del request o algo para saber que headers hay que meter en el response para cada caso diferente
-        this->_response.append("Content-Type: ");
-        this->_response.append("text/html\r\n");
-        this->_response.append("Server: ");
-        this->_response.append(this->_server._servername + "\r\n");
-        this->_response.append(this->_body);
-        std::cout << "=====================RESPONSE====================" << std::endl;
-        std::cout << this->_response << std::endl;
-    }
-    if (request.getMethod() == "POST")
-    {
-        
-    }
-    if (request.getMethod() == "DELETE")
-    {
-        
     }
 }

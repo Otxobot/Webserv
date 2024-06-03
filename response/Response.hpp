@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:43 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/29 15:48:52 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/03 14:30:32 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 // #include <dirent.h>
 #include <string>
 #include <sstream>
+#include <dirent.h>
 
 #define DEFAULT "/index.html"
 
@@ -56,7 +57,10 @@ class Response
         void        enter_location(Config server, std::string uri);
         int         check_for_statusCode();
         void        handle_SC_error(int sc);
-        void        check_if_cgi();
+
+        void        handle_GET();
+        void        handle_POST();
+        void        handle_DELETE();      
 };
 
 #endif
