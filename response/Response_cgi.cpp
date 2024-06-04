@@ -3,8 +3,12 @@
 
 void    Response::handle_GET_CGI()
 {
-    std::string content = runCGI(this->_request, "html/primera_pagina", "html/primera_pagina/cgiscript.py");
-    std::cout << "content from runCGI: " << content << std::endl;
+    std::cout << "this->_server._root: "<<this->_server._root << std::endl;
+
+    
+//"html/primera_pagina/cgiscript.py"
+    std::cout << this->_server._root + "/" + this->_server._locations["/cgi-bin"]._file << std::endl;
+    std::string content = runCGI(this->_request, this->_server._root , this->_server._root + "/" + this->_server._locations["/cgi-bin"]._file);
     this->_response.append("HTTP/1.1");
     this->_response.append(" ");
     this->_response.append("200 OK");

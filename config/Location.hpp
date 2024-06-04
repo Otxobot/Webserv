@@ -29,10 +29,10 @@ class Location
 		std::string					_handle_delete;
 		std::string					_handle_post;
 		std::string					_error_page;
-		std::string					_cgi;
 		std::string					_upload;
 		int							_buffer_size;
 	public:
+		std::string					_cgi;
 		std::string					_redirect;
 		bool			_allowGET;
 		bool			_allowPOST;
