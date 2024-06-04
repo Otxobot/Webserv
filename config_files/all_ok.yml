@@ -5,7 +5,7 @@ server:
   location: /
     file: "index.html"
   location: "/goto42"
-    redirect: "www.42urduliz.com"
+    redirect: "http://www.42urduliz.com"
   location: "/hola"
     file: "hola.html"
   location: "/favicon.ico"

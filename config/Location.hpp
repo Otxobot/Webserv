@@ -24,7 +24,6 @@ class Location
 	private:
 		std::string		location_path;
 		//int					_index;
-		std::string					_redirect;
 		std::string					_root;
 		bool						_autoindex;
 		std::string					_handle_delete;
@@ -34,6 +33,7 @@ class Location
 		std::string					_upload;
 		int							_buffer_size;
 	public:
+		std::string					_redirect;
 		bool			_allowGET;
 		bool			_allowPOST;
 		bool			_allowDELETE;

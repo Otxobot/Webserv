@@ -132,27 +132,15 @@ void Response::handle_SC_error(int sc)
 
 void Response::responseCreation(std::vector<Config> &servers, Request &request)
 {
-    // time_t _time;
-	// std::string tm;
-	// time(&_time);
-	// tm = ctime(&_time);
-    // tm.erase(tm.length() - 1);
-
     this->_request = request;
     this->_servers = servers;
     this->_server = this->calibrate_host_location(this->_servers, this->_request);
     
-    std::string protocol = request.getProtocol();
+    //std::string protocol = request.getProtocol();
     std::string uri = this->_request.getTarget();
     std::string cgi = "/cgi-bin";
     std::string method = this->_request.getMethod();
     this->_statusCode = this->_request.getStatusCode();
-
-    if (this->_request.getTarget() == cgi)
-    {
-        this->handle_GET_CGI();
-        return ;
-    }
 
     std::map<std::string, Location>::iterator it = this->_server._locations.find(uri);
     if (it != this->_server._locations.end())
@@ -161,6 +149,7 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         ((!this->_server._locations[uri]._allowGET && method == "GET") || (!this->_server._locations[uri]._allowDELETE && method == "DELETE") ||
         ((!this->_server._locations[uri]._allowPOST && method == "POST"))))
         {
+            std::cout << "ENTRA AQUI"  << std::endl;
             this->handle_SC_error(this->_statusCode);
             return ;
         }
@@ -171,8 +160,37 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         return ;
     }
 
+    if (this->_request.getTarget() == cgi && method == "GET")
+    {
+        this->handle_GET_CGI();
+        return ;
+    }
+    // else if (this->_request.getTarget() == cgi && method == "POST")
+    // {
+    //     this->handle_POST_CGI();
+    //     return ;
+    // }
+
     if (request.getMethod() == "GET")
+    {
+        if (!this->_server._locations[uri]._redirect.empty())
+        {
+            std::string redirect = this->_server._locations[uri]._redirect;
+            std::cout << "TIENE REDIRECCION" << std::endl;
+            this->_response.append("HTTP/1.1");
+            this->_response.append(" ");
+            this->_statusCode = 301;
+            this->_response.append("301");
+            this->_response.append(" ");
+            this->_response.append(getStatusCodeTranslate(301) + "\r\n");
+            this->_response.append("Location: ");
+            this->_response.append(redirect);
+            this->_response.append("\r\n\r\n");
+            std::cout << this->_response << std::endl;
+            return ;
+        }
         this->handle_GET();
+    }
     // if (request.getMethod() == "POST")
     //     this->handle_POST();
     if (request.getMethod() == "DELETE")

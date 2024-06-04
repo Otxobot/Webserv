@@ -63,6 +63,7 @@ class Response
         void        handle_DELETE();
         
         void        handle_GET_CGI();
+        void        handle_POST_CGI();
 };
 
 #endif
