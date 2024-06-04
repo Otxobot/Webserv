@@ -154,11 +154,12 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
             return ;
         }
     }
-    else
-    {
-        this->handle_SC_error(404);
-        return ;
-    }
+    // else
+    // {
+    //     std::cout << "holaaaaaa entro" << std::cout;
+    //     this->handle_SC_error(404);
+    //     return ;
+    // }
 
     if (this->_request.getTarget() == cgi && method == "GET")
     {
@@ -211,8 +212,6 @@ void Response::handle_GET()
     tm.erase(tm.length() - 1);
 
     std::string contentType;
-    this->_response.append("HTTP/1.1");
-    this->_response.append(" ");
     if (this->_server._locations[this->_request.getTarget()]._file.find(".html") != std::string::npos)
         contentType = "text/html\r\n";
     else if (this->_server._locations[this->_request.getTarget()]._file.find(".txt") != std::string::npos)
@@ -221,6 +220,8 @@ void Response::handle_GET()
     int number = this->_statusCode;
     if (number != 200)
         return ;
+    this->_response.append("HTTP/1.1");
+    this->_response.append(" ");
     std::ostringstream oss;
     oss << number;
     std::string status_code = oss.str();
@@ -303,13 +304,17 @@ void Response::createBody()
         uri.append("/");
 
     our_location = this->_server._locations[uri];
-    std::string path = this->_server._root + "/" + our_location._file;
+    std::string path;
+    if (!our_location._file.empty())
+        path = this->_server._root + "/" + our_location._file;
+    else
+        path = this->_server._root + uri;
+    std::cout << "path-> " << path << std::endl;
     std::ifstream file(path.c_str());
     if (!file.is_open())
     {
-        std::cout << "Failed to open file: " << our_location._file << std::endl;
-        this->handle_SC_error(500);
-        return ;
+        this->handle_SC_error(404);
+       return ;
     }
     else
     {
