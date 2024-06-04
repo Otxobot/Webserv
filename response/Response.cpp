@@ -142,9 +142,9 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     std::string method = this->_request.getMethod();
     this->_statusCode = this->_request.getStatusCode();
 
-    std::map<std::string, Location>::iterator it = this->_server._locations.find(uri);
-    if (it != this->_server._locations.end())
-    {    
+    // std::map<std::string, Location>::iterator it = this->_server._locations.find(uri);
+    // if (it != this->_server._locations.end())
+    // {    
         if ((method != "GET" && method != "POST" && method != "DELETE") ||
         ((!this->_server._locations[uri]._allowGET && method == "GET") || (!this->_server._locations[uri]._allowDELETE && method == "DELETE") ||
         ((!this->_server._locations[uri]._allowPOST && method == "POST"))))
@@ -153,7 +153,7 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
             this->handle_SC_error(this->_statusCode);
             return ;
         }
-    }
+    //}
     // else
     // {
     //     std::cout << "holaaaaaa entro" << std::cout;
@@ -314,7 +314,7 @@ void Response::createBody()
     if (!file.is_open())
     {
         this->handle_SC_error(404);
-       return ;
+        return ;
     }
     else
     {
