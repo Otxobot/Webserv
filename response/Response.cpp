@@ -295,8 +295,8 @@ void Response::createBody()
 {
     std::string uri = this->_request.getTarget();
     std::cout << uri << std::endl;
-    uri.erase(0, uri.find_first_not_of(' '));       // leading spaces
-    uri.erase(uri.find_last_not_of(' ') + 1);       // trailing spaces
+    uri.erase(0, uri.find_first_not_of(' '));
+    uri.erase(uri.find_last_not_of(' ') + 1);
     Location our_location;
 
     if (uri.empty())

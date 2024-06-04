@@ -240,20 +240,6 @@ void Server::acceptedConnectHandling(int &accptSockFD)
 		return; // Socket is connected but doesn't send request.
 }
 
-// std::string Server::get_body(std::string file_name)
-// {
-// 	std::string _body;
-// 	std::ifstream file(file_name.c_str());
-// 	if (file)
-// 	{
-// 		std::ostringstream ss;
-// 		ss << file.rdbuf();
-// 		_body = ss.str();
-// 		file.close(); // close the file(filename)
-// 	}
-// 	return _body;
-// }
-
 // int Server::num_len(int n)
 // {
 // 	int i;
