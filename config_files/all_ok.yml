@@ -8,8 +8,6 @@ server:
     redirect: "http://www.42urduliz.com"
   location: "/hola"
     file: "hola.html"
-  location: "/favicon.ico"
-    file: "icon1.png"
   location: "/hola2"
     file: "hola2.txt"
   location: "/cgi-bin"

@@ -176,20 +176,25 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         if (!this->_server._locations[uri]._redirect.empty())
         {
             std::string redirect = this->_server._locations[uri]._redirect;
+            redirect.erase(0, redirect.find_first_not_of(' '));       // leading spaces
+            redirect.erase(redirect.find_last_not_of(' ') + 1);
             std::cout << "TIENE REDIRECCION" << std::endl;
             this->_response.append("HTTP/1.1");
             this->_response.append(" ");
             this->_statusCode = 301;
             this->_response.append("301");
             this->_response.append(" ");
-            this->_response.append(getStatusCodeTranslate(301) + "\r\n");
+            this->_response.append(getStatusCodeTranslate(301));
             this->_response.append("Location: ");
             this->_response.append(redirect);
+            this->_response.append("\r\nContent-Type: text/html; charset=UTF-8\r\n");
+            this->_response.append("Content-Length: 0\r\n");
+            this->_response.append("Connection: close");
             this->_response.append("\r\n\r\n");
-            std::cout << this->_response << std::endl;
             return ;
         }
-        this->handle_GET();
+        else
+            this->handle_GET();
     }
     // if (request.getMethod() == "POST")
     //     this->handle_POST();
