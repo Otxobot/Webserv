@@ -4,6 +4,7 @@ server:
   root: "./html/primera_pagina"
   location: /
     file: "index.html"
+    allow: POST
   location: "/goto42"
     redirect: "http://www.42urduliz.com"
   location: "/hola"
@@ -102,16 +103,6 @@ server:
     root: "html/cgi-bin"
   location: "/favicon.ico"
     file: "icon1.png"
-
-server:
-  servername: register.com
-  listen: 127.0.0.1:61009
-  root: "./www/register"
-  location: /
-    file: index.html
-    handle_post: "setCookie"
-  location: "/favicon.ico"
-    file: "cookie.png"
 
 server:
   servername: bufferSize.com

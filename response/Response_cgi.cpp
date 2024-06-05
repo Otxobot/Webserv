@@ -17,7 +17,6 @@ int    Response::handle_GET_CGI()
         this->_response.append(ss.str());
         this->_response.append("\r\n");
         this->_response.append("\r\n");
-        std::cout << "content2: " << content << std::endl << std::endl;
         this->_response.append(content);
         return (0);
     }

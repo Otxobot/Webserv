@@ -144,7 +144,7 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     ((!this->_server._locations[uri]._allowGET && method == "GET") || (!this->_server._locations[uri]._allowDELETE && method == "DELETE") ||
     ((!this->_server._locations[uri]._allowPOST && method == "POST"))))
     {
-        std::cout << "ENTRA AQUI"  << std::endl;
+        this->_statusCode = 405;
         this->handle_SC_error(this->_statusCode);
         return ;
     }

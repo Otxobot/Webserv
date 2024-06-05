@@ -24,5 +24,6 @@ def calculate():
 
     print('<html><body><h1>Result: {}</h1></body></html>'.format(result))
 
+
 if __name__ == '__main__':
     calculate()
