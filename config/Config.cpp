@@ -128,6 +128,10 @@ std::vector<Config> Config::parseServers(std::ifstream &file, int contador)
 			int buffer_size = std::atoi(line_to_num.c_str());
 			_serversConfig[i]._buffer_size = buffer_size;
         }
+		// if (line.find("client_max_body_size:") != std::string::npos)
+		// {
+		// 	_serversConfig[i]._client_max_body_size = trim_comillas(line.substr())
+		// }
 	}
 	return (_serversConfig);
 }

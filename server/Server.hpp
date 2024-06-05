@@ -21,6 +21,8 @@
 #define CYAN "\033[36m"
 #define RESET "\033[0m"
 
+#define MAX_BODY_SIZE 100000
+
 #include "../Webserv.hpp"
 #include "../config/Config.hpp"
 #include "../request/Request.hpp"
@@ -61,6 +63,7 @@ class Server
 	    std::vector<int> _ports;
 	    int _port;
 	    std::string _host;
+		int client_max_body_size;
 
 	    // Socket infos
 	    struct sockaddr_in _serverAddr;

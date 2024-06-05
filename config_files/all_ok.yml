@@ -2,6 +2,7 @@ server:
   servername: site1.com
   listen: 127.0.0.1:61001
   root: "./html/primera_pagina"
+  buffer_size: 100000
   location: /
     file: "index.html"
   location: "/goto42"

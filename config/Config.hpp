@@ -34,9 +34,9 @@ class Config
 		std::string							_file;
 		bool								_autoindex;
 		std::map<int, std::string>			_errorpage;
-		unsigned long						_client_max_body_size;
-		int									_buffer_size;
 	public:
+		int									_buffer_size;
+		unsigned long						_client_max_body_size;
 		std::string							_servername;
 		std::string							_root;
 		int									_port; //uint16_t

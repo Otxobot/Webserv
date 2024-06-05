@@ -135,6 +135,7 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     this->_request = request;
     this->_servers = servers;
     this->_server = this->calibrate_host_location(this->_servers, this->_request);
+    //std::cout << "this->_server._client_max_body_size" << this->_server._client_max_body_size << std::endl;
     
     std::string uri = this->_request.getTarget();
     std::string method = this->_request.getMethod();

@@ -214,41 +214,70 @@ void Server::acceptedConnectHandling(int &accptSockFD)
 {
 	char buffer[BUFFER_SIZE + 1] = {0};
 	bzero(buffer, sizeof(buffer));
-	int valRead = recv(accptSockFD, buffer, BUFFER_SIZE, 0);
-	if (valRead > 0)
+	int valRead;
+	while ((valRead = recv(accptSockFD, buffer, BUFFER_SIZE, 0)) > 0)
 	{
-		buffer[valRead] = '\0';
-		std::map<int, std::string>::iterator it = _clients.find(accptSockFD);
-		if (it != _clients.end())
-			it->second += buffer;
-		std::string req(buffer);
-		this->_request.reset();
-		this->_request.Request_start(req);
-		if (FD_ISSET(accptSockFD, &_writeFDs))
+		if (valRead > this->client_max_body_size)
 		{
-			this->responseHandling(accptSockFD);
+			            std::string response = "HTTP/1.1 413 Payload Too Large\r\n"
+                                   "Content-Type: text/html\r\n"
+                                   "Content-Length: 76\r\n\r\n"
+                                   "<html><body><h1>413 Payload Too Large</h1></body></html>\r\n";
+            send(accptSockFD, response.c_str(), response.length(), 0);
+            close(accptSockFD);
+            return;
 		}
+
+		if (valRead > 0)
+		{
+			buffer[valRead] = '\0';
+			std::map<int, std::string>::iterator it = _clients.find(accptSockFD);
+			if (it != _clients.end())
+				it->second += buffer;
+			std::string req(buffer);
+			this->_request.reset();
+			this->_request.Request_start(req);
+			if (FD_ISSET(accptSockFD, &_writeFDs))
+			{
+				this->responseHandling(accptSockFD);
+			}
+		}
+		if (valRead == 0)
+		{
+			close(accptSockFD);
+			FD_CLR(accptSockFD, &_masterFDs);
+			FD_CLR(accptSockFD, &_writeFDs);
+			_clients.erase(accptSockFD);
+		}
+		else
+			return; 
 	}
-	if (valRead == 0)
-	{
-		close(accptSockFD);
-		FD_CLR(accptSockFD, &_masterFDs);
-		FD_CLR(accptSockFD, &_writeFDs);
-		_clients.erase(accptSockFD);
-	}
-	else
-		return; // Socket is connected but doesn't send request.
+	//int valRead = recv(accptSockFD, buffer, BUFFER_SIZE, 0);
+
+	// if (valRead > 0)
+	// {
+	// 	buffer[valRead] = '\0';
+	// 	std::map<int, std::string>::iterator it = _clients.find(accptSockFD);
+	// 	if (it != _clients.end())
+	// 		it->second += buffer;
+	// 	std::string req(buffer);
+	// 	this->_request.reset();
+	// 	this->_request.Request_start(req);
+	// 	if (FD_ISSET(accptSockFD, &_writeFDs))
+	// 	{
+	// 		this->responseHandling(accptSockFD);
+	// 	}
+	// }
+	// if (valRead == 0)
+	// {
+	// 	close(accptSockFD);
+	// 	FD_CLR(accptSockFD, &_masterFDs);
+	// 	FD_CLR(accptSockFD, &_writeFDs);
+	// 	_clients.erase(accptSockFD);
+	// }
+	// else
+	// 	return; // Socket is connected but doesn't send request.
 }
-
-// int Server::num_len(int n)
-// {
-// 	int i;
-
-// 	i = 1;
-// 	while (n /= 10)
-// 		i++;
-// 	return (i);
-// }
 
 // char *Server::ft_itoa(int n)
 // {
