@@ -22,6 +22,8 @@ std::string runCGI(Request& _request, const std::string& root, const std::string
     pid_t pid;
     std::string content;
     extern char **environ;
+
+    std::string script_py;
     // Establecer variables de entorno
     setenv("GATEWAY_INTERFACE", "CGI/1.1", 1);
     setenv("SERVER_PROTOCOL", "HTTP/1.1", 1);
@@ -31,9 +33,9 @@ std::string runCGI(Request& _request, const std::string& root, const std::string
     setenv("REDIRECT_STATUS", "1", 1);
     setenv("PATH_INFO", (root + _request.getTarget()).c_str(), 1);
     setenv("SCRIPT_FILENAME", (root + _request.getTarget()).c_str(), 1);
-    if (!_request.getReqValue("Cookie").empty()) {
-        setenv("HTTP_COOKIE", _request.getReqValue("Cookie").c_str(), 1);
-    }
+    // if (!_request.getReqValue("Cookie").empty()) {
+    //     setenv("HTTP_COOKIE", _request.getReqValue("Cookie").c_str(), 1);
+    // }
     if (_request.getMethod() == "GET") {
         setenv("QUERY_STRING", _request.getQueryString().c_str(), 1);
         setenv("CONTENT_LENGTH", "0", 1);
@@ -54,7 +56,7 @@ std::string runCGI(Request& _request, const std::string& root, const std::string
         dup2(Ifd[1], 1); // Redirigir stdout al pipe
         close(Ifd[1]);
         argv[0] = cgi_path.c_str();
-        argv[1] = (root + _request.getTarget()).c_str();
+        argv[1] = (_request.getQueryString()).c_str();
         argv[2] = NULL;
         if (execve(argv[0], (char* const*)argv, environ) == -1) 
         {

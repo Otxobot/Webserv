@@ -136,41 +136,33 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     this->_servers = servers;
     this->_server = this->calibrate_host_location(this->_servers, this->_request);
     
-    //std::string protocol = request.getProtocol();
     std::string uri = this->_request.getTarget();
-    std::string cgi = "/cgi-bin";
     std::string method = this->_request.getMethod();
     this->_statusCode = this->_request.getStatusCode();
-
-    // std::map<std::string, Location>::iterator it = this->_server._locations.find(uri);
-    // if (it != this->_server._locations.end())
-    // {    
-        if ((method != "GET" && method != "POST" && method != "DELETE") ||
-        ((!this->_server._locations[uri]._allowGET && method == "GET") || (!this->_server._locations[uri]._allowDELETE && method == "DELETE") ||
-        ((!this->_server._locations[uri]._allowPOST && method == "POST"))))
-        {
-            std::cout << "ENTRA AQUI"  << std::endl;
-            this->handle_SC_error(this->_statusCode);
-            return ;
-        }
-    //}
-    // else
-    // {
-    //     std::cout << "holaaaaaa entro" << std::cout;
-    //     this->handle_SC_error(404);
-    //     return ;
-    // }
-
-    if (this->_request.getTarget() == cgi && method == "GET")
+   
+    if ((method != "GET" && method != "POST" && method != "DELETE") ||
+    ((!this->_server._locations[uri]._allowGET && method == "GET") || (!this->_server._locations[uri]._allowDELETE && method == "DELETE") ||
+    ((!this->_server._locations[uri]._allowPOST && method == "POST"))))
     {
-        this->handle_GET_CGI();
+        std::cout << "ENTRA AQUI"  << std::endl;
+        this->handle_SC_error(this->_statusCode);
         return ;
     }
+
     // else if (this->_request.getTarget() == cgi && method == "POST")
     // {
     //     this->handle_POST_CGI();
     //     return ;
     // }
+    std::cout << "querrryyyy->" << this->_request.getQueryString() << std::endl;
+    if (this->_request.getQueryString().find("=") != std::string::npos && method == "GET")
+    {
+        if (this->handle_GET_CGI())
+        {
+            perror("py scritp couldn't be executed");
+            //return ;
+        }
+    }
 
     if (request.getMethod() == "GET")
     {
@@ -195,7 +187,9 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
             return ;
         }
         else
+        {
             this->handle_GET();
+        }
     }
     // if (request.getMethod() == "POST")
     //     this->handle_POST();
@@ -324,7 +318,6 @@ void Response::createBody()
         this->_body.append("Content-Length: ");
         std::ostringstream oss;
         oss.str("");
-        std::cout << "Content.size():" << Content.size() << std::endl;
         oss << Content.size();
         this->_body.append(oss.str());
         this->_body.append("\r\nConnection: close\r\n");

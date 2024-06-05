@@ -45,13 +45,13 @@ int Request::Request_start(std::string request)
 {
     int status_code = 0;
 	this->request = request;
+	std::cout <<"+++++++++++++++++++++++++++++ Request ++++++++++++++++++++++++++++++++" << std::endl;
 	std::cout << this->request << std::endl;
 	if ((status_code = this->request_line()) || (status_code = this->request_headers()) || (status_code = this->request_body()))
 		{
 			this->_statusCode = status_code;
 			return (status_code);
 		}
-	std::cout <<"+++++++++++++++++++++++++++++ Request ++++++++++++++++++++++++++++++++" << std::endl;
 	//printRequestInformation();
 	return 0;
 }
