@@ -71,6 +71,21 @@ std::vector<Config> Config::parseConfig(std::string configFile)
 	return (serversConfig);
 }
 
+std::vector<std::string> split(const std::string& str, char delimiter) 
+{
+    std::vector<std::string> result;
+    std::string::size_type start = 0;
+    std::string::size_type end = str.find(delimiter);
+    while (end != std::string::npos) {
+        result.push_back(str.substr(start, end - start));
+        start = end + 1;
+        end = str.find(delimiter, start);
+    }
+    // Add the last part
+    result.push_back(str.substr(start));
+    return result;
+}
+
 std::vector<Config> Config::parseServers(std::ifstream &file, int contador)
 {
 	//Aqui hay que parsear todos los servidores y sus locations
@@ -128,6 +143,14 @@ std::vector<Config> Config::parseServers(std::ifstream &file, int contador)
 			int buffer_size = std::atoi(line_to_num.c_str());
 			_serversConfig[i]._buffer_size = buffer_size;
         }
+		if (line.find("error_page: ") != std::string::npos)
+        {
+            std::string errorpage = line.substr(14);
+            std::vector<std::string> errorpage_vector = split(errorpage, ' ');
+            int errorcode = std::atoi(trim_comillas(errorpage_vector[0]).c_str());
+            std::string errormessage = trim_comillas(errorpage_vector[1]);
+            _serversConfig[i]._errorpage[errorcode] = errormessage;
+        }
 		// if (line.find("client_max_body_size:") != std::string::npos)
 		// {
 		// 	_serversConfig[i]._client_max_body_size = trim_comillas(line.substr())
@@ -175,7 +198,7 @@ Location Config::parseLocation(std::ifstream &file, std::string &line)
 		}
         if (line.find("file: ") != std::string::npos)
         {
-			
+
             loc.setFile(trim_comillas(line.substr(10)));
         }
         if (line.find("redirect: ") != std::string::npos)

@@ -87,6 +87,37 @@ Config Response::calibrate_host_location(std::vector<Config> _servers, Request _
     return _servers[i];
 }
 
+std::string readFileToString(const std::string& filename) {
+    std::ifstream file(filename.c_str());
+    if (file) {
+        std::ostringstream ss;
+        ss << file.rdbuf();
+        std::string content = ss.str();
+        if (content.empty()) {
+            std::cerr << "Warning: File content is empty" << std::endl;
+        }
+        return content;
+    } else {
+        std::cerr << "Error: Could not open the file " << filename << std::endl;
+        return "<!DOCTYPE html>\n"
+               "<html>\n"
+               "<head>\n"
+               "<title>Error Page</title>\n"
+               "<style>\n"
+               "body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }\n"
+               "h1 { font-size: 50px; }\n"
+               "p { font-size: 24px; }\n"
+               "</style>\n"
+               "</head>\n"
+               "<body>\n"
+               "<h1>Error page</h1>\n"
+               "<p>Status code: 404 </p>\n"
+               "<p> Not Found\r\n </p>\n"
+               "</body>\n"
+               "</html>\n";
+    }
+}
+
 void Response::handle_SC_error(int sc)
 {
     this->_response.append("HTTP/1.1");
@@ -96,24 +127,31 @@ void Response::handle_SC_error(int sc)
     oss << sc;
     std::string statusCodeStr = oss.str();
 
-
-    std::string html = 
-        "<!DOCTYPE html>"
-        "<html>"
-        "<head>"
-        "<title>Error Page</title>"
-        "<style>"
-        "body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }"
-        "h1 { font-size: 50px; }"
-        "p { font-size: 24px; }"
-        "</style>"
-        "</head>"
-        "<body>"
-        "<h1>Error page</h1>"
-        "<p>Status code: " + statusCodeStr + "</p>"
-        "<p>" + this->getStatusCodeTranslate(sc) + "</p>"
-        "</body>"
-        "</html>";
+    std::string html;
+    if (this->_server._errorpage.count(sc)) {
+    std::string filename = "html/" + this->_server._errorpage[sc];
+    html = readFileToString(filename);
+    }
+    else
+    {
+        html = 
+            "<!DOCTYPE html>"
+            "<html>"
+            "<head>"
+            "<title>Error Page</title>"
+            "<style>"
+            "body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }"
+            "h1 { font-size: 50px; }"
+            "p { font-size: 24px; }"
+            "</style>"
+            "</head>"
+            "<body>"
+            "<h1>Error page</h1>"
+            "<p>Status code: " + statusCodeStr + "</p>"
+            "<p>" + this->getStatusCodeTranslate(sc) + "</p>"
+            "</body>"
+            "</html>";
+    }
 
     std::ostringstream ossSize;
     ossSize << html.size();

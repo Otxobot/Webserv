@@ -32,9 +32,9 @@ class Config
 		std::string									_host; //in_addr_t
 		std::string							_listen;
 		bool								_autoindex;
-		std::map<int, std::string>			_errorpage;
 		std::string							_file;
 	public:
+		std::map<int, std::string>			_errorpage;
 		int									_buffer_size;
 		unsigned long						_client_max_body_size;
 		std::string							_servername;

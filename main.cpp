@@ -21,10 +21,10 @@ int main(int ac, char **av)
     	std::cout << "Usage: " << av[0] << " <config file>" << std::endl;
     	return 1;
   	}
-	if (!verifyConf(av[1]))
-	{
-		return (1);
-	}
+	// if (!verifyConf(av[1]))
+	// {
+	// 	return (1);
+	// }
 	std::string confFilename;
 	Config config;
 	confFilename = av[1];
