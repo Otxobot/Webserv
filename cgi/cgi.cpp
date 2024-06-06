@@ -74,5 +74,5 @@ std::string runCGI(Request& _request, const std::string& root, const std::string
         close(Ifd[0]);
         waitpid(pid, NULL, 0);
     }
-    return content;
+    return (content);
 }

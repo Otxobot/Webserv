@@ -188,7 +188,7 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     std::string uri = this->_request.getTarget();
     std::string method = this->_request.getMethod();
     this->_statusCode = this->_request.getStatusCode();
-   
+
     if ((method != "GET" && method != "POST" && method != "DELETE") ||
     ((!this->_server._locations[uri]._allowGET && method == "GET") || (!this->_server._locations[uri]._allowDELETE && method == "DELETE") ||
     ((!this->_server._locations[uri]._allowPOST && method == "POST"))))
@@ -197,13 +197,14 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         this->handle_SC_error(this->_statusCode);
         return ;
     }
+
     if (uri == "/" && this->_server._locations[uri]._file != "index.html" && (!this->_server._locations[uri]._autoindex))
     {
         createDirectoryListing(this->_server._root);
         return ;
     }
 
-    // else if (this->_request.getTarget() == cgi && method == "POST")
+    // else if (this->_request.getTarget() == "/cgi-bin" && method == "POST")
     // {
     //     this->handle_POST_CGI();
     //     return ;
@@ -212,10 +213,10 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     {
         if (this->handle_GET_CGI())
         {
-            perror("py scritp couldn't be executed");
             this->handle_SC_error(500);
             return ;
         }
+        return ;
     }
 
     if (request.getMethod() == "GET")
