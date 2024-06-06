@@ -62,8 +62,10 @@ class Response
         void        handle_POST();
         void        handle_DELETE();
         
-        int        handle_GET_CGI();
+        int         handle_GET_CGI();
         void        handle_POST_CGI();
+        void        createDirectoryListing(std::string diretoryPath);
+        void        handle_GET_autoindex(std::string open);
 };
 
 #endif

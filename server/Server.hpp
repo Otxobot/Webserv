@@ -43,7 +43,7 @@
 // #include <unistd.h>
 // #include <sys/stat.h>
 // #include <algorithm>
-// #include <sstream>
+// #include <sstream  
 
 #define BUFFER_SIZE 1024	
 #define BACKLOG 2048
@@ -63,7 +63,6 @@ class Server
 	    std::vector<int> _ports;
 	    int _port;
 	    std::string _host;
-		int client_max_body_size;
 
 	    // Socket infos
 	    struct sockaddr_in _serverAddr;

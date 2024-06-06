@@ -217,7 +217,7 @@ void Server::acceptedConnectHandling(int &accptSockFD)
 	int valRead;
 	while ((valRead = recv(accptSockFD, buffer, BUFFER_SIZE, 0)) > 0)
 	{
-		if (valRead > this->client_max_body_size)
+		if (valRead > 100000)
 		{
 			            std::string response = "HTTP/1.1 413 Payload Too Large\r\n"
                                    "Content-Type: text/html\r\n"

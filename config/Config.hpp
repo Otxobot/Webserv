@@ -31,9 +31,9 @@ class Config
 		std::vector<int> 					_ports;
 		std::string									_host; //in_addr_t
 		std::string							_listen;
-		std::string							_file;
 		bool								_autoindex;
 		std::map<int, std::string>			_errorpage;
+		std::string							_file;
 	public:
 		int									_buffer_size;
 		unsigned long						_client_max_body_size;

@@ -175,6 +175,7 @@ Location Config::parseLocation(std::ifstream &file, std::string &line)
 		}
         if (line.find("file: ") != std::string::npos)
         {
+			
             loc.setFile(trim_comillas(line.substr(10)));
         }
         if (line.find("redirect: ") != std::string::npos)
@@ -187,7 +188,12 @@ Location Config::parseLocation(std::ifstream &file, std::string &line)
         }
         if (line.find("autoindex: ") != std::string::npos)
         {
-            line.substr(14) == "on" ? loc.setAutoindex(true) : loc.setAutoindex(false);
+            if (line.substr(14) == "on")
+			{
+				loc.setAutoindex(true);
+			}
+			else
+				loc.setAutoindex(false);
         }
         if (line.find("handle_delete: ") != std::string::npos)
         {

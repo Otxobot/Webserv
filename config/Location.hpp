@@ -25,13 +25,13 @@ class Location
 		std::string		location_path;
 		//int					_index;
 		std::string					_root;
-		bool						_autoindex;
 		std::string					_handle_delete;
 		std::string					_handle_post;
 		std::string					_error_page;
 		std::string					_upload;
 		int							_buffer_size;
 	public:
+		bool						_autoindex;
 		std::string					_cgi;
 		std::string					_redirect;
 		bool			_allowGET;

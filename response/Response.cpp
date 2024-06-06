@@ -130,12 +130,61 @@ void Response::handle_SC_error(int sc)
             this->_response.append(_body);
 }
 
+void Response::createDirectoryListing(std::string directoryPath) {
+    DIR* dir;
+    struct dirent* ent;
+    std::string htmlContent = "<html><body><ul>";
+
+    if ((dir = opendir(directoryPath.c_str())) != NULL) {
+        // Print all the files and directories within directory
+        while ((ent = readdir(dir)) != NULL) {
+            htmlContent += "<li><a href=\"" + std::string(ent->d_name) + "\">" + std::string(ent->d_name) + "</a></li>";
+        }
+        closedir(dir);
+    } else {
+        // Could not open directory
+        perror("Could not open directory");
+        return;
+    }
+
+    htmlContent += "</ul></body></html>";
+
+    // Write the HTML content to a file
+    std::ofstream htmlFile;
+    std::string index = "/autoindex.html";
+    std::string open = directoryPath + index;
+    std::cout << "open->" <<  open << std::endl;
+    htmlFile.open(open.c_str());
+    htmlFile << htmlContent;
+    htmlFile.close();
+    std::string filePath = this->_server._root + "/autoindex.html";
+    std::ifstream file(filePath.c_str());
+
+    if (file.is_open())
+    {
+        std::cout << "entra aqui a crear la response" << std::endl;
+        // Start of the HTTP response
+        this->_response = "HTTP/1.1 200 OK\r\n"
+                          "Content-Type: text/html\r\n"
+                          "Connection: close\r\n"
+                          "\r\n";
+
+        // Append each line of the file to the response
+        std::string line;
+        while (std::getline(file, line)) {
+            this->_response += line + "\n";
+        }
+        file.close();
+    }
+    else
+        this->handle_SC_error(500);
+}
+
 void Response::responseCreation(std::vector<Config> &servers, Request &request)
 {
     this->_request = request;
     this->_servers = servers;
     this->_server = this->calibrate_host_location(this->_servers, this->_request);
-    //std::cout << "this->_server._client_max_body_size" << this->_server._client_max_body_size << std::endl;
     
     std::string uri = this->_request.getTarget();
     std::string method = this->_request.getMethod();
@@ -149,13 +198,27 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         this->handle_SC_error(this->_statusCode);
         return ;
     }
+    std::cout << "uri->" << uri << std::endl;
+    if (uri == "/" && this->_server._locations[uri]._file != "index.html" && (!this->_server._locations[uri]._autoindex))
+    {
+        std::cout << "ENTRAMOS A HACER EL AUTOINDEX" << std::endl;
+        std::cout << this->_server._root << std::endl;
+        createDirectoryListing(this->_server._root);
+        return ;
+    }
+    // if (this->_server._locations[uri]._file.find("index.html") == std::string::npos && (!this->_server._locations[uri]._autoindex))
+    // {
+    //     std::cout << "ENTRAMOS A HACER EL AUTOINDEX" << std::endl;
+    //     std::cout << this->_server._root << std::endl;
+    //     createDirectoryListing(this->_server._root);
+    //     return ;
+    // }
 
     // else if (this->_request.getTarget() == cgi && method == "POST")
     // {
     //     this->handle_POST_CGI();
     //     return ;
     // }
-    std::cout << "querrryyyy->" << this->_request.getQueryString() << std::endl;
     if (this->_request.getQueryString().find("=") != std::string::npos && method == "GET")
     {
         if (this->handle_GET_CGI())
