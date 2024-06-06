@@ -153,7 +153,6 @@ void Response::createDirectoryListing(std::string directoryPath) {
     std::ofstream htmlFile;
     std::string index = "/autoindex.html";
     std::string open = directoryPath + index;
-    std::cout << "open->" <<  open << std::endl;
     htmlFile.open(open.c_str());
     htmlFile << htmlContent;
     htmlFile.close();
@@ -198,21 +197,11 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         this->handle_SC_error(this->_statusCode);
         return ;
     }
-    std::cout << "uri->" << uri << std::endl;
     if (uri == "/" && this->_server._locations[uri]._file != "index.html" && (!this->_server._locations[uri]._autoindex))
     {
-        std::cout << "ENTRAMOS A HACER EL AUTOINDEX" << std::endl;
-        std::cout << this->_server._root << std::endl;
         createDirectoryListing(this->_server._root);
         return ;
     }
-    // if (this->_server._locations[uri]._file.find("index.html") == std::string::npos && (!this->_server._locations[uri]._autoindex))
-    // {
-    //     std::cout << "ENTRAMOS A HACER EL AUTOINDEX" << std::endl;
-    //     std::cout << this->_server._root << std::endl;
-    //     createDirectoryListing(this->_server._root);
-    //     return ;
-    // }
 
     // else if (this->_request.getTarget() == cgi && method == "POST")
     // {
@@ -224,7 +213,8 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         if (this->handle_GET_CGI())
         {
             perror("py scritp couldn't be executed");
-            //return ;
+            this->handle_SC_error(500);
+            return ;
         }
     }
 
@@ -233,9 +223,8 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         if (!this->_server._locations[uri]._redirect.empty())
         {
             std::string redirect = this->_server._locations[uri]._redirect;
-            redirect.erase(0, redirect.find_first_not_of(' '));       // leading spaces
+            redirect.erase(0, redirect.find_first_not_of(' '));
             redirect.erase(redirect.find_last_not_of(' ') + 1);
-            std::cout << "TIENE REDIRECCION" << std::endl;
             this->_response.append("HTTP/1.1");
             this->_response.append(" ");
             this->_statusCode = 301;
@@ -293,8 +282,9 @@ void Response::handle_GET()
     this->_response.append("Server: ");
     this->_response.append(this->_server._servername + "\r\n");
     this->_response.append(this->_body);
-    std::cout << "=====================RESPONSE====================" << std::endl;
-    std::cout << this->_response << std::endl;
+    // std::cout << "=======================RESPONSE=========================" << std::endl;
+    // std::cout << this->_response << std::endl;
+    // std::cout << "=======================RESPONSE=========================" << std::endl;
 }
 
 bool isDirectory(std::string path)
@@ -353,7 +343,6 @@ void Response::handle_DELETE()
 void Response::createBody()
 {
     std::string uri = this->_request.getTarget();
-    std::cout << uri << std::endl;
     uri.erase(0, uri.find_first_not_of(' '));
     uri.erase(uri.find_last_not_of(' ') + 1);
     Location our_location;
@@ -367,7 +356,6 @@ void Response::createBody()
         path = this->_server._root + "/" + our_location._file;
     else
         path = this->_server._root + uri;
-    std::cout << "path-> " << path << std::endl;
     std::ifstream file(path.c_str());
     if (!file.is_open())
     {

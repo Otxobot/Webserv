@@ -4,7 +4,8 @@ server:
   root: "./html/primera_pagina"
   buffer_size: 100000
   location: /
-    autoindex: on
+    file: "index.html"
+    autoindex: off
   location: "/goto42"
     redirect: "http://www.42urduliz.com"
   location: "/hola"
