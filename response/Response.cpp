@@ -111,8 +111,8 @@ std::string readFileToString(const std::string& filename) {
                "</head>\n"
                "<body>\n"
                "<h1>Error page</h1>\n"
-               "<p>Status code: 404 </p>\n"
-               "<p> Not Found\r\n </p>\n"
+               "<p>Status code: 500 </p>\n"
+               "<p> Internal Server Error\r\n </p>\n"
                "</body>\n"
                "</html>\n";
     }
