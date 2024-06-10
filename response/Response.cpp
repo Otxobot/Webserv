@@ -88,7 +88,7 @@ Config Response::calibrate_host_location(std::vector<Config> _servers, Request _
 }
 
 std::string readFileToString(const std::string& filename) {
-    std::ifstream file(filename.c_str());
+    std::ifstream file(filename.c_str()); // c_str() needed for C++98
     if (file) {
         std::ostringstream ss;
         ss << file.rdbuf();
@@ -117,7 +117,6 @@ std::string readFileToString(const std::string& filename) {
                "</html>\n";
     }
 }
-
 void Response::handle_SC_error(int sc)
 {
     this->_response.append("HTTP/1.1");
@@ -126,37 +125,33 @@ void Response::handle_SC_error(int sc)
     std::ostringstream oss;
     oss << sc;
     std::string statusCodeStr = oss.str();
-
     std::string html;
     if (this->_server._errorpage.count(sc)) {
-    std::string filename = "html/" + this->_server._errorpage[sc];
+    std::string filename = this->_server._root + "/" + this->_server._errorpage[sc];
     html = readFileToString(filename);
     }
-    else
-    {
-        html = 
-            "<!DOCTYPE html>"
-            "<html>"
-            "<head>"
-            "<title>Error Page</title>"
-            "<style>"
-            "body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }"
-            "h1 { font-size: 50px; }"
-            "p { font-size: 24px; }"
-            "</style>"
-            "</head>"
-            "<body>"
-            "<h1>Error page</h1>"
-            "<p>Status code: " + statusCodeStr + "</p>"
-            "<p>" + this->getStatusCodeTranslate(sc) + "</p>"
-            "</body>"
-            "</html>";
+    else {
+    html =
+        "<!DOCTYPE html>"
+        "<html>"
+        "<head>"
+        "<title>Error Page</title>"
+        "<style>"
+        "body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }"
+        "h1 { font-size: 50px; }"
+        "p { font-size: 24px; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<h1>Error page</h1>"
+        "<p>Status code: " + statusCodeStr + "</p>"
+        "<p>" + this->getStatusCodeTranslate(sc) + "</p>"
+        "</body>"
+        "</html>";
     }
-
     std::ostringstream ossSize;
     ossSize << html.size();
     std::string html_size = ossSize.str();
-    // Print the HTML to the console (or to an HTTP response, etc.)
     this->_body = html;
     this->_response.append(oss.str());
     this->_response.append(" " + this->getStatusCodeTranslate(sc) + "Content-Type: ");
