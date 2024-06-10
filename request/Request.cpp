@@ -159,78 +159,65 @@ int		Request::request_headers()
 	return EXIT_SUCCESS;
 }
 
-int		Request::request_body()
-{
-	if (this->headers["Content-Type"].find("boundary") != std::string::npos && this->request.find("filename=") == std::string::npos)
-	{
-		if (this->request.find("Content-Disposition") != std::string::npos)
-		{
-			this->request.erase(0, request.find("Content-Disposition") + 21);
-			ContentDiposition = this->request.substr(0,request.find(";"));
-			this->headers["Content-Disposition"] = ContentDiposition;
-			this->request.erase(0,request.find(";") + 1);
-		}
-		if (this->request.find("name") != std::string::npos)
-		{
-			this->name = this->request.erase(0, request.find("=")).substr(2, request.find("\r\n") - 3);
-			this->headers["name"] = this->name;
-			this->request.erase(0, request.find("\r\n") + 4);
-		}
-		if (this->request[0] != '-')
-		{
-			this->value = this->request.substr(0, request.find("-"));
-			this->headers["value"] = this->value;
-		}
-
-	}
-	else if (this->headers["Content-Type"].find("boundary") != std::string::npos && this->request.find("filename=") != std::string::npos)
-	{
-		if (this->request.find("Content-Disposition") != std::string::npos)
-		{
-			this->request.erase(0, request.find("Content-Disposition") + 21);
-			ContentDiposition = this->request.substr(0,request.find(";"));
-			this->headers["Content-Disposition"] = ContentDiposition;
-			this->request.erase(0,request.find(";") + 1);
-			this->request.erase(0,request.find(";") + 2);
-		}
-		if (this->request.find("filename") != std::string::npos)
-		{
-			this->request.erase(0, request.find("\"") + 1);
-			this->name = this->request.substr(0, request.find("\""));
-			this->headers["name"] = this->name;
-			this->request.erase(0, request.find("\r\n") + 2);
-		}
-		if (this->request.find("Content-Type") != std::string::npos)
-		{
-			this->request.erase(0, request.find(":") + 2);
-			this->contentType = this->request.substr(0, request.find("\r\n"));
-			this->headers["ContentType"] = this->contentType;
-			this->request.erase(0, request.find("\r\n\r\n") + 4);
-			std::cout << this->request << std::endl;
-		}
-		this->value = this->request.substr(0, request.find("-") - 2);
-		this->headers["value"] = this->value;
-	}
-	else
-	{
-		if (this->request.find("\n") == std::string::npos)
-		{
-			this->body = this->request;
-		}
-		else
-		{
-			while (this->request.length())
-			{	
-				std::string tmp = this->request.substr(0, this->request.find("\n"));
-				std::cout << "tmp: " << tmp << std::endl;
-				if (tmp[tmp.size() - 1] == '\r')
-    				tmp.erase(tmp.size() - 1);
-				this->body.append(tmp);
-				this->request.erase(0, this->request.find("\n") + 1);	
-			}
-		}
-	}
-	return EXIT_SUCCESS;
+int Request::request_body() {
+    if (this->headers["Content-Type"].find("boundary") != std::string::npos) {
+        std::string boundary = "--" + this->headers["Content-Type"].substr(this->headers["Content-Type"].find("boundary=") + 9);
+        size_t pos = 0;
+        while ((pos = this->request.find(boundary)) != std::string::npos) {
+            std::string part = this->request.substr(0, pos);
+            this->request.erase(0, pos + boundary.length() + 2); // +2 for CRLF
+            if (part.find("Content-Disposition") != std::string::npos) {
+                size_t dispPos = part.find("Content-Disposition:") + 21;
+                size_t dispEnd = part.find(";", dispPos);
+                this->ContentDiposition = part.substr(dispPos, dispEnd - dispPos);
+                this->headers["Content-Disposition"] = this->ContentDiposition;
+                size_t namePos = part.find("name=\"") + 6;
+                size_t nameEnd = part.find("\"", namePos);
+                this->name = part.substr(namePos, nameEnd - namePos);
+                this->headers["name"] = this->name;
+                size_t filenamePos = part.find("filename=\"");
+                if (filenamePos != std::string::npos) {
+                    filenamePos += 10;
+                    size_t filenameEnd = part.find("\"", filenamePos);
+                    std::string filename = part.substr(filenamePos, filenameEnd - filenamePos);
+                    this->headers["filename"] = filename;
+                }
+                size_t contentTypePos = part.find("Content-Type: ");
+                if (contentTypePos != std::string::npos) {
+                    contentTypePos += 14;
+                    size_t contentTypeEnd = part.find("\r\n", contentTypePos);
+                    this->contentType = part.substr(contentTypePos, contentTypeEnd - contentTypePos);
+                    this->headers["Content-Type"] = this->contentType;
+                }
+                size_t dataStart = part.find("\r\n\r\n") + 4;
+                size_t dataEnd = part.find("\r\n--", dataStart);
+                this->value = part.substr(dataStart, dataEnd - dataStart);
+                this->headers["value"] = this->value;
+            }
+        }
+        std::cout << "Content-Disposition: " << this->headers["Content-Disposition"] << std::endl;
+        std::cout << "name: " << this->headers["name"] << std::endl;
+        std::cout << "filename: " << this->headers["filename"] << std::endl;
+        std::cout << "Content-Type: " << this->headers["Content-Type"] << std::endl;
+        std::cout << "value: " << this->headers["value"] << std::endl;
+    } else {
+        // Handle non-multipart request body
+        if (this->request.find("\n") == std::string::npos) {
+            this->body = this->request;
+        } else {
+            while (!this->request.empty()) {
+                std::string tmp = this->request.substr(0, this->request.find("\n"));
+                if (!tmp.empty() && tmp[tmp.length() - 1] == '\r') {
+                    tmp.erase(tmp.length() - 1);
+                }
+                this->body.append(tmp);
+                if (!this->request.empty()) {
+                    this->request.erase(0, this->request.find("\n") + 1);
+                }
+            }
+        }
+    }
+    return EXIT_SUCCESS;
 }
 
 std::string Request::getTarget()

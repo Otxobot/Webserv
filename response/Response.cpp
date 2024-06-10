@@ -76,6 +76,7 @@ Config Response::calibrate_host_location(std::vector<Config> _servers, Request _
 {
     int i = 0;
     int size = _servers.size();
+    std::cout << "PORT-->" << _request.getPort() << std::endl;
     while (i < size)
     {
         if (_servers[i]._port == _request.getPort())
@@ -278,8 +279,11 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
             this->handle_GET();
         }
     }
-    // if (request.getMethod() == "POST")
-    //     this->handle_POST();
+    if (request.getMethod() == "POST")
+    {
+        std::cout << "ENTRANDO A HANDLE POST" << std::endl;
+        this->handle_POST();
+    }
     if (request.getMethod() == "DELETE")
         this->handle_DELETE();
 }
@@ -319,6 +323,13 @@ void Response::handle_GET()
     // std::cout << "=======================RESPONSE=========================" << std::endl;
     // std::cout << this->_response << std::endl;
     // std::cout << "=======================RESPONSE=========================" << std::endl;
+}
+
+void Response::handle_POST()
+{
+    std::string contentType = this->_request.headers["Content-Type"];
+    std::cout << "contentType string->" << contentType << std::endl;
+    return ;
 }
 
 bool isDirectory(std::string path)

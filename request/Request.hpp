@@ -82,7 +82,6 @@ class Request
         std::string url;
         std::string protocol;
         std::string body;
-        std::map<std::string, std::string> headers;
         int			port;
         int         _statusCode;
         std::string ContentDiposition;
@@ -91,6 +90,7 @@ class Request
 
         std::string contentType;
     public:
+        std::map<std::string, std::string> headers;
         Request();
         ~Request();
         int		Request_start(std::string request);
