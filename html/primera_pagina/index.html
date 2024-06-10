@@ -1,26 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora</title>
+    <title>Subir Archivos</title>
 </head>
 <body>
-    <h2>Calculadora Simple</h2>
-    <form action="calc.cgi" method="get">
-        <label for="num1">Número 1:</label>
-        <input type="text" id="num1" name="num1"><br><br>
-        <label for="num2">Número 2:</label>
-        <input type="text" id="num2" name="num2"><br><br>
-        <input type="submit" value="Calcular">
+    <h1>Subir Archivos</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <label for="file">Selecciona un archivo:</label>
+        <input type="file" id="file" name="file">
+        <br><br>
+        <input type="submit" value="Subir">
     </form>
-
-    <div id="result"></div>
-
-    <script>
-        function showResult(result) {
-            document.getElementById('result').innerText = 'El resultado es: ' + result;
-        }
-    </script>
 </body>
 </html>

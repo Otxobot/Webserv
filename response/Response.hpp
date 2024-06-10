@@ -22,8 +22,13 @@
 // #include <sstream>
 // #include <sys/stat.h>
 // #include <dirent.h>
-#include <string>
+#include <iostream>
+#include <fstream>
 #include <sstream>
+#include <string>
+#include <map>
+#include <vector>
+#include <algorithm>
 
 #define DEFAULT "/index.html"
 
@@ -36,13 +41,13 @@ class Response
     private:
         std::vector<Config> _servers;
         Config  _server;
-        Request _request;
         std::string _statusLine;
         std::string _headers;
         int _statusCode;
         bool _isCGI;
         bool _isLocation;
     public:
+        Request _request;
         std::string _body;
         std::string _response;
         Response();
@@ -52,13 +57,17 @@ class Response
         std::string getStatusCodeTranslate(int status_code);
         void        createBody();
         void        get_body();
-        Config      calibrate_host_location(std::vector<Config> _servers, Request _request);
+        Config      calibrate_host_location(std::vector<Config> &_servers, Request &_request);
         void        enter_location(Config server, std::string uri);
         int         check_for_statusCode();
         void        handle_SC_error(int sc);
         void        handleGetRequest(const std::string& protocol, const std::string& tm);
         void        handlePostRequest(const std::string& protocol, const std::string& tm);
         void        handleDeleteRequest(const std::string& protocol, const std::string& tm, std::string _Path);
+        bool        readBodyChunk(std::string& chunk);
+        void        PostMethod(const std::string& protocol, const std::string& tm);
+        std::string getUploadPath();
+        
 };
 
 #endif

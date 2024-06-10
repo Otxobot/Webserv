@@ -170,6 +170,12 @@ bool	paramsFunction(std::ifstream &file, std::vector<int> &ports, std::string &l
 			return false;
 		}
 	}
+	else if (line.find("error_page:") != std::string::npos) {
+		if (!ErrorPage(line)) {
+			std::cerr << "error_page error" << std::endl;
+			return false;
+		}
+	}
 	else {
 		std::cerr << "unrecognized parameter error" << std::endl;
 		return false;
@@ -206,7 +212,7 @@ bool	verifyConf(const std::string &fileName) {
 			}
 		} else if (spacesCount(line) == 2) {
 				if (!paramsFunction(file, ports, line, listCount, locaCount, rootCount, nameCount, index)) {
-					parseError(line, "Params Error", index);
+					parseError(line, "Params Error1", index);
 					file.close();
 					return false;
 				}

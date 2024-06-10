@@ -210,35 +210,101 @@ void Server::newConnectHandling(int &sockFD)
 		_accptMaster.insert(std::pair<int, int>(accptSockFD, sockFD));
 }
 
+//supuestamente llega bien el txt, no sabemos si las imagenes llegan bien, a veces parecen llegar bien y a veces no
 void Server::acceptedConnectHandling(int &accptSockFD)
 {
-	char buffer[BUFFER_SIZE + 1] = {0};
-	bzero(buffer, sizeof(buffer));
-	int valRead = recv(accptSockFD, buffer, BUFFER_SIZE, 0);
-	if (valRead > 0)
-	{
-		buffer[valRead] = '\0';
-		std::map<int, std::string>::iterator it = _clients.find(accptSockFD);
-		if (it != _clients.end())
-			it->second += buffer;
-		std::string req(buffer);
-		this->_request.reset();
-		this->_request.Request_start(req);
-		if (FD_ISSET(accptSockFD, &_writeFDs))
-		{
-			this->responseHandling(accptSockFD);
-		}
-	}
-	if (valRead == 0)
-	{
-		close(accptSockFD);
-		FD_CLR(accptSockFD, &_masterFDs);
-		FD_CLR(accptSockFD, &_writeFDs);
-		_clients.erase(accptSockFD);
-	}
-	else
-		return; // Socket is connected but doesn't send request.
+    char buffer[BUFFER_SIZE + 1];
+    std::string requestData;
+    int valRead;
+
+    while ((valRead = recv(accptSockFD, buffer, BUFFER_SIZE, 0)) > 0)
+    {
+        buffer[valRead] = '\0';  // Null-terminate the buffer
+        requestData.append(buffer, valRead);
+
+        // Check if the request headers have been fully received
+        size_t headerEnd = requestData.find("\r\n\r\n");
+        if (headerEnd != std::string::npos)
+        {
+            // Extract headers to determine Content-Length if it exists
+            std::string headers = requestData.substr(0, headerEnd + 4);
+            size_t contentLengthPos = headers.find("Content-Length: ");
+            if (contentLengthPos != std::string::npos)
+            {
+                size_t contentLengthEnd = headers.find("\r\n", contentLengthPos);
+                int contentLength = atoi(headers.substr(contentLengthPos + 16, contentLengthEnd - contentLengthPos - 16).c_str());
+
+                // Check if the full request has been received
+                size_t totalRequestSize = headerEnd + 4 + contentLength;
+                if (requestData.size() >= totalRequestSize)
+                {
+                    // Full request received, process it
+                    this->_request.reset();
+                    this->_request.Request_start(requestData);
+                    if (FD_ISSET(accptSockFD, &_writeFDs))
+                    {
+                        this->responseHandling(accptSockFD);
+                    }
+                    break;
+                }
+            }
+            else
+            {
+                // No Content-Length header, assume no body
+                this->_request.reset();
+                this->_request.Request_start(requestData);
+                if (FD_ISSET(accptSockFD, &_writeFDs))
+                {
+                    this->responseHandling(accptSockFD);
+                }
+                break;
+            }
+        }
+
+        // Handle large payload case
+        if (requestData.size() > 1000000000)
+        {
+            std::string response = "HTTP/1.1 413 Payload Too Large\r\n"
+                                   "Content-Type: text/html\r\n"
+                                   "Content-Length: 76\r\n\r\n"
+                                   "<html><body><h1>413 Payload Too Large</h1></body></html>\r\n";
+            send(accptSockFD, response.c_str(), response.length(), 0);
+            close(accptSockFD);
+            FD_CLR(accptSockFD, &_masterFDs);
+            FD_CLR(accptSockFD, &_writeFDs);
+            _clients.erase(accptSockFD);
+            return;
+        }
+    }
+
+    if (valRead == 0)
+    {
+        // Socket closed
+        close(accptSockFD);
+        FD_CLR(accptSockFD, &_masterFDs);
+        FD_CLR(accptSockFD, &_writeFDs);
+        _clients.erase(accptSockFD);
+    }
+    else if (valRead < 0)
+    {
+        if (errno == EAGAIN || errno == EWOULDBLOCK)
+        {
+            // No data available right now, try again later
+            return;
+        }
+        else
+        {
+            // Other error occurred
+            perror("recv failed");
+            close(accptSockFD);
+            FD_CLR(accptSockFD, &_masterFDs);
+            FD_CLR(accptSockFD, &_writeFDs);
+            _clients.erase(accptSockFD);
+        }
+    }
 }
+
+
 
 // std::string Server::get_body(std::string file_name)
 // {

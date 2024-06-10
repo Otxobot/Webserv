@@ -12,6 +12,10 @@
 
 #include "Response.hpp"
 #include <dirent.h>
+#include <fstream>
+#include <cstdlib>
+#include <sys/stat.h>
+#include <sstream>
 
 Response::Response(): _headers(""), _statusCode(200)
 {
@@ -23,9 +27,39 @@ Response::~Response()
     //Default destructor
 }
 
+bool isDirectory(std::string path)
+{
+    DIR *dir;
+
+    if ((dir = opendir(path.c_str())))
+    {
+        closedir(dir);
+        return true;
+    }
+    return false;
+}
+
 std::string Response::getHeaders()
 {
     return this->_headers;
+}
+
+std::string Response::getUploadPath() {
+    std::string uploadPath = this->_server._root + "/uploaded_files";
+
+    // Verificar si la carpeta existe
+    struct stat info;
+    if (stat(uploadPath.c_str(), &info) != 0) {
+        // Si no existe, intenta crear la carpeta
+        int result = system(("mkdir -p " + uploadPath).c_str());
+        if (result != 0) {
+            // Si la creación falla, lanzar una excepción o manejar el error de alguna otra manera
+            throw std::runtime_error("Error: Unable to create directory");
+        }
+        std::cout << "Directory created: " << uploadPath << std::endl;
+    }
+
+    return uploadPath;
 }
 
 std::string Response::getStatusCodeTranslate(int status_code)
@@ -54,6 +88,9 @@ std::string Response::getStatusCodeTranslate(int status_code)
         case 409:
             status = "Conflict\r\n";
             break;
+        case 413:
+            status = "Payload Too Large\r\n";
+            break;
         case 500:
             status = "Internal Server Error\r\n";
             break;
@@ -62,9 +99,6 @@ std::string Response::getStatusCodeTranslate(int status_code)
             break;
         case 502:
             status = "Bad Geteway\r\n";
-            break;
-        case 413:
-            status = "Payload Too Large\r\n";
             break;
         case 505:
             status = "HTTP Version Not Supported\r\n";
@@ -95,20 +129,23 @@ std::string Response::getStatusCodeTranslate(int status_code)
 //     }
 // }
 
-Config Response::calibrate_host_location(std::vector<Config> _servers, Request _request)
+Config Response::calibrate_host_location(std::vector<Config> &_servers, Request &_request)
 {
     int i = 0;
     int size = _servers.size();
+    std::cout << "PORT--->" << _request.getPort() << std::endl;
     while (i < size)
     {
         if (_servers[i]._port == _request.getPort())
         {
             std::cout << "SE HA CALIBRADO:" <<i<< std::endl;
+            std::cout << _servers[i]._port << std::endl;
             return (_servers[i]);
         }
         i++;
     }
-    return _servers[i];
+    std::cout << "NO SE ESTA CALIBRANDO:" <<i<< std::endl;
+    return (_servers[i]);
 }
 
 // void Response::enter_location(Config server, std::string uri)
@@ -130,13 +167,52 @@ Config Response::calibrate_host_location(std::vector<Config> _servers, Request _
 
 // }
 
+std::string readFileToString(const std::string& filename) {
+    std::ifstream file(filename.c_str()); // c_str() needed for C++98
+    if (file) {
+        std::ostringstream ss;
+        ss << file.rdbuf();
+        std::string content = ss.str();
+        if (content.empty()) {
+            std::cerr << "Warning: File content is empty" << std::endl;
+        }
+        return content;
+    } else {
+        std::cerr << "Error: Could not open the file " << filename << std::endl;
+        return "<!DOCTYPE html>\n"
+               "<html>\n"
+               "<head>\n"
+               "<title>Error Page</title>\n"
+               "<style>\n"
+               "body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }\n"
+               "h1 { font-size: 50px; }\n"
+               "p { font-size: 24px; }\n"
+               "</style>\n"
+               "</head>\n"
+               "<body>\n"
+               "<h1>Error page</h1>\n"
+               "<p>Status code: 500 </p>\n"
+               "<p> Internal Server Error\r\n </p>\n"
+               "</body>\n"
+               "</html>\n";
+    }
+}
+
 void Response::handle_SC_error(int sc)
 {
+    this->_response.append("HTTP/1.1");
+    this->_response.append(" ");
+    this->_statusCode = sc;
     std::ostringstream oss;
     oss << sc;
     std::string statusCodeStr = oss.str();
-
-    std::string html = 
+    std::string html;
+    if (this->_server._errorpage.count(sc)) {
+    std::string filename = this->_server._root + "/" + this->_server._errorpage[sc];
+    html = readFileToString(filename);
+    }
+    else {
+    html = 
         "<!DOCTYPE html>"
         "<html>"
         "<head>"
@@ -153,20 +229,19 @@ void Response::handle_SC_error(int sc)
         "<p>" + this->getStatusCodeTranslate(sc) + "</p>"
         "</body>"
         "</html>";
-
-    // Print the HTML to the console (or to an HTTP response, etc.)
+    }
+    std::ostringstream ossSize;
+    ossSize << html.size();
+    std::string html_size = ossSize.str();
     this->_body = html;
-    std::cout << html << std::endl;
-    std::ostringstream len_stream;
-    this->_response.append("Content-Type: ");
+    this->_response.append(oss.str());
+    this->_response.append(" " + this->getStatusCodeTranslate(sc) + "Content-Type: ");
     this->_response.append("text/html\r\n");
             this->_response.append("Content-Length: ");
-            len_stream << html.length();
-            std::string content_length = len_stream.str();
-            this->_response.append(content_length);
-            this->_response.append("\r\nConnection: Closed\r\n");
+            this->_response.append(html_size);
+            this->_response.append("\r\nConnection: Closed");
             this->_response.append("\r\n\r\n");
-            this->_response.append(html);
+            this->_response.append(_body);
 }
 
 std::string getExtension(const std::string& fileName) {
@@ -243,11 +318,18 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     this->_request = request;
     this->_servers = servers;
     this->_server = this->calibrate_host_location(this->_servers, this->_request);
+    if (this->_server._port == 0)
+    {
+        std::cout << "entro aqui\n";
+        this->_statusCode = 404;
+        this->handle_SC_error(this->_statusCode);
+        return;
+    }
     std::string uri = this->_request.getTarget();
     std::cout << "uritron-> " << uri << std::endl;
     std::cout << "server-> " << this->_request.getPort() << std::endl;
     this->_statusCode = this->_request.getStatusCode();
-    
+
     std::string method = this->_request.getMethod();
     if ((method != "GET" && method != "POST" && method != "DELETE") ||
         ((!this->_server._locations[uri]._allowGET && method == "GET") || (!this->_server._locations[uri]._allowDELETE && method == "DELETE") ||
@@ -274,7 +356,7 @@ void Response::handleGetRequest(const std::string& protocol, const std::string& 
     std::ostringstream oss;
     oss << number;
     std::string status_code = oss.str();
-    std::cout << status_code << std::endl;
+    std::cout << "status_code-> " << status_code << std::endl;
     if (status_code == "200")
     {
         this->_response.append(status_code);
@@ -290,7 +372,7 @@ void Response::handleGetRequest(const std::string& protocol, const std::string& 
         this->_response.append(tm);
         this->_response.append(" GMT\r\n");
         this->handle_SC_error(number);
-        std::cout << this->_response << std::endl;
+        //std::cout << this->_response << std::endl;
         return ;
     }
     this->_response.append("Date: ");
@@ -298,11 +380,58 @@ void Response::handleGetRequest(const std::string& protocol, const std::string& 
     this->_response.append(" GMT\r\n");
     this->_response.append("Content-Type: ");
     this->createBody();
-    std::cout << this->_response << std::endl;
+    //std::cout << this->_response << std::endl;
 }
 
-void Response::handlePostRequest(const std::string& protocol, const std::string& tm)
-{
+std::streampos getFileSize(const std::string& filePath) {
+    std::ifstream file(filePath.c_str(), std::ios::binary | std::ios::ate);
+    if (file.is_open()) {
+        std::streampos fileSize = file.tellg();
+        file.close();
+        return fileSize;
+    } else {
+        std::cerr << "Unable to open file: " << filePath << std::endl;
+        return -1;
+    }
+}
+
+// void    Response::PostMethod()
+// {
+//     std::string file_path;
+//     std::string buffer;
+
+//     // if (!this->_server._root + "/uploaded_files")
+//     //     this->handle_SC_error(401);
+    
+//     if (1)
+//     {
+//         file_path = getUploadPath();
+//         std::cout << "file_path---> " << file_path << std::endl;
+//         if (!isDirectory(file_path))
+//             this->handle_SC_error(404);
+//         else
+//         {
+//             std::string fileName = file_path + '/' + this->_request.headers["name"];
+//             std::ifstream fileCheck(fileName.c_str());
+//             if (fileCheck.is_open())
+//             {
+//                 fileCheck.close();
+//                 this->handle_SC_error(403);
+//                 return;
+//             }
+//             else
+//             {
+//                 std::ofstream file(fileName.c_str());
+//                 std::stringstream ss(this->_request.headers["value"]);
+//                 while(std::getline(ss, buffer))
+//                     file << buffer.append("\n");
+//                 file.close();
+//             }
+//         }
+//     }
+// }
+
+void Response::handlePostRequest(const std::string& protocol, const std::string& tm) {
     this->_response.append(protocol);
     this->_response.append(" ");
     int number = this->_statusCode;
@@ -310,27 +439,25 @@ void Response::handlePostRequest(const std::string& protocol, const std::string&
     oss << number;
     std::string status_code = oss.str();
     std::cout << status_code << std::endl;
-    if (status_code == "200" || status_code == "201")
-    {
+    
+    if (status_code == "200" || status_code == "201") {
         this->_response.append(status_code);
-        this->_response.append(" OK\r\n"); // Agrega "OK" al estado
-    }
-    else
-    {
+        this->_response.append(" OK\r\n");
+        this->_response.append("Date: ");
+        this->_response.append(tm);
+        this->_response.append(" GMT\r\n");
+    } else {
         this->_response.append(status_code);
         std::string message = this->getStatusCodeTranslate(number);
         this->_response.append(" ");
         this->_response.append(message);
-        this->_response.append("Date: ");
+        this->_response.append("\r\nDate: ");
         this->_response.append(tm);
         this->_response.append(" GMT\r\n");
         this->handle_SC_error(number);
-        std::cout << this->_response << std::endl;
+        //std::cout << this->_response << std::endl;
         return;
     }
-    this->_response.append("Date: ");
-    this->_response.append(tm);
-    this->_response.append(" GMT\r\n");
 
     // Handle saving the request data
     std::string uri = this->_request.getTarget();
@@ -339,61 +466,68 @@ void Response::handlePostRequest(const std::string& protocol, const std::string&
     if (uri.empty())
         uri.append("/");
     our_location = this->_server._locations[uri];
-    std::string filePath = this->_server._root;
-    std::ofstream outFile(filePath.c_str());
-    if (outFile)
-    {
-        std::cout << "ENTRO PERRO" << std::endl;
-        std::cout << "body do be like-> " << this->_request.getBody() << std::endl;
 
-        // Escribir el cuerpo de la solicitud en el archivo línea por línea
-        // if (this->_request.getBody().size() > this->_server._buffer_size)
-        // {
-        //     this->_statusCode = 413;
-        //     this->handle_SC_error(this->_statusCode);
-        //     return;
-        // }
-        std::istringstream iss(this->_request.getBody());
-        std::string line;
-        while (std::getline(iss, line))
-        {
-            outFile << line << std::endl;
-        }
+    // Detect the content type and file extension
+    std::string contentType = this->_request.headers["Content-Type"];
+    std::cout << "Content-Type----> " << contentType << std::endl;
+    // std::cout << "this->_request.headers[name]-> " << this->_request.headers["name"] << std::endl;
+    // std::cout << "this->_request.headers[content-type]-> " << this->_request.headers["ContentType"] << std::endl;
+    // std::cout << "this->_request.headers[value]-> " << this->_request.headers["value"] << std::endl;
+    std::string fileExtension;
 
+    if (contentType == "text/html") {
+        fileExtension = ".html";
+    } else if (contentType == "text/plain") {
+        fileExtension = ".txt";
+    } else if (contentType == "image/jpeg") {
+        fileExtension = ".jpg";
+    } else if (contentType == "image/png") {
+        fileExtension = ".png";
+    } else if (contentType == "application/pdf") {
+        fileExtension = ".pdf";
+    } else {
+        std::cout << "Unsupported Media Type" << std::endl;
+        this->_statusCode = 415; // Unsupported Media Type
+        this->handle_SC_error(this->_statusCode);
+        return;
+    }
+
+    // Construct the file path
+    std::string filePath = this->_server._root + "/uploaded_file" + fileExtension;
+    std::cout << "filePath---> " << filePath << std::endl;
+    std::ofstream outFile(filePath.c_str(), std::ios::binary);
+
+    if (outFile.is_open()) {
+        std::cout << "get body length-> " << this->_request.getBodyLength() << std::endl;
+
+        // Write body to file
+        outFile.write(this->_request.headers["value"].c_str(), this->_request.headers["value"].size());
         outFile.close();
 
-        // Agrega Content-Length
         std::ostringstream len_stream;
-        std::cout << "BODY ES -> ----" << this->_request.getBody() << "----" << std::endl;
-        len_stream << this->_request.getBody().length();
+        len_stream << getFileSize(filePath);
         std::string content_length = len_stream.str();
         this->_response.append("Content-Length: ");
-        this->_response.append(content_length); // Longitud del cuerpo
+        this->_response.append(content_length);
         this->_response.append("\r\n");
-
         this->_response.append("Connection: Closed\r\n");
         this->_response.append("\r\n");
-    }
-    else
-    {
-        std::cout << "ENTRO PERRO2" << std::endl;
+    } else {
         this->_statusCode = 500;
         this->handle_SC_error(this->_statusCode);
     }
-    std::cout << "respuesta post-> ///////" << this->_response << "///////" << std::endl;
+    // std::ofstream textFile("/home/mikferna/Desktop/Webserv/html/primera_pagina/testeo.txt");
+    // if (textFile.is_open()) {
+    //     textFile << this->_request.headers["value"];
+    //     textFile.close();
+    // } else {
+    //     std::cout << "Error opening the file" << std::endl;
+    //     // Handle error opening the file
+    // }
+    //std::cout << this->_request.headers["value"].size() << std::endl;
+    std::cout << "\n\n" << this->_request.headers["value"] << "\n\nLAGARTO\n" << std::endl;
 }
 
-bool isDirectory(std::string path)
-{
-    DIR *dir;
-
-    if ((dir = opendir(path.c_str())))
-    {
-        closedir(dir);
-        return true;
-    }
-    return false;
-}
 
 void    Response::handleDeleteRequest(const std::string& protocol, const std::string& tm, std::string _Path)
 {

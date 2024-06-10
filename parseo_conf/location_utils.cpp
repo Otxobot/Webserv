@@ -146,7 +146,6 @@ bool ErrorPage(std::string &line)
 	iss >> config >> num >> str >> null;
 	num = trimChars(num, "\"");
 	str = trimChars(str, "\"");
-
 	if(!null.empty() || num.empty() || str.empty())
 		return false;
 		

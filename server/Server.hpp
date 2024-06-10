@@ -43,7 +43,7 @@
 // #include <algorithm>
 // #include <sstream>
 
-#define BUFFER_SIZE 1024	
+#define BUFFER_SIZE 1000000
 #define BACKLOG 2048
 
 class Config;
@@ -80,6 +80,7 @@ class Server
 
 	    // first is accept socket ; second is master socket
 	    std::map<int, int> _accptMaster;
+		//int client_buffer_size;
 
 	    // HttpServer _server;
 	    //int _isvalid;
@@ -101,6 +102,7 @@ class Server
 	    void newConnectHandling(int &);
 	    void acceptedConnectHandling(int &);
 	    void responseHandling(int &);
+		bool isRequestComplete(const std::string &request);
 };
 
 #endif

@@ -26,9 +26,11 @@ Config::Config()
 	_file = "";
 	_autoindex = false;
 	_index = 0;
-	_port = 0;
+	_port = 61001;
 	_host = "";
 	_client_max_body_size = 0;
+	_buffer_size = 0;
+	_errorpage.clear();
 }
 
 Config::~Config()
@@ -69,6 +71,23 @@ std::vector<Config> Config::parseConfig(std::string configFile)
 	}
 	serversConfig = parseServers(file, contador);
 	return (serversConfig);
+}
+
+std::vector<std::string> split(const std::string& str, char delimiter) {
+    std::vector<std::string> result;
+    std::string::size_type start = 0;
+    std::string::size_type end = str.find(delimiter);
+
+    while (end != std::string::npos) {
+        result.push_back(str.substr(start, end - start));
+        start = end + 1;
+        end = str.find(delimiter, start);
+    }
+
+    // Add the last part
+    result.push_back(str.substr(start));
+
+    return result;
 }
 
 std::vector<Config> Config::parseServers(std::ifstream &file, int contador)
@@ -120,6 +139,7 @@ std::vector<Config> Config::parseServers(std::ifstream &file, int contador)
 			std::string port_str = listen.substr(colonPos + 1);
     		int port = atoi(port_str.c_str());
 			_serversConfig[i]._port = port;
+			std::cout << "El puerto es: " << port << std::endl;
 			_serversConfig[i]._ports.push_back(port);
 		}
 		if (line.find("buffer_size: ") != std::string::npos)
@@ -127,6 +147,15 @@ std::vector<Config> Config::parseServers(std::ifstream &file, int contador)
 			std::string line_to_num = line.substr(15);
 			int buffer_size = std::atoi(line_to_num.c_str());
 			_serversConfig[i]._buffer_size = buffer_size;
+        }
+		if (line.find("error_page: ") != std::string::npos)
+        {
+			std::string errorpage = line.substr(14);
+			std::vector<std::string> errorpage_vector = split(errorpage, ' ');
+			int errorcode = std::atoi(trim_comillas(errorpage_vector[0]).c_str());
+			std::string errormessage = trim_comillas(errorpage_vector[1]);
+			_serversConfig[i]._errorpage[errorcode] = errormessage;
+			std::cout << "Error page es: " << errorcode << " " << errormessage << std::endl;
         }
 	}
 	return (_serversConfig);

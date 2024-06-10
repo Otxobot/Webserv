@@ -65,6 +65,7 @@
 #define SERVICE_UNABAILABLE 503
 #define GATEWAY_TIMEOUT 504
 #define HTTP_VERSION_NOT_SUPPORTED 505
+#define BUFFER_SIZE 1000000
 
 #include <string>
 #include <iostream>
@@ -82,17 +83,17 @@ class Request
         std::string url;
         std::string protocol;
         std::string body;
-        std::map<std::string, std::string> headers;
         int			port;
         int         _statusCode;
         std::string ContentDiposition;
         std::string name;
         std::string value;
-
         std::string contentType;
+        int         bodyLength;
     public:
         Request();
         ~Request();
+        std::map<std::string, std::string> headers;
         int		Request_start(std::string request);
         int     request_line();
         int     request_headers();
@@ -105,6 +106,8 @@ class Request
         std::string getMethod();
         int     getStatusCode();
         std::string getBody();
+        int getBodyLength();
+        std::string getHeader(const std::string &name) const;
 };
 
 #endif
