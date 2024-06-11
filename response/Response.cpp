@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/11 18:09:39 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/11 18:14:11 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -445,7 +445,7 @@ void Response::handle_POST(const std::string& protocol)
         return;
     }
     // Construct the file path
-    std::string filePath = this->_server._root + "/" +this->_request.headers["filename"];
+    std::string filePath = this->_server._root + "/upload/" +this->_request.headers["filename"];
     std::ofstream outFile(filePath.c_str(), std::ios::binary);
     if (outFile.is_open()) {
         // Write body to file

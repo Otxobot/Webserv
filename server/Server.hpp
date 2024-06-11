@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:08 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/11 18:05:18 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/11 18:10:49 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@
 // #include <fstream>
 // #include <unistd.h>
 // #include <sys/stat.h>;
-        this->_response.append("Content-Length: ");
 // #include <algorithm>
 // #include <sstream  
 

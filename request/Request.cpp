@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:33 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/11 18:08:34 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/11 18:12:46 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int Request::Request_start(std::string request)
 			this->_statusCode = status_code;
 			return (status_code);
 		}
-	printRequestInformation();
+	//printRequestInformation();
 	return 0;
 }
 
