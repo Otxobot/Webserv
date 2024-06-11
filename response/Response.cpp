@@ -326,13 +326,6 @@ void Response::handle_GET()
     // std::cout << "=======================RESPONSE=========================" << std::endl;
 }
 
-// void Response::handle_POST()
-// {
-//     std::string contentType = this->_request.headers["Content-Type"];
-//     std::cout << "contentType string->" << contentType << std::endl;
-//     return ;
-// }
-
 std::streampos getFileSize(const std::string& filePath) {
     std::ifstream file(filePath.c_str(), std::ios::binary | std::ios::ate);
     if (file.is_open()) {
@@ -344,7 +337,6 @@ std::streampos getFileSize(const std::string& filePath) {
         return -1;
     }
 }
-
 std::string urlDecode(const std::string& encoded) {
     std::string decoded;
     std::istringstream iss(encoded);
@@ -375,57 +367,24 @@ std::string urlDecode(const std::string& encoded) {
     return decoded;
 }
 
-void Response::writeUrlEncodedToFile(const std::string& content) {
-    // Decodificar el contenido codificado
+void Response::writeUrlEncodedToFile(const std::string& content)
+{
+    std::cout << "content--->" << content << std::endl;
+     std::string root = this->_server._root + "/upload/output.txt";
+    std::ofstream outFile(root.c_str());
     std::string decodedContent = urlDecode(content);
-
-    // Encontrar la posición donde comienza el texto después de "content="
-    size_t startPos = decodedContent.find("content=");
-    if (startPos != std::string::npos) {
-        // Avanzar startPos más allá de la longitud de "content="
-        startPos += std::string("content=").length();
-        // Tomar una subcadena que comienza después de "content="
-        std::string modifiedContent = decodedContent.substr(startPos);
-
-        // Ruta del archivo de salida
-        std::ofstream outFile("/home/abasante/Documents/Webserv/html/primera_pagina/output.txt");
-        if (!outFile) {
-            throw std::runtime_error("Failed to open file for writing");
-        }
-
-        // Escribir el contenido modificado en el archivo
-        outFile << modifiedContent;
-
-        // Verificar si el archivo está abierto antes de cerrarlo
-        if (outFile.is_open()) {
-            std::cout << "El archivo ha sido creado correctamente" << std::endl;
-        }
-
-        // Cerrar el archivo
+    if (outFile.is_open()) {
+        outFile.write(decodedContent.c_str(), decodedContent.size());
         outFile.close();
+        this->_response.append("Content-Length: 0");
+        this->_response.append("\r\n");
+        this->_response.append("Connection: Closed\r\n");
+        this->_response.append("\r\n");
     } else {
-        throw std::runtime_error("El texto no tiene el formato esperado");
+        this->_statusCode = 500;
+        this->handle_SC_error(this->_statusCode);
     }
-    // if (outFile.is_open()) 
-    //     {
-    //         outFile.write(this->_request.headers["value"].c_str(), this->_request.headers["value"].size());
-    //         outFile.close();
-    //         std::ostringstream len_stream;
-    //         len_stream << getFileSize(outFile);
-    //         std::string content_length = len_stream.str();
-    //         this->_response.append("Content-Length: ");
-    //         this->_response.append(content_length);
-    //         this->_response.append("\r\n");
-    //         this->_response.append("Connection: Closed\r\n");
-    //         this->_response.append("\r\n");
-    //     } 
-    //     else 
-    //     {
-    //         this->_statusCode = 500;
-    //         this->handle_SC_error(this->_statusCode);
-    //     }
 }
-
 
 void Response::handle_POST(const std::string& protocol) 
 {
