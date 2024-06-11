@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/11 16:56:51 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/11 18:05:59 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -282,9 +282,3 @@ int Config::getIndex()
 {
 	return this->_index;
 }
-
-// std::map<std::string, Location> Config::getLocations()
-// {
-// 	std::cout << "entro a get locations" << std::endl;
-// 	return (this->_locations);
-// }

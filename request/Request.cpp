@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:33 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/28 15:57:10 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/11 18:08:34 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,14 +45,12 @@ int Request::Request_start(std::string request)
 {
     int status_code = 0;
 	this->request = request;
-	std::cout <<"+++++++++++++++++++++++++++++ Request ++++++++++++++++++++++++++++++++" << std::endl;
-	std::cout << this->request << std::endl;
 	if ((status_code = this->request_line()) || (status_code = this->request_headers()) || (status_code = this->request_body()))
 		{
 			this->_statusCode = status_code;
 			return (status_code);
 		}
-	//printRequestInformation();
+	printRequestInformation();
 	return 0;
 }
 
@@ -195,11 +193,6 @@ int Request::request_body() {
                 this->headers["value"] = this->value;
             }
         }
-        std::cout << "Content-Disposition: " << this->headers["Content-Disposition"] << std::endl;
-        std::cout << "name: " << this->headers["name"] << std::endl;
-        std::cout << "filename: " << this->headers["filename"] << std::endl;
-        std::cout << "Content-Type: " << this->headers["Content-Type"] << std::endl;
-        std::cout << "value: " << this->headers["value"] << std::endl;
     } else {
         // Handle non-multipart request body
         if (this->request.find("\n") == std::string::npos) {
@@ -230,7 +223,6 @@ std::string Request::getTarget()
 int		Request::getPort()
 {
 	std::string tmp;
-	//std::cout << "HOST------->"<< this->headers["Host"] << std::endl;
 	for (std::map<std::string, std::string>::iterator it = this->headers.begin(); it != this->headers.end(); it++)
 		if (it->first == "Host")
 			tmp = it->second;
@@ -241,7 +233,6 @@ int		Request::getPort()
 	}
 	else
 		throw::std::runtime_error("No port found in the request");
-	// 	this->port = 80;
 	
 	return this->port;
 }

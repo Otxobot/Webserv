@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:11 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/11 16:43:51 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/11 18:10:12 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,9 +258,6 @@ void Server::acceptedConnectHandling(int &accptSockFD)
                     this->_request.reset();
                     this->_request.Request_start(requestData);
                     port = this->_request.getPort(); // Corrección aquí
-                    std::cout << "port: " << port << std::endl;
-                    std::cout << "valread--->"<< ultValread << std::endl;
-                    std::cout << "get_buffer: " << get_buffer_server(this->servers_parsed, port) << std::endl;
                     if (get_buffer_server(this->servers_parsed, port) <= ultValread ||
                         get_buffer_server(this->servers_parsed, port) == -1)
 						{

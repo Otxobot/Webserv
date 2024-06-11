@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 15:53:04 by mikferna          #+#    #+#             */
-/*   Updated: 2024/06/11 18:01:03 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/11 18:05:50 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,6 @@ std::string int_to_string(int value) {
 }
 
 std::string runCGI(Request& _request, const std::string& root, const std::string& cgi_path) {
-    std::cout << "cgi_path.c_str();---> " << cgi_path.c_str() << std::endl;
-    std::cout << "bodyy-----> " << _request.getBody() << std::endl;
-    std::cout << "method-----> " << _request.getMethod() << std::endl;
     char const *argv[2];
     int Ifd[2];
     int Ofd[2];

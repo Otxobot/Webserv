@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/11 17:28:45 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/11 18:09:39 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,7 +195,6 @@ void Response::createDirectoryListing(std::string directoryPath) {
 
     if (file.is_open())
     {
-        std::cout << "entra aqui a crear la response" << std::endl;
         // Start of the HTTP response
         this->_response = "HTTP/1.1 200 OK\r\n"
                           "Content-Type: text/html\r\n"
@@ -285,7 +284,6 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     }
     if (request.getMethod() == "POST")
     {
-        std::cout << "ENTRANDO A HANDLE POST" << std::endl;
         this->handle_POST(protocol);
     }
     if (request.getMethod() == "DELETE")
@@ -324,9 +322,6 @@ void Response::handle_GET()
     this->_response.append("Server: ");
     this->_response.append(this->_server._servername + "\r\n");
     this->_response.append(this->_body);
-    // std::cout << "=======================RESPONSE=========================" << std::endl;
-    // std::cout << this->_response << std::endl;
-    // std::cout << "=======================RESPONSE=========================" << std::endl;
 }
 
 std::streampos getFileSize(const std::string& filePath) {
@@ -372,7 +367,6 @@ std::string urlDecode(const std::string& encoded) {
 
 void Response::writeUrlEncodedToFile(const std::string& content)
 {
-    std::cout << "content--->" << content << std::endl;
      std::string root = this->_server._root + "/upload/output.txt";
     std::ofstream outFile(root.c_str());
     std::string decodedContent = urlDecode(content);
@@ -419,7 +413,6 @@ void Response::handle_POST(const std::string& protocol)
         this->_response.append(tm);
         this->_response.append(" GMT\r\n");
         this->handle_SC_error(number);
-        //std::cout << this->_response << std::endl;
         return;
     }
     // Handle saving the request data
@@ -430,10 +423,6 @@ void Response::handle_POST(const std::string& protocol)
     our_location = this->_server._locations[uri];
     // Detect the content type and file extension
     std::string contentType = this->_request.headers["Content-Type"];
-    std::cout << "Content-Type----> " << contentType << std::endl;
-    // std::cout << "this->_request.headers[name]-> " << this->_request.headers["name"] << std::endl;
-    // std::cout << "this->_request.headers[content-type]-> " << this->_request.headers["ContentType"] << std::endl;
-    // std::cout << "this->_request.headers[value]-> " << this->_request.headers["value"] << std::endl;
     std::string fileExtension;
     if (contentType == "text/html") {
         fileExtension = ".html";
@@ -457,10 +446,8 @@ void Response::handle_POST(const std::string& protocol)
     }
     // Construct the file path
     std::string filePath = this->_server._root + "/" +this->_request.headers["filename"];
-    //std::cout << "filePath---> " << filePath << std::endl;
     std::ofstream outFile(filePath.c_str(), std::ios::binary);
     if (outFile.is_open()) {
-        //std::cout << "get body length-> " << this->_request.getBodyLength() << std::endl;
         // Write body to file
         outFile.write(this->_request.headers["value"].c_str(), this->_request.headers["value"].size());
         outFile.close();
@@ -476,7 +463,6 @@ void Response::handle_POST(const std::string& protocol)
         this->_statusCode = 500;
         this->handle_SC_error(this->_statusCode);
     }
-    //std::cout << "\n\n" << this->_request.headers["value"] << "\n\nLAGARTO\n" << std::endl;
 }
 
 bool isDirectory(std::string path)

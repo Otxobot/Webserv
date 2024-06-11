@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:02:01 by hcarrasc          #+#    #+#             */
-/*   Updated: 2024/05/21 13:17:30 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/11 18:06:44 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,6 @@ bool checkPorts(std::vector<int> &Allport)
 		{
 			if(Allport[i] == Allport[j])
 			{
-				std::cout << Allport[i] << " <---- ";
 				return false;
 			}
 		}
