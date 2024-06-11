@@ -1,17 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Upload</title>
+    <title>Enviar Texto con POST</title>
 </head>
 <body>
-    <h1>Upload a File</h1>
-    <form action="/" method="post" enctype="multipart/form-data">
-        <label for="fileInput">Choose a file:</label>
-        <input type="file" id="fileInput" name="file">
-        <br><br>
-        <button type="submit">Upload</button>
+    <h1>Enviar Texto</h1>
+    <form action="/tu_endpoint" method="POST" enctype="application/octet-stream">
+        <label for="content">Ingresa tu texto:</label><br>
+        <textarea id="content" name="content" rows="4" cols="50"></textarea><br><br>
+        <input type="submit" value="Enviar">
     </form>
 </body>
 </html>

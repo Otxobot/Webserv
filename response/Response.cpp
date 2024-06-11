@@ -76,10 +76,8 @@ Config Response::calibrate_host_location(std::vector<Config> _servers, Request _
 {
     int i = 0;
     int size = _servers.size();
-    std::cout << "PORT IN RESPONSE CREATION2->" << this->_request.getPort() << std::endl;
     while (i < size)
     {
-        std ::cout << "El puerto de cada server" << _servers[i]._port << std::endl;
         if (_servers[i]._port == _request.getPort())
         {
             return (_servers[i]);
@@ -219,9 +217,7 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
 {
     this->_request = request;
     this->_servers = servers;
-    std::cout << "PORT IN RESPONSE CREATION->" << this->_request.getPort() << std::endl;
     this->_server = this->calibrate_host_location(this->_servers, this->_request);
-    std::cout << "PORT IN RESPONSE CREATION3->" << this->_request.getPort() << std::endl;
     
     std::string uri = this->_request.getTarget();
     std::string method = this->_request.getMethod();
@@ -349,6 +345,88 @@ std::streampos getFileSize(const std::string& filePath) {
     }
 }
 
+std::string urlDecode(const std::string& encoded) {
+    std::string decoded;
+    std::istringstream iss(encoded);
+    char ch;
+    while (iss.get(ch)) {
+        if (ch == '+') {
+            decoded += ' ';
+        } else if (ch == '%' && iss.get(ch)) {
+            int hex;
+            if (isdigit(ch)) {
+                hex = ch - '0';
+            } else {
+                hex = toupper(ch) - 'A' + 10;
+            }
+            hex *= 16;
+            if (iss.get(ch)) {
+                if (isdigit(ch)) {
+                    hex += ch - '0';
+                } else {
+                    hex += toupper(ch) - 'A' + 10;
+                }
+                decoded += static_cast<char>(hex);
+            }
+        } else {
+            decoded += ch;
+        }
+    }
+    return decoded;
+}
+
+void Response::writeUrlEncodedToFile(const std::string& content) {
+    // Decodificar el contenido codificado
+    std::string decodedContent = urlDecode(content);
+
+    // Encontrar la posición donde comienza el texto después de "content="
+    size_t startPos = decodedContent.find("content=");
+    if (startPos != std::string::npos) {
+        // Avanzar startPos más allá de la longitud de "content="
+        startPos += std::string("content=").length();
+        // Tomar una subcadena que comienza después de "content="
+        std::string modifiedContent = decodedContent.substr(startPos);
+
+        // Ruta del archivo de salida
+        std::ofstream outFile("/home/abasante/Documents/Webserv/html/primera_pagina/output.txt");
+        if (!outFile) {
+            throw std::runtime_error("Failed to open file for writing");
+        }
+
+        // Escribir el contenido modificado en el archivo
+        outFile << modifiedContent;
+
+        // Verificar si el archivo está abierto antes de cerrarlo
+        if (outFile.is_open()) {
+            std::cout << "El archivo ha sido creado correctamente" << std::endl;
+        }
+
+        // Cerrar el archivo
+        outFile.close();
+    } else {
+        throw std::runtime_error("El texto no tiene el formato esperado");
+    }
+    // if (outFile.is_open()) 
+    //     {
+    //         outFile.write(this->_request.headers["value"].c_str(), this->_request.headers["value"].size());
+    //         outFile.close();
+    //         std::ostringstream len_stream;
+    //         len_stream << getFileSize(outFile);
+    //         std::string content_length = len_stream.str();
+    //         this->_response.append("Content-Length: ");
+    //         this->_response.append(content_length);
+    //         this->_response.append("\r\n");
+    //         this->_response.append("Connection: Closed\r\n");
+    //         this->_response.append("\r\n");
+    //     } 
+    //     else 
+    //     {
+    //         this->_statusCode = 500;
+    //         this->handle_SC_error(this->_statusCode);
+    //     }
+}
+
+
 void Response::handle_POST(const std::string& protocol) 
 {
     time_t _time;
@@ -405,6 +483,10 @@ void Response::handle_POST(const std::string& protocol)
         fileExtension = ".png";
     } else if (contentType == "application/pdf") {
         fileExtension = ".pdf";
+    }
+    else if (contentType == "application/x-www-form-urlencoded" || contentType == "application/octet-stream"){
+        writeUrlEncodedToFile(_request.getBody());
+        return ; 
     } else {
         std::cout << "Unsupported Media Type" << std::endl;
         this->_statusCode = 415; // Unsupported Media Type
@@ -412,8 +494,8 @@ void Response::handle_POST(const std::string& protocol)
         return;
     }
     // Construct the file path
-    std::string filePath = this->_server._root + "/uploaded_file" + fileExtension;
-    std::cout << "filePath---> " << filePath << std::endl;
+    std::string filePath = this->_server._root + "/" +this->_request.headers["filename"];
+    //std::cout << "filePath---> " << filePath << std::endl;
     std::ofstream outFile(filePath.c_str(), std::ios::binary);
     if (outFile.is_open()) {
         //std::cout << "get body length-> " << this->_request.getBodyLength() << std::endl;
@@ -432,7 +514,7 @@ void Response::handle_POST(const std::string& protocol)
         this->_statusCode = 500;
         this->handle_SC_error(this->_statusCode);
     }
-    std::cout << "\n\n" << this->_request.headers["value"] << "\n\nLAGARTO\n" << std::endl;
+    //std::cout << "\n\n" << this->_request.headers["value"] << "\n\nLAGARTO\n" << std::endl;
 }
 
 bool isDirectory(std::string path)

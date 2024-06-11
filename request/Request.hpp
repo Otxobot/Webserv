@@ -101,6 +101,7 @@ class Request
         void    reset();
         std::string getTarget();
         int     getPort();
+        std::string getBody();
         std::string &getProtocol();
         std::string getMethod();
         int     getStatusCode();

@@ -60,6 +60,7 @@ class Response
 
         void        handle_GET();
         void        handle_POST(const std::string& protocol);
+        void        writeUrlEncodedToFile(const std::string& content);
         void        handle_DELETE();
         
         int         handle_GET_CGI();

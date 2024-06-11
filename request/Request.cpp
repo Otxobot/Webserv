@@ -148,8 +148,7 @@ int		Request::request_headers()
 			if (tmp == "Host" && this->headers.count(header))
 				return BAD_REQUEST;
 			if (header.length() > HEADER_MAX_LENGTH || value.length() > VALUE_MAX_LENGTH)
-				return BAD_REQUEST;
-			std::cout << "request_headers->" << header << ":" << value << std::endl;
+				return BAD_REQUEST;	
 			this->headers[header] = trim(value);
 		}
 		else
@@ -260,6 +259,11 @@ std::string Request::getMethod()
 int Request::getStatusCode()
 {
 	return (this->_statusCode);
+}
+
+std::string Request::getBody()
+{
+	return (this->body);
 }
 
 void Request::reset()
