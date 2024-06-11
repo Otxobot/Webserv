@@ -26,14 +26,3 @@ server:
   location: "/cgi-bin"
     file: "cgi-bin/otrocgi.html"
     cgi: "cgi-bin/cgiscript1.py"
-
-server:
-  servername: site3.com
-  listen: 127.0.0.1:61003
-  root: "./html/tercera_pagina"
-  location: /
-    file: "index.html"
-  location: "/favicon.ico"
-    file: "icon3.png"
-  location: "/images/sample"
-    file: "images/sample_image3.jpg"
