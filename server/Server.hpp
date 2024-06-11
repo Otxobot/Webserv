@@ -36,6 +36,7 @@
 #include <sys/select.h> //select
 #include <sys/types.h>
 #include <utility>
+#include <climits>
 
 // #include <iostream>
 // #include <netinet/in.h>

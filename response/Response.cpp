@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/03 16:47:36 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/11 17:28:45 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,12 +238,15 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         createDirectoryListing(this->_server._root);
         return ;
     }
-
-    // else if (this->_request.getTarget() == "/cgi-bin" && method == "POST")
-    // {
-    //     this->handle_POST_CGI();
-    //     return ;
-    // }
+    if ((this->_request.getTarget()).find("/cgi-bin") != std::string::npos && method == "POST")
+    {
+        if (this->handle_POST_CGI())
+        {
+            this->handle_SC_error(500);
+            return;
+        }
+        return ;
+    }
     if (this->_request.getQueryString().find("=") != std::string::npos && method == "GET")
     {
         if (this->handle_GET_CGI())

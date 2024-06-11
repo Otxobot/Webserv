@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/29 16:19:48 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/11 16:56:51 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ Config::Config()
 	_port = 0;
 	_host = "";
 	_client_max_body_size = 0;
+	_buffer_size = 0;
 }
 
 Config::~Config()

@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:11 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/29 15:12:38 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/11 16:43:51 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,13 +210,33 @@ void Server::newConnectHandling(int &sockFD)
 		_accptMaster.insert(std::pair<int, int>(accptSockFD, sockFD));
 }
 
+int get_buffer_server(std::vector<Config> &_servers, int port)
+{
+    int i = 0;
+    int size = _servers.size();
+    while (i < size)
+    {
+        if (_servers[i]._port == port)
+        {
+            if (_servers[i]._buffer_size == 0)
+                return INT_MAX;
+            return (_servers[i]._buffer_size);
+        }
+        i++;
+    }
+    return -1;
+}
+//supuestamente llega bien el txt, no sabemos si las imagenes llegan bien, a veces parecen llegar bien y a veces no
 void Server::acceptedConnectHandling(int &accptSockFD)
 {
     char buffer[BUFFER_SIZE + 1];
     std::string requestData;
     int valRead;
+	int ultValread = 0;
+    int port;
     while ((valRead = recv(accptSockFD, buffer, BUFFER_SIZE, 0)) > 0)
     {
+		ultValread += valRead;
         buffer[valRead] = '\0';  // Null-terminate the buffer
         requestData.append(buffer, valRead);
         // Check if the request headers have been fully received
@@ -237,6 +257,24 @@ void Server::acceptedConnectHandling(int &accptSockFD)
                     // Full request received, process it
                     this->_request.reset();
                     this->_request.Request_start(requestData);
+                    port = this->_request.getPort(); // Corrección aquí
+                    std::cout << "port: " << port << std::endl;
+                    std::cout << "valread--->"<< ultValread << std::endl;
+                    std::cout << "get_buffer: " << get_buffer_server(this->servers_parsed, port) << std::endl;
+                    if (get_buffer_server(this->servers_parsed, port) <= ultValread ||
+                        get_buffer_server(this->servers_parsed, port) == -1)
+						{
+							std::string response = "HTTP/1.1 413 Payload Too Large\r\n"
+                                   "Content-Type: text/html\r\n"
+                                   "Content-Length: 76\r\n\r\n"
+                                   "<html><body><h1>413 Payload Too Large</h1></body></html>\r\n";
+							send(accptSockFD, response.c_str(), response.length(), 0);
+            				close(accptSockFD);
+							FD_CLR(accptSockFD, &_masterFDs);
+							FD_CLR(accptSockFD, &_writeFDs);
+							_clients.erase(accptSockFD);
+                        	break ;
+						}
                     if (FD_ISSET(accptSockFD, &_writeFDs))
                     {
                         this->responseHandling(accptSockFD);

@@ -10,8 +10,6 @@ server:
     redirect: "http://www.42urduliz.com"
   location: "/hola"
     file: "hola.html"
-  location: "/hola2"
-    file: "hola2.txt"
   location: "/cgi-bin"
     file: "cgi-bin/calc.html"
     cgi: "cgi-bin/cgiscript.py"
