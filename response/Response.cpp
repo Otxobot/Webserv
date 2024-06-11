@@ -76,16 +76,18 @@ Config Response::calibrate_host_location(std::vector<Config> _servers, Request _
 {
     int i = 0;
     int size = _servers.size();
-    std::cout << "PORT-->" << _request.getPort() << std::endl;
+    std::cout << "PORT IN RESPONSE CREATION2->" << this->_request.getPort() << std::endl;
     while (i < size)
     {
+        std ::cout << "El puerto de cada server" << _servers[i]._port << std::endl;
         if (_servers[i]._port == _request.getPort())
         {
             return (_servers[i]);
         }
         i++;
     }
-    return _servers[i];
+    //return _servers[i];
+    throw std::runtime_error("No server found with the requested port");
 }
 
 std::string readFileToString(const std::string& filename) {
@@ -217,10 +219,13 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
 {
     this->_request = request;
     this->_servers = servers;
+    std::cout << "PORT IN RESPONSE CREATION->" << this->_request.getPort() << std::endl;
     this->_server = this->calibrate_host_location(this->_servers, this->_request);
+    std::cout << "PORT IN RESPONSE CREATION3->" << this->_request.getPort() << std::endl;
     
     std::string uri = this->_request.getTarget();
     std::string method = this->_request.getMethod();
+    std::string protocol = this->_request.getProtocol();
     this->_statusCode = this->_request.getStatusCode();
 
     if ((method != "GET" && method != "POST" && method != "DELETE") ||
@@ -282,7 +287,7 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     if (request.getMethod() == "POST")
     {
         std::cout << "ENTRANDO A HANDLE POST" << std::endl;
-        this->handle_POST();
+        this->handle_POST(protocol);
     }
     if (request.getMethod() == "DELETE")
         this->handle_DELETE();
@@ -325,11 +330,109 @@ void Response::handle_GET()
     // std::cout << "=======================RESPONSE=========================" << std::endl;
 }
 
-void Response::handle_POST()
+// void Response::handle_POST()
+// {
+//     std::string contentType = this->_request.headers["Content-Type"];
+//     std::cout << "contentType string->" << contentType << std::endl;
+//     return ;
+// }
+
+std::streampos getFileSize(const std::string& filePath) {
+    std::ifstream file(filePath.c_str(), std::ios::binary | std::ios::ate);
+    if (file.is_open()) {
+        std::streampos fileSize = file.tellg();
+        file.close();
+        return fileSize;
+    } else {
+        std::cerr << "Unable to open file: " << filePath << std::endl;
+        return -1;
+    }
+}
+
+void Response::handle_POST(const std::string& protocol) 
 {
+    time_t _time;
+	std::string tm;
+	time(&_time);
+	tm = ctime(&_time);
+    tm.erase(tm.length() - 1);
+
+    this->_response.append(protocol);
+    this->_response.append(" ");
+    int number = this->_statusCode;
+    std::ostringstream oss;
+    oss << number;
+    std::string status_code = oss.str();
+    std::cout << status_code << std::endl;
+    if (status_code == "200" || status_code == "201") {
+        this->_response.append(status_code);
+        this->_response.append(" OK\r\n");
+        this->_response.append("Date: ");
+        this->_response.append(tm);
+        this->_response.append(" GMT\r\n");
+    } else {
+        this->_response.append(status_code);
+        std::string message = this->getStatusCodeTranslate(number);
+        this->_response.append(" ");
+        this->_response.append(message);
+        this->_response.append("\r\nDate: ");
+        this->_response.append(tm);
+        this->_response.append(" GMT\r\n");
+        this->handle_SC_error(number);
+        //std::cout << this->_response << std::endl;
+        return;
+    }
+    // Handle saving the request data
+    std::string uri = this->_request.getTarget();
+    Location our_location;
+    if (uri.empty())
+        uri.append("/");
+    our_location = this->_server._locations[uri];
+    // Detect the content type and file extension
     std::string contentType = this->_request.headers["Content-Type"];
-    std::cout << "contentType string->" << contentType << std::endl;
-    return ;
+    std::cout << "Content-Type----> " << contentType << std::endl;
+    // std::cout << "this->_request.headers[name]-> " << this->_request.headers["name"] << std::endl;
+    // std::cout << "this->_request.headers[content-type]-> " << this->_request.headers["ContentType"] << std::endl;
+    // std::cout << "this->_request.headers[value]-> " << this->_request.headers["value"] << std::endl;
+    std::string fileExtension;
+    if (contentType == "text/html") {
+        fileExtension = ".html";
+    } else if (contentType == "text/plain") {
+        fileExtension = ".txt";
+    } else if (contentType == "image/jpeg") {
+        fileExtension = ".jpg";
+    } else if (contentType == "image/png") {
+        fileExtension = ".png";
+    } else if (contentType == "application/pdf") {
+        fileExtension = ".pdf";
+    } else {
+        std::cout << "Unsupported Media Type" << std::endl;
+        this->_statusCode = 415; // Unsupported Media Type
+        this->handle_SC_error(this->_statusCode);
+        return;
+    }
+    // Construct the file path
+    std::string filePath = this->_server._root + "/uploaded_file" + fileExtension;
+    std::cout << "filePath---> " << filePath << std::endl;
+    std::ofstream outFile(filePath.c_str(), std::ios::binary);
+    if (outFile.is_open()) {
+        //std::cout << "get body length-> " << this->_request.getBodyLength() << std::endl;
+        // Write body to file
+        outFile.write(this->_request.headers["value"].c_str(), this->_request.headers["value"].size());
+        outFile.close();
+        std::ostringstream len_stream;
+        len_stream << getFileSize(filePath);
+        std::string content_length = len_stream.str();
+        this->_response.append("Content-Length: ");
+        this->_response.append(content_length);
+        this->_response.append("\r\n");
+        this->_response.append("Connection: Closed\r\n");
+        this->_response.append("\r\n");
+    } else {
+        this->_statusCode = 500;
+        this->handle_SC_error(this->_statusCode);
+    }
+    std::cout << "\n\n" << this->_request.headers["value"] << "\n\nLAGARTO\n" << std::endl;
 }
 
 bool isDirectory(std::string path)

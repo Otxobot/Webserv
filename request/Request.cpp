@@ -149,6 +149,7 @@ int		Request::request_headers()
 				return BAD_REQUEST;
 			if (header.length() > HEADER_MAX_LENGTH || value.length() > VALUE_MAX_LENGTH)
 				return BAD_REQUEST;
+			std::cout << "request_headers->" << header << ":" << value << std::endl;
 			this->headers[header] = trim(value);
 		}
 		else
@@ -230,6 +231,7 @@ std::string Request::getTarget()
 int		Request::getPort()
 {
 	std::string tmp;
+	//std::cout << "HOST------->"<< this->headers["Host"] << std::endl;
 	for (std::map<std::string, std::string>::iterator it = this->headers.begin(); it != this->headers.end(); it++)
 		if (it->first == "Host")
 			tmp = it->second;
@@ -239,7 +241,8 @@ int		Request::getPort()
 		this->port = atoi(tmp.c_str());
 	}
 	else
-		this->port = 80;
+		throw::std::runtime_error("No port found in the request");
+	// 	this->port = 80;
 	
 	return this->port;
 }

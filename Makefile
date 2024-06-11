@@ -19,7 +19,7 @@ SRC = $(addsuffix .cpp, $(FILES))
 
 OBJ = $(addsuffix .o, $(FILES))
 
-CFLAGS = c++ -Wall -Wextra -Werror --std=c++98 #-fsanitize=address -g3
+CFLAGS = c++ -Wall -Wextra -Werror --std=c++98 -fsanitize=address -g3
 
 all : $(NAME)
 

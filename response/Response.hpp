@@ -59,7 +59,7 @@ class Response
         void        handle_SC_error(int sc);
 
         void        handle_GET();
-        void        handle_POST();
+        void        handle_POST(const std::string& protocol);
         void        handle_DELETE();
         
         int         handle_GET_CGI();
