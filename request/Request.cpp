@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:33 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/12 16:24:39 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/12 16:32:03 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,7 +233,6 @@ int		Request::getPort()
 	}
 	else
 		throw::std::runtime_error("No port found in the request");
-	
 	return this->port;
 }
 
