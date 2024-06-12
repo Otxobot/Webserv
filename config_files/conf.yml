@@ -3,7 +3,7 @@ server:
   listen: 127.0.0.1:61001
   root: "./html/primera_pagina"
   location: /
-    autoindex: on
+    file: "index.html"
   location: "/goto42"
     redirect: "http://www.42urduliz.com"
   location: "/hola"

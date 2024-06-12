@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/12 14:51:50 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/12 16:21:38 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,12 @@ void Response::handle_SC_error(int sc)
             this->_response.append(_body);
 }
 
-void Response::createDirectoryListing(std::string directoryPath) {
+#include <dirent.h>
+#include <string>
+#include <fstream>
+#include <iostream>
+
+void Response::createDirectoryListing(std::string directoryPath, std::string uri) {
     DIR* dir;
     struct dirent* ent;
     std::string htmlContent = "<html><body><ul>";
@@ -174,7 +179,8 @@ void Response::createDirectoryListing(std::string directoryPath) {
         while ((ent = readdir(dir)) != NULL) {
             // Avoid adding autoindex.html to the list
             if (strcmp(ent->d_name, "autoindex.html") != 0) {
-                htmlContent += "<li><a href=\"" + std::string(ent->d_name) + "\">" + std::string(ent->d_name) + "</a></li>";
+                std::string relativePath = uri + "/" + std::string(ent->d_name);
+                htmlContent += "<li><a href=\"" + relativePath + "\">" + std::string(ent->d_name) + "</a></li>";
             }
         }
         closedir(dir);
@@ -217,7 +223,6 @@ void Response::createDirectoryListing(std::string directoryPath) {
 }
 
 
-
 void Response::responseCreation(std::vector<Config> &servers, Request &request)
 {
     this->_request = request;
@@ -239,7 +244,7 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     }
     if (this->_server._locations[uri]._file == "" && this->_server._locations[uri]._autoindex) // uri == "/" && 
     {
-        createDirectoryListing(this->_server._root + uri);
+        createDirectoryListing(this->_server._root + uri, uri);
     }
     if ((this->_request.getTarget()).find("/cgi-bin") != std::string::npos && method == "POST")
     {
@@ -303,10 +308,14 @@ void Response::handle_GET()
     tm.erase(tm.length() - 1);
 
     std::string contentType;
-    if (this->_server._locations[this->_request.getTarget()]._file.find(".html") != std::string::npos)
+    if (this->_request.getTarget().find(".html") != std::string::npos)
         contentType = "text/html\r\n";
-    else if (this->_server._locations[this->_request.getTarget()]._file.find(".txt") != std::string::npos)
+    else if (this->_request.getTarget().find(".txt") != std::string::npos)
         contentType = "text/plain\r\n";
+    else if (this->_request.getTarget().find(".png") != std::string::npos)
+        contentType = "image/png\r\n";
+    else if (this->_request.getTarget().find(".jpg") != std::string::npos || this->_request.getTarget().find(".jpeg") != std::string::npos)
+        contentType = "image/jpeg\r\n";
     this->createBody();
     int number = this->_statusCode;
     if (number != 200)
@@ -326,6 +335,7 @@ void Response::handle_GET()
     this->_response.append("Server: ");
     this->_response.append(this->_server._servername + "\r\n");
     this->_response.append(this->_body);
+    std::cout << "response ->\n" << this->_response << "\n\n" << std::endl;
 }
 
 std::streampos getFileSize(const std::string& filePath) {
@@ -531,7 +541,6 @@ void Response::createBody()
 
     if (uri.empty())
         uri.append("/");
-
     our_location = this->_server._locations[uri];
     std::string path;
     if (!our_location._file.empty())
@@ -554,7 +563,7 @@ void Response::createBody()
         oss.str("");
         oss << Content.size();
         this->_body.append(oss.str());
-        this->_body.append("\r\nConnection: close\r\n");
+        this->_body.append("\r\nConnection: close");
         this->_body.append("\r\n\r\n");
         this->_body.append(ss.str());
     }

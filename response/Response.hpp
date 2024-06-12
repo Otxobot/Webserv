@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:43 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/03 15:23:25 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/12 16:22:22 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ class Response
         
         int         handle_GET_CGI();
         int         handle_POST_CGI();
-        void        createDirectoryListing(std::string diretoryPath);
+        void        createDirectoryListing(std::string directoryPath, std::string uri);
         void        handle_GET_autoindex(std::string open);
 };
 
