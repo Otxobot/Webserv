@@ -2,7 +2,7 @@ server:
   servername: site1.com
   listen: 127.0.0.1:61001
   root: "./html/primera_pagina"
-  buffer_size: 100000
+  buffer_size: 3000
   error_page: "404" "customErrors/404.html"
   error_page: "500" "customErrors/500.html"
   error_page: "503" "customErrors/503.html"

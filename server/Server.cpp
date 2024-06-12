@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include <climits>
 
 Server::Server(Config config, std::string configFile) : _masterSockFD(0),
 				   _port(0),
@@ -210,12 +211,33 @@ void Server::newConnectHandling(int &sockFD)
 		_accptMaster.insert(std::pair<int, int>(accptSockFD, sockFD));
 }
 
+
+int get_buffer_server(std::vector<Config> &_servers, int port)
+{
+    int i = 0;
+    int size = _servers.size();
+    while (i < size)
+    {
+        if (_servers[i]._port == port)
+        {
+            if (_servers[i]._buffer_size == 0)
+                return INT_MAX;
+            return (_servers[i]._buffer_size);
+        }
+        i++;
+    }
+    std::cout << "NO SE ESTA CALIBRANDO:" << i << std::endl;
+    return -1;
+}
+
+
 //supuestamente llega bien el txt, no sabemos si las imagenes llegan bien, a veces parecen llegar bien y a veces no
 void Server::acceptedConnectHandling(int &accptSockFD)
 {
     char buffer[BUFFER_SIZE + 1];
     std::string requestData;
     int valRead;
+    int port;
 
     while ((valRead = recv(accptSockFD, buffer, BUFFER_SIZE, 0)) > 0)
     {
@@ -241,6 +263,13 @@ void Server::acceptedConnectHandling(int &accptSockFD)
                     // Full request received, process it
                     this->_request.reset();
                     this->_request.Request_start(requestData);
+                    port = this->_request.getPort(); // Corrección aquí
+					std::cout << "port: " << port << std::endl;
+					std::cout << "valread--->"<< valRead << std::endl;
+					std::cout << "get_buffer: " << get_buffer_server(this->servers_parsed, port) << std::endl;
+                    if (get_buffer_server(this->servers_parsed, port) <= valRead ||
+						get_buffer_server(this->servers_parsed, port) == -1) // Corrección aquí
+                        return;
                     if (FD_ISSET(accptSockFD, &_writeFDs))
                     {
                         this->responseHandling(accptSockFD);
@@ -303,6 +332,7 @@ void Server::acceptedConnectHandling(int &accptSockFD)
         }
     }
 }
+
 
 
 
