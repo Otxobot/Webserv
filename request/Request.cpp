@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:33 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/11 18:12:46 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/12 12:06:30 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -270,6 +270,7 @@ void Request::reset()
 std::string Request::getQueryString() const {
     return this->queryUrl;
 }
+
 std::string Request::getReqValue(const std::string& key) const {
     // Comprueba si la clave existe en el mapa de encabezados
     if (this->headers.find(key) != this->headers.end()) {
