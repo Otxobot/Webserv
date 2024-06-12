@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrar Archivo</title>
+</head>
+<body>
+    <h1>Borrar Archivo</h1>
+    <form id="deleteForm" action="#" method="POST">
+        <label for="filePath">Ruta del Archivo:</label><br>
+        <input type="text" id="filePath" name="filePath"><br><br>
+        <input type="submit" value="Eliminar Archivo">
+    </form>
+
+    <script>
+        document.getElementById('deleteForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evitar la presentación predeterminada del formulario
+            var filePath = document.getElementById('filePath').value;
+            fetch(filePath, {
+                method: 'DELETE'
+            });
+        });
+    </script>
+</body>
+</html>

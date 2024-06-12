@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:21 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/14 12:48:54 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/12 16:47:04 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@
 #include <cstdlib> // For exit() and EXIT_FAILURE
 #include <iostream> // For cout
 #include <unistd.h> // For read
-#include <cerrno>
 #include <vector> // Include the necessary header file
 #include <string>
 

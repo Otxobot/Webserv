@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/12 16:39:45 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/12 18:33:49 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,6 +225,9 @@ void Response::createDirectoryListing(std::string directoryPath, std::string uri
 
 void Response::responseCreation(std::vector<Config> &servers, Request &request)
 {
+    std::string static pasturi;
+    if (pasturi.empty())
+        pasturi = "asdasfasfoSIODGPODBDgDSVV<SBDVSDBVAIASSAD";
     this->_request = request;
     this->_servers = servers;
     try
@@ -242,9 +245,20 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     std::string protocol = this->_request.getProtocol();
     this->_statusCode = this->_request.getStatusCode();
 
+    // std::cout << "uri---> " << uri << std::endl;
+    // std::cout << "get---> " <<this->_server._locations[uri]._allowGET<< std::endl;
+    // std::cout << "post---> " <<this->_server._locations[uri]._allowPOST<< std::endl;
+    // std::cout <<"del---> " << this->_server._locations[uri]._allowDELETE<< std::endl;
+
+    // std::cout <<"\n\n\n" << pasturi << std::endl;
+    //  std::cout << "pastget---> " <<this->_server._locations[pasturi]._allowGET<< std::endl;
+    // std::cout << "pastpost---> " <<this->_server._locations[pasturi]._allowPOST<< std::endl;
+    // std::cout <<"pastdel---> " << this->_server._locations[pasturi]._allowDELETE<< std::endl;
+    // std::cout <<"pasturi---> " << pasturi << std::endl;
+    // std::cout <<"meth---> " << method << std::endl;
     if ((method != "GET" && method != "POST" && method != "DELETE") ||
     ((!this->_server._locations[uri]._allowGET && method == "GET") || (!this->_server._locations[uri]._allowDELETE && method == "DELETE") ||
-    ((!this->_server._locations[uri]._allowPOST && method == "POST"))))
+    (!this->_server._locations[uri]._allowPOST && method == "POST")) || (!this->_server._locations[pasturi]._allowDELETE && method == "DELETE"))
     {
         this->_statusCode = 405;
         this->handle_SC_error(this->_statusCode);
@@ -305,6 +319,8 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
     }
     if (request.getMethod() == "DELETE")
         this->handle_DELETE();
+    if (uri != "/favicon.ico")
+        pasturi = uri;
 }
 
 void Response::handle_GET()
@@ -343,7 +359,7 @@ void Response::handle_GET()
     this->_response.append("Server: ");
     this->_response.append(this->_server._servername + "\r\n");
     this->_response.append(this->_body);
-    std::cout << "response ->\n" << this->_response << "\n\n" << std::endl;
+    //std::cout << "response ->\n" << this->_response << "\n\n" << std::endl;
 }
 
 std::streampos getFileSize(const std::string& filePath) {

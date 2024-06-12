@@ -9,7 +9,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #F4F4F4;
+            background-color: #f4f4f4;
         }
         header {
             background: #333;
@@ -64,17 +64,18 @@
     </style>
 </head>
 <body>
+
 <header>
     <h1>Webserv: Primera Pagina</h1>
 </header>
+
 <nav>
     <ul>
         <li><a href="#CGI">CGI</a></li>
         <li><a href="#Redirection">Redirection</a></li>
-        <li><a href="#POST">POST</a></li>
-        <li><a href="#DELETE">DELETE</a></li>
     </ul>
 </nav>
+
 <div class="container">
     <section id="CGI" class="content">
         <div>
@@ -83,6 +84,7 @@
             <a href="http://127.0.0.1:61001/cgi-bin/calc.html" class="button">Go to CGI</a>
         </div>
     </section>
+
     <section id="Redirection" class="content">
         <div>
             <h2>Redirection</h2>
@@ -90,6 +92,7 @@
             <a href="http://127.0.0.1:61001/goto42" class="button">Go to 42</a>
         </div>
     </section>
+
     <section id="POST" class="content">
         <div>
             <h2>POST</h2>
@@ -97,51 +100,14 @@
             <a href="http://127.0.0.1:61001/post.html" class="button">Go to POST</a>
         </div>
     </section>
+    
     <section id="DELETE" class="content">
         <div>
             <h2>DELETE</h2>
             <p>This is a DELETE method example page</p>
-            <form id="deleteForm">
-                <label for="filePath">Path of the file to delete:</label><br>
-                <input type="text" id="filePath" name="filePath" required><br><br>
-                <button type="submit">Delete</button>
-            </form>
-            <p id="responseMessage"></p>
+            <a href="http://127.0.0.1:61001/delete.html" class="button">Go to DELETE</a>
         </div>
     </section>
 </div>
-<footer>
-    <p>&copy; 2024 WebServer. All rights reserved.</p>
-</footer>
-<script>
-    document.getElementById('deleteForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the default form submission
-        var filePath = document.getElementById('filePath').value;
-        fetch(filePath, {
-            method: 'DELETE'
-        })
-        .then(response => {
-            var responseMessage = document.getElementById('responseMessage');
-            if (response.ok) {
-                responseMessage.textContent = 'File deleted successfully.';
-                setTimeout(() => {
-                    window.location.href = '/upload'; // Redirect after 2 seconds
-                }, 2000);
-            } else if (response.status === 403) {
-                responseMessage.textContent = 'Permission denied.';
-            } else if (response.status === 404) {
-                responseMessage.textContent = 'File not found.';
-            } else if (response.status === 409) {
-                responseMessage.textContent = 'Target is a directory.';
-            } else {
-                responseMessage.textContent = 'Error deleting the file.';
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('responseMessage').textContent = 'An error occurred while trying to delete the file.';
-        });
-    });
-</script>
 </body>
 </html>
