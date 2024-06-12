@@ -24,10 +24,31 @@
 </head>
 <body>
     <h1>Subir Archivos</h1>
-    <form action="/tu_endpoint" method="POST" enctype="multipart/form-data">
+    <form id="uploadForm" method="POST" enctype="multipart/form-data">
         <label for="file">Selecciona un archivo:</label><br>
         <input type="file" id="file" name="file"><br><br>
         <input type="submit" value="Subir">
     </form>
+
+    <script>
+        document.getElementById('uploadForm').onsubmit = function(event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+            
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = '/upload';
+                } else {
+                    alert('Error al subir el archivo');
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('Error al subir el archivo');
+            });
+        };
+    </script>
 </body>
 </html>

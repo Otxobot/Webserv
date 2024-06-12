@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/11 18:14:11 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/12 14:51:50 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,45 +172,51 @@ void Response::createDirectoryListing(std::string directoryPath) {
     if ((dir = opendir(directoryPath.c_str())) != NULL) {
         // Print all the files and directories within directory
         while ((ent = readdir(dir)) != NULL) {
-            htmlContent += "<li><a href=\"" + std::string(ent->d_name) + "\">" + std::string(ent->d_name) + "</a></li>";
+            // Avoid adding autoindex.html to the list
+            if (strcmp(ent->d_name, "autoindex.html") != 0) {
+                htmlContent += "<li><a href=\"" + std::string(ent->d_name) + "\">" + std::string(ent->d_name) + "</a></li>";
+            }
         }
         closedir(dir);
+
+        htmlContent += "</ul></body></html>";
+
+        // Write the HTML content to a file
+        std::ofstream htmlFile;
+        std::string index = "/autoindex.html"; // Nombre del archivo de índice
+        std::string indexPath = directoryPath + index; // Ruta completa del archivo de índice
+        htmlFile.open(indexPath.c_str());
+        htmlFile << htmlContent;
+        htmlFile.close();
+
+        // Leyendo el archivo de índice recién creado y preparando la respuesta HTTP
+        std::ifstream file(indexPath.c_str());
+
+        if (file.is_open()) {
+            // Start of the HTTP response
+            this->_response = "HTTP/1.1 200 OK\r\n"
+                              "Content-Type: text/html\r\n"
+                              "Connection: close\r\n"
+                              "\r\n";
+
+            // Append each line of the file to the response
+            std::string line;
+            while (std::getline(file, line)) {
+                this->_response += line + "\n";
+            }
+            file.close();
+        } else {
+            // Error al abrir el archivo de índice recién creado
+            this->handle_SC_error(500);
+        }
     } else {
-        // Could not open directory
+        // No se pudo abrir el directorio proporcionado
         perror("Could not open directory");
         return;
     }
-
-    htmlContent += "</ul></body></html>";
-
-    // Write the HTML content to a file
-    std::ofstream htmlFile;
-    std::string index = "/autoindex.html";
-    std::string open = directoryPath + index;
-    htmlFile.open(open.c_str());
-    htmlFile << htmlContent;
-    htmlFile.close();
-    std::string filePath = this->_server._root + "/autoindex.html";
-    std::ifstream file(filePath.c_str());
-
-    if (file.is_open())
-    {
-        // Start of the HTTP response
-        this->_response = "HTTP/1.1 200 OK\r\n"
-                          "Content-Type: text/html\r\n"
-                          "Connection: close\r\n"
-                          "\r\n";
-
-        // Append each line of the file to the response
-        std::string line;
-        while (std::getline(file, line)) {
-            this->_response += line + "\n";
-        }
-        file.close();
-    }
-    else
-        this->handle_SC_error(500);
 }
+
+
 
 void Response::responseCreation(std::vector<Config> &servers, Request &request)
 {
@@ -231,11 +237,9 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
         this->handle_SC_error(this->_statusCode);
         return ;
     }
-
-    if (uri == "/" && this->_server._locations[uri]._file != "index.html" && (!this->_server._locations[uri]._autoindex))
+    if (this->_server._locations[uri]._file == "" && this->_server._locations[uri]._autoindex) // uri == "/" && 
     {
-        createDirectoryListing(this->_server._root);
-        return ;
+        createDirectoryListing(this->_server._root + uri);
     }
     if ((this->_request.getTarget()).find("/cgi-bin") != std::string::npos && method == "POST")
     {

@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:51:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/11 18:05:59 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/12 14:31:36 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,7 +212,8 @@ Location Config::parseLocation(std::ifstream &file, std::string &line)
         }
         if (line.find("autoindex: ") != std::string::npos)
         {
-            if (line.substr(14) == "on")
+			std::cout << "autoindex: " << line.substr(15) << std::endl;
+            if (line.substr(15) == "on")
 			{
 				loc.setAutoindex(true);
 			}

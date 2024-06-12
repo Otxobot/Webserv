@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:11 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/12 13:44:22 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/12 14:43:05 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ void Server::waitingForConnections()
 		FD_ZERO(&_readFDs);
 		_readFDs = _masterFDs;
 		usleep(2000);
-		struct timeval _tv = {3, 500};
+		struct timeval _tv = {1, 500};
 		int activity = select(_maxSockFD + 1, &_readFDs, &_writeFDs, NULL, &_tv);
 		if (activity == -1)
 		{
@@ -226,6 +226,7 @@ int get_buffer_server(std::vector<Config> &_servers, int port)
     }
     return -1;
 }
+
 //supuestamente llega bien el txt, no sabemos si las imagenes llegan bien, a veces parecen llegar bien y a veces no
 void Server::acceptedConnectHandling(int &accptSockFD)
 {
