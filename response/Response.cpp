@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:00:31 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/12 16:21:38 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/12 16:27:55 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,7 +227,14 @@ void Response::responseCreation(std::vector<Config> &servers, Request &request)
 {
     this->_request = request;
     this->_servers = servers;
-    this->_server = this->calibrate_host_location(this->_servers, this->_request);
+    try
+    {
+        this->_server = this->calibrate_host_location(this->_servers, this->_request);
+    }
+    catch (const std::exception &e)
+	{
+		std::cerr << e.what() << '\n';
+	}
     
     std::string uri = this->_request.getTarget();
     std::string method = this->_request.getMethod();
