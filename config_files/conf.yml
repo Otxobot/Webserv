@@ -2,7 +2,6 @@ server:
   servername: site1.com
   listen: 127.0.0.1:61001
   root: "./html/primera_pagina"
-  buffer_size: 100000000
   location: /
     file: "index.html"
   location: "/goto42"
@@ -16,7 +15,6 @@ server:
     file: "post.html"
   location: "/delete.html"
     file: "delete.html"
-    allow: GET POST
   location: "/upload"
     autoindex: on
 

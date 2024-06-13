@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:17:05 by abasante          #+#    #+#             */
-/*   Updated: 2024/05/28 16:31:54 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/13 11:42:43 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,6 +167,12 @@ bool	paramsFunction(std::ifstream &file, std::vector<int> &ports, std::string &l
 	else if (line.find("buffer_size:") != std::string::npos) {
 		if (!Buffersize(line)) {
 			std::cerr << "buffer_size error" << std::endl;
+			return false;
+		}
+	}
+	else if (line.find("error_page:") != std::string::npos) {
+		if (!ErrorPage(line)) {
+			std::cerr << "error_page error" << std::endl;
 			return false;
 		}
 	}

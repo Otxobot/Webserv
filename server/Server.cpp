@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:11 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/12 17:54:31 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/13 11:45:07 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ void Server::waitingForConnections()
 		FD_ZERO(&_readFDs);
 		_readFDs = _masterFDs;
 		usleep(2000);
-		struct timeval _tv = {1, 500};
+		struct timeval _tv = {3, 500};
 		int activity = select(_maxSockFD + 1, &_readFDs, &_writeFDs, NULL, &_tv);
 		if (activity == -1)
 		{
@@ -291,20 +291,6 @@ void Server::acceptedConnectHandling(int &accptSockFD)
                 }
                 break;
             }
-        }
-        // Handle large payload case
-        if (requestData.size() > 1000000000)
-        {
-            std::string response = "HTTP/1.1 413 Payload Too Large\r\n"
-                                   "Content-Type: text/html\r\n"
-                                   "Content-Length: 76\r\n\r\n"
-                                   "<html><body><h1>413 Payload Too Large</h1></body></html>\r\n";
-            send(accptSockFD, response.c_str(), response.length(), 0);
-            close(accptSockFD);
-            FD_CLR(accptSockFD, &_masterFDs);
-            FD_CLR(accptSockFD, &_writeFDs);
-            _clients.erase(accptSockFD);
-            return;
         }
     }
     if (valRead == 0)
