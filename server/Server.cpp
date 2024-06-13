@@ -6,7 +6,7 @@
 /*   By: abasante <abasante@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 11:39:11 by abasante          #+#    #+#             */
-/*   Updated: 2024/06/13 11:45:07 by abasante         ###   ########.fr       */
+/*   Updated: 2024/06/13 12:04:17 by abasante         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -304,7 +304,7 @@ void Server::acceptedConnectHandling(int &accptSockFD)
     else if (valRead < 0)
     {
 		// Other error occurred
-		perror("recv failed");
+		//perror("recv failed");
 		close(accptSockFD);
 		FD_CLR(accptSockFD, &_masterFDs);
 		FD_CLR(accptSockFD, &_writeFDs);
